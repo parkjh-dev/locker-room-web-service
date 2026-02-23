@@ -23,32 +23,32 @@
 
 ## Phase 2. 핵심 인프라 모듈
 
-- [ ] 2-1. 공통 타입 정의 (`types/api.ts` - ApiResponse, CursorPageResponse, FieldError, CursorPageParams, SearchParams)
-- [ ] 2-2. 공통 타입 정의 (`types/common.ts` - 공통 유틸리티 타입)
-- [ ] 2-3. Axios 인스턴스 생성 (`lib/axios.ts` - baseURL, timeout, Content-Type)
-- [ ] 2-4. Axios Request 인터셉터 (Authorization 헤더 자동 첨부, POST 멱등성 키 자동 생성)
-- [ ] 2-5. Axios Response 인터셉터 (401 토큰 갱신 재시도, 403 USER_SUSPENDED 처리, 429/500 Toast, 에러 코드 메시지 매핑)
-- [ ] 2-6. TanStack Query 설정 (`lib/queryClient.ts` - staleTime, gcTime, retry)
-- [ ] 2-7. Keycloak 초기화 설정 (`lib/keycloak.ts`)
-- [ ] 2-8. Auth Store (`features/auth/stores/authStore.ts` - Zustand, 토큰/유저/인증상태 관리)
-- [ ] 2-9. UI Store (`stores/uiStore.ts` - 사이드바 토글 등 UI 상태)
-- [ ] 2-10. KeycloakProvider (`app/providers/KeycloakProvider.tsx` - 초기화, silent check-sso, 토큰 만료 콜백)
-- [ ] 2-11. QueryProvider (`app/providers/QueryProvider.tsx`)
-- [ ] 2-12. AppProvider (`app/providers/AppProvider.tsx` - 모든 프로바이더 조합)
-- [ ] 2-13. Sonner Toaster 전역 설정
+- [x] 2-1. 공통 타입 정의 (`types/api.ts` - ApiResponse, CursorPageResponse, FieldError, CursorPageParams, SearchParams)
+- [x] 2-2. 공통 타입 정의 (`types/common.ts` - 공통 유틸리티 타입)
+- [x] 2-3. Axios 인스턴스 생성 (`lib/axios.ts` - baseURL, timeout, Content-Type)
+- [x] 2-4. Axios Request 인터셉터 (Authorization 헤더 자동 첨부, POST 멱등성 키 자동 생성)
+- [x] 2-5. Axios Response 인터셉터 (401 토큰 갱신 재시도, 403 USER_SUSPENDED 처리, 429/500 Toast, 에러 코드 메시지 매핑)
+- [x] 2-6. TanStack Query 설정 (`lib/queryClient.ts` - staleTime, gcTime, retry)
+- [x] 2-7. Keycloak 초기화 설정 (`lib/keycloak.ts`)
+- [x] 2-8. Auth Store (`features/auth/stores/authStore.ts` - Zustand, 토큰/유저/인증상태 관리)
+- [x] 2-9. UI Store (`stores/uiStore.ts` - 사이드바 토글 등 UI 상태)
+- [x] 2-10. KeycloakProvider (`app/providers/KeycloakProvider.tsx` - 초기화, silent check-sso, 토큰 만료 콜백)
+- [x] 2-11. QueryProvider (`app/providers/QueryProvider.tsx`)
+- [x] 2-12. AppProvider (`app/providers/AppProvider.tsx` - 모든 프로바이더 조합)
+- [x] 2-13. Sonner Toaster 전역 설정
 
 ---
 
 ## Phase 3. 공통 컴포넌트
 
-- [ ] 3-1. ErrorBoundary (`components/common/ErrorBoundary.tsx` - 글로벌 + fallback UI)
-- [ ] 3-2. SkeletonLoader (`components/common/SkeletonLoader.tsx` - 게시글/카드/목록 스켈레톤)
-- [ ] 3-3. EmptyState (`components/common/EmptyState.tsx` - 아이콘 + 메시지 + 액션 버튼)
-- [ ] 3-4. ConfirmDialog (`components/common/ConfirmDialog.tsx` - 삭제/탈퇴 등 파괴적 액션 확인)
-- [ ] 3-5. FullScreenLoader (Keycloak 초기화/라우트 전환 시 전체화면 로딩)
-- [ ] 3-6. useInfiniteScroll 훅 (`hooks/useInfiniteScroll.ts` - IntersectionObserver 기반)
-- [ ] 3-7. useDebounce 훅 (`hooks/useDebounce.ts` - 검색 입력 디바운스)
-- [ ] 3-8. useMediaQuery 훅 (`hooks/useMediaQuery.ts` - 반응형 분기)
+- [x] 3-1. ErrorBoundary (`components/common/ErrorBoundary.tsx` - 글로벌 + fallback UI)
+- [x] 3-2. SkeletonLoader (`components/common/SkeletonLoader.tsx` - 게시글/카드/목록 스켈레톤)
+- [x] 3-3. EmptyState (`components/common/EmptyState.tsx` - 아이콘 + 메시지 + 액션 버튼)
+- [x] 3-4. ConfirmDialog (`components/common/ConfirmDialog.tsx` - 삭제/탈퇴 등 파괴적 액션 확인)
+- [x] 3-5. FullScreenLoader (Keycloak 초기화/라우트 전환 시 전체화면 로딩)
+- [x] 3-6. useInfiniteScroll 훅 (`hooks/useInfiniteScroll.ts` - IntersectionObserver 기반)
+- [x] 3-7. useDebounce 훅 (`hooks/useDebounce.ts` - 검색 입력 디바운스)
+- [x] 3-8. useMediaQuery 훅 (`hooks/useMediaQuery.ts` - 반응형 분기)
 
 ---
 
