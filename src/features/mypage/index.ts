@@ -1,0 +1,1 @@
+// mypage module public API
