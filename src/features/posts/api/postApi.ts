@@ -27,4 +27,9 @@ export const postApi = {
       .then((r) => r.data.data),
 
   report: (postId: number, reason: string) => api.post(`/posts/${postId}/report`, { reason }),
+
+  getPopular: (size?: number) =>
+    api
+      .get<ApiResponse<PostListItem[]>>('/posts/popular', { params: { size } })
+      .then((r) => r.data.data),
 };
