@@ -65,12 +65,12 @@
 
 ## Phase 5. 라우트 가드 & 라우터
 
-- [ ] 5-1. ProtectedRoute (`guards/ProtectedRoute.tsx` - 비로그인 → /auth/login?returnUrl 리다이렉트)
-- [ ] 5-2. AdminRoute (`guards/AdminRoute.tsx` - role ≠ ADMIN → /403)
-- [ ] 5-3. ProfileGuard (`guards/ProfileGuard.tsx` - GET /users/me 404 → /auth/profile/complete)
-- [ ] 5-4. 에러 페이지 (NotFoundPage, ForbiddenPage, SuspendedPage)
-- [ ] 5-5. 라우터 설정 (`app/router.tsx` - 전체 라우트 등록, lazy loading, 레이아웃 배치)
-- [ ] 5-6. App.tsx + main.tsx 진입점 조합 (RouterProvider + AppProvider + ErrorBoundary)
+- [x] 5-1. ProtectedRoute (`guards/ProtectedRoute.tsx` - 비로그인 → /auth/login?returnUrl 리다이렉트)
+- [x] 5-2. AdminRoute (`guards/AdminRoute.tsx` - role ≠ ADMIN → /403)
+- [x] 5-3. ProfileGuard (`guards/ProfileGuard.tsx` - GET /users/me 404 → /auth/profile/complete)
+- [x] 5-4. 에러 페이지 (NotFoundPage, ForbiddenPage, SuspendedPage)
+- [x] 5-5. 라우터 설정 (`app/router.tsx` - 전체 라우트 등록, lazy loading, 레이아웃 배치)
+- [x] 5-6. App.tsx + main.tsx 진입점 조합 (RouterProvider + AppProvider + ErrorBoundary)
 
 ---
 

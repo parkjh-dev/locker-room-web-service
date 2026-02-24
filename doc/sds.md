@@ -59,10 +59,11 @@ src/
 │   └── common/                   # 공통 비즈니스 컴포넌트
 │       ├── Pagination.tsx        # Cursor 페이지네이션 / 무한스크롤
 │       ├── FileUpload.tsx        # 파일 업로드 UI
-│       ├── ErrorBoundary.tsx     # 에러 바운더리
-│       ├── EmptyState.tsx        # 빈 상태 UI
-│       ├── SkeletonLoader.tsx    # 스켈레톤 로딩
-│       ├── ConfirmDialog.tsx     # 확인 다이얼로그
+│       ├── ErrorBoundary.tsx     # 에러 바운더리 (Class Component + DefaultErrorFallback)
+│       ├── EmptyState.tsx        # 빈 상태 UI (아이콘 + 메시지 + 액션)
+│       ├── SkeletonLoader.tsx    # 스켈레톤 로딩 (post-list/post-detail/card/list 타입)
+│       ├── ConfirmDialog.tsx     # 확인 다이얼로그 (default/destructive variant)
+│       ├── FullScreenLoader.tsx  # 전체화면 로딩 (Keycloak 초기화, 라우트 전환)
 │       └── TeamSelector.tsx      # 종목 → 팀 2단계 선택
 ├── features/                     # 기능별 모듈
 │   ├── auth/
@@ -249,6 +250,18 @@ src/
 │   ├── ProtectedRoute.tsx
 │   ├── AdminRoute.tsx
 │   └── ProfileGuard.tsx
+├── pages/                        # 페이지 컴포넌트 (라우트 단위, lazy loading)
+│   ├── HomePage.tsx
+│   ├── auth/                     # LoginPage, SignupPage, PasswordFindPage, OAuthCallbackPage, ProfileCompletePage
+│   ├── boards/                   # BoardListPage, BoardPostListPage
+│   ├── posts/                    # PostDetailPage, PostCreatePage, PostEditPage
+│   ├── notices/                  # NoticeListPage, NoticeDetailPage
+│   ├── mypage/                   # MyProfilePage, EditProfilePage, MyPostsPage, MyCommentsPage, MyLikesPage, WithdrawPage
+│   ├── notifications/            # NotificationListPage
+│   ├── inquiries/                # InquiryListPage, InquiryCreatePage, InquiryDetailPage
+│   ├── requests/                 # RequestListPage, RequestCreatePage, RequestDetailPage
+│   ├── admin/                    # AdminDashboardPage, AdminUsersPage, AdminReportsPage, AdminNoticesPage, AdminInquiriesPage, AdminRequestsPage
+│   └── errors/                   # NotFoundPage, ForbiddenPage, SuspendedPage
 ├── styles/                       # (예비) 추가 스타일
 └── index.css                     # 글로벌 스타일 (Tailwind 지시어, CSS 변수, shadcn 테마)
 ```
@@ -258,8 +271,11 @@ src/
 ```
 src/
 ├── main.tsx                      # ReactDOM.createRoot, App 마운트
+├── App.tsx                       # ErrorBoundary > AppProvider > RouterProvider
 └── vite-env.d.ts                 # Vite 환경변수 타입
 ```
+
+> **App.tsx 구조**: `ErrorBoundary`가 최상위에서 치명적 에러를 캐치하고, `AppProvider`(Keycloak + Query + Toaster)가 전역 프로바이더를 조합하며, `RouterProvider`가 `createBrowserRouter`로 정의된 라우터를 렌더링한다. 모든 페이지 컴포넌트는 `React.lazy`로 코드 스플리팅된다.
 
 ---
 
@@ -1089,6 +1105,12 @@ if (message) {
 
 ## 11. 레이아웃 설계
 
+> **디자인 참고**: 블라인드(teamblind.com) 스타일 기반의 깔끔한 커뮤니티 레이아웃
+> - 최대 너비 `max-w-[1140px]` 중앙 정렬 컨테이너
+> - Header: sticky top, 높이 64px (h-16), 흰 배경 + 하단 border
+> - Sidebar: 왼쪽 240px, 데스크톱 고정 / 모바일 Sheet 오버레이
+> - 모바일 breakpoint: `lg` (1024px) 기준으로 사이드바 숨김 → 햄버거 메뉴 전환
+
 ### 11.1 PublicLayout
 
 ```
@@ -1460,3 +1482,4 @@ export default defineConfig({
 |------|------|--------|----------|
 | 1.0 | 2026-02-23 | - | 초안 작성 |
 | 1.1 | 2026-02-23 | - | Phase 1 반영: 기술 스택 버전 고정 (Tailwind v3, Zod v4, shadcn CLI v2.3.0), 디렉토리 구조 보정 (index.css, lib/utils.ts), Tailwind config/CSS 변수를 실제 구현과 동기화 |
+| 1.2 | 2026-02-24 | - | Phase 3~5 반영: pages/ 디렉토리 추가, FullScreenLoader 추가, App.tsx 진입점 구조 명시, 레이아웃 디자인 기준(블라인드 스타일, max-w 1140px, 왼쪽 사이드바) 추가 |
