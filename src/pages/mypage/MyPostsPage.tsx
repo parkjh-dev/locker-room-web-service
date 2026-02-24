@@ -1,9 +1,21 @@
-// TODO: Phase 6+ 에서 실제 구현 예정
+import { Link } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { MyPostList } from '@/features/mypage/components/MyPostList';
+
 export default function MyPostsPage() {
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">MyPosts</h1>
-      <p className="text-muted-foreground">이 페이지는 준비 중입니다.</p>
+      <div className="flex items-center gap-2">
+        <Button variant="ghost" size="sm" asChild>
+          <Link to="/mypage">
+            <ArrowLeft className="mr-1 h-4 w-4" />
+            마이페이지
+          </Link>
+        </Button>
+        <h1 className="text-lg font-bold">내가 쓴 글</h1>
+      </div>
+      <MyPostList />
     </div>
   );
 }

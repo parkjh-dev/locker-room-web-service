@@ -151,22 +151,22 @@
 
 ## Phase 10. 마이페이지 기능
 
-- [ ] 10-1. User 타입 정의 (`features/mypage/types/user.ts` - UserProfile, UserTeam)
-- [ ] 10-2. User API 함수 (`features/mypage/api/userApi.ts` - getMe, updateMe, deleteMe, getMyPosts, getMyComments, getMyLikes)
-- [ ] 10-3. useMyProfile 훅, useUpdateProfile 훅, useWithdraw 훅
-- [ ] 10-4. Profile Zod 스키마 (닉네임 변경, 비밀번호 변경)
-- [ ] 10-5. MyProfile 컴포넌트 (프로필 정보 표시 - 이메일, 닉네임, 응원팀, 가입일)
-- [ ] 10-6. EditProfileForm 컴포넌트 (닉네임 변경 + 비밀번호 변경)
-- [ ] 10-7. MyPostList 컴포넌트 (내가 쓴 글 목록 + 무한스크롤)
-- [ ] 10-8. MyCommentList 컴포넌트 (내가 쓴 댓글 목록, 클릭 시 게시글 이동)
-- [ ] 10-9. MyLikeList 컴포넌트 (좋아요한 글 목록)
-- [ ] 10-10. WithdrawForm 컴포넌트 (비밀번호 확인 + 확인 다이얼로그)
-- [ ] 10-11. MyProfilePage (`/mypage`)
-- [ ] 10-12. EditProfilePage (`/mypage/edit`)
-- [ ] 10-13. MyPostsPage (`/mypage/posts`)
-- [ ] 10-14. MyCommentsPage (`/mypage/comments`)
-- [ ] 10-15. MyLikesPage (`/mypage/likes`)
-- [ ] 10-16. WithdrawPage (`/mypage/withdraw`)
+- [x] 10-1. User 타입 정의 (`features/mypage/types/user.ts` - UserProfile, UserTeam)
+- [x] 10-2. User API 함수 (`features/mypage/api/userApi.ts` - getMe, updateMe, deleteMe, getMyPosts, getMyComments, getMyLikes)
+- [x] 10-3. useMyProfile 훅, useUpdateProfile 훅, useWithdraw 훅
+- [x] 10-4. Profile Zod 스키마 (닉네임 변경, 비밀번호 변경)
+- [x] 10-5. MyProfile 컴포넌트 (프로필 정보 표시 - 이메일, 닉네임, 응원팀, 가입일)
+- [x] 10-6. EditProfileForm 컴포넌트 (닉네임 변경 + 비밀번호 변경)
+- [x] 10-7. MyPostList 컴포넌트 (내가 쓴 글 목록 + 무한스크롤)
+- [x] 10-8. MyCommentList 컴포넌트 (내가 쓴 댓글 목록, 클릭 시 게시글 이동)
+- [x] 10-9. MyLikeList 컴포넌트 (좋아요한 글 목록)
+- [x] 10-10. WithdrawForm 컴포넌트 (비밀번호 확인 + 확인 다이얼로그)
+- [x] 10-11. MyProfilePage (`/mypage`)
+- [x] 10-12. EditProfilePage (`/mypage/edit`)
+- [x] 10-13. MyPostsPage (`/mypage/posts`)
+- [x] 10-14. MyCommentsPage (`/mypage/comments`)
+- [x] 10-15. MyLikesPage (`/mypage/likes`)
+- [x] 10-16. WithdrawPage (`/mypage/withdraw`)
 
 ---
 

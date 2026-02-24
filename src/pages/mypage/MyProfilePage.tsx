@@ -1,9 +1,15 @@
-// TODO: Phase 6+ 에서 실제 구현 예정
+import { SkeletonLoader } from '@/components/common/SkeletonLoader';
+import { MyProfile } from '@/features/mypage/components/MyProfile';
+import { useMyProfile } from '@/features/mypage/hooks/useMyProfile';
+
 export default function MyProfilePage() {
-  return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold">MyProfile</h1>
-      <p className="text-muted-foreground">이 페이지는 준비 중입니다.</p>
-    </div>
-  );
+  const { data: profile, isLoading } = useMyProfile();
+
+  if (isLoading) {
+    return <SkeletonLoader type="post-list" count={3} />;
+  }
+
+  if (!profile) return null;
+
+  return <MyProfile profile={profile} />;
 }

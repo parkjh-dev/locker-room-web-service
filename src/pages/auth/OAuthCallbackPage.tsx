@@ -20,8 +20,8 @@ export default function OAuthCallbackPage() {
         }
 
         // 유저 정보 조회
-        const res = await userApi.getMe();
-        setUser(res.data as ReturnType<typeof useAuthStore.getState>['user'] & object);
+        const profile = await userApi.getMe();
+        setUser(profile);
         navigate(returnUrl, { replace: true });
       } catch (error: unknown) {
         const err = error as { response?: { status?: number } };
