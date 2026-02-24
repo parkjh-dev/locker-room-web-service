@@ -1,9 +1,14 @@
-// TODO: Phase 6+ 에서 실제 구현 예정
+import { Megaphone } from 'lucide-react';
+import { NoticeManagement } from '@/features/admin/components/NoticeManagement';
+
 export default function AdminNoticesPage() {
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">AdminNotices</h1>
-      <p className="text-muted-foreground">이 페이지는 준비 중입니다.</p>
+      <div className="flex items-center gap-2">
+        <Megaphone className="h-5 w-5" />
+        <h1 className="text-lg font-bold">공지 관리</h1>
+      </div>
+      <NoticeManagement />
     </div>
   );
 }
