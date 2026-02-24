@@ -54,12 +54,12 @@
 
 ## Phase 4. 레이아웃
 
-- [ ] 4-1. Header 컴포넌트 (`components/layout/Header.tsx` - 로고, 비로그인: 로그인/회원가입 버튼, 로그인: 알림아이콘+프로필 드롭다운)
-- [ ] 4-2. Sidebar 컴포넌트 (`components/layout/Sidebar.tsx` - 게시판 목록, 마이페이지/고객센터/요청 링크, 모바일 Sheet 토글)
-- [ ] 4-3. Footer 컴포넌트 (`components/layout/Footer.tsx`)
-- [ ] 4-4. PublicLayout (`components/layout/PublicLayout.tsx` - Header + Outlet)
-- [ ] 4-5. SidebarLayout (`components/layout/SidebarLayout.tsx` - Header + Sidebar + Outlet, 반응형)
-- [ ] 4-6. AdminLayout (`components/layout/AdminLayout.tsx` - Admin Header + Admin Sidebar + Outlet)
+- [x] 4-1. Header 컴포넌트 (`components/layout/Header.tsx` - 로고, 비로그인: 로그인/회원가입 버튼, 로그인: 알림아이콘+프로필 드롭다운)
+- [x] 4-2. Sidebar 컴포넌트 (`components/layout/Sidebar.tsx` - 게시판 목록, 마이페이지/고객센터/요청 링크, 모바일 Sheet 토글)
+- [x] 4-3. Footer 컴포넌트 (`components/layout/Footer.tsx`)
+- [x] 4-4. PublicLayout (`components/layout/PublicLayout.tsx` - Header + Outlet)
+- [x] 4-5. SidebarLayout (`components/layout/SidebarLayout.tsx` - Header + Sidebar + Outlet, 반응형)
+- [x] 4-6. AdminLayout (`components/layout/AdminLayout.tsx` - Admin Header + Admin Sidebar + Outlet)
 
 ---
 
