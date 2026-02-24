@@ -6,7 +6,6 @@ import {
   Megaphone,
   HelpCircle,
   GitPullRequestArrow,
-  Shield,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -24,7 +23,7 @@ function AdminHeader() {
     <header className="sticky top-0 z-40 border-b bg-background">
       <div className="flex h-16 items-center gap-4 px-6">
         <Link to="/admin" className="flex items-center gap-2 font-bold text-lg">
-          <Shield className="h-5 w-5 text-primary" />
+          <img src="/logo.png" alt="Locker Room" className="h-8 w-8" />
           <span className="text-primary">Admin</span>
         </Link>
         <div className="flex-1" />

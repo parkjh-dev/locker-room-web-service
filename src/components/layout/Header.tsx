@@ -29,8 +29,9 @@ export function Header() {
         )}
 
         {/* 로고 */}
-        <Link to="/" className="flex items-center gap-2 font-bold text-lg whitespace-nowrap">
-          <span className="text-primary">Locker Room</span>
+        <Link to="/" className="flex items-center gap-2 whitespace-nowrap">
+          <img src="/logo.png" alt="Locker Room" className="h-9 w-9" />
+          <span className="hidden font-bold text-lg text-primary sm:inline">Locker Room</span>
         </Link>
 
         {/* 검색바 (로그인 시) */}
