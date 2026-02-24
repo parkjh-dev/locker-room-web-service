@@ -139,13 +139,13 @@
 
 ## Phase 9. 공지사항 기능
 
-- [ ] 9-1. Notice 타입 정의 (`features/notices/types/notice.ts`)
-- [ ] 9-2. Notice API 함수 (`features/notices/api/noticeApi.ts` - getNotices, getNoticeDetail)
-- [ ] 9-3. useNotices 훅, useNoticeDetail 훅
-- [ ] 9-4. NoticeList 컴포넌트 (고정 공지 우선 + Cursor 페이지네이션)
-- [ ] 9-5. NoticeDetail 컴포넌트
-- [ ] 9-6. NoticeListPage (`/notices`)
-- [ ] 9-7. NoticeDetailPage (`/notices/:noticeId`)
+- [x] 9-1. Notice 타입 정의 (`features/notices/types/notice.ts`)
+- [x] 9-2. Notice API 함수 (`features/notices/api/noticeApi.ts` - getNotices, getNoticeDetail)
+- [x] 9-3. useNotices 훅, useNoticeDetail 훅
+- [x] 9-4. NoticeList 컴포넌트 (고정 공지 우선 + Cursor 페이지네이션)
+- [x] 9-5. NoticeDetail 컴포넌트
+- [x] 9-6. NoticeListPage (`/notices`)
+- [x] 9-7. NoticeDetailPage (`/notices/:noticeId`)
 
 ---
 
