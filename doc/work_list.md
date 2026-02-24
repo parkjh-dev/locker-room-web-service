@@ -123,17 +123,17 @@
 
 ## Phase 8. 댓글 기능
 
-- [ ] 8-1. Comment 타입 정의 (`features/comments/types/comment.ts` - CommentResponse, 대댓글 중첩)
-- [ ] 8-2. Comment API 함수 (`features/comments/api/commentApi.ts` - getComments, createComment, createReply, updateComment, deleteComment)
-- [ ] 8-3. useComments 훅 (useInfiniteQuery)
-- [ ] 8-4. useCreateComment 훅 (useMutation + 캐시 무효화)
-- [ ] 8-5. useCreateReply 훅
-- [ ] 8-6. Comment Zod 스키마 (content 1~1000자)
-- [ ] 8-7. CommentForm 컴포넌트 (댓글 입력)
-- [ ] 8-8. ReplyForm 컴포넌트 (인라인 대댓글 입력)
-- [ ] 8-9. CommentItem 컴포넌트 (댓글 1개 표시 + 대댓글 중첩 + 수정/삭제 + AI 배지)
-- [ ] 8-10. CommentList 컴포넌트 (CommentItem 반복 + 무한스크롤 + CommentForm)
-- [ ] 8-11. PostDetailPage에 CommentList 통합
+- [x] 8-1. Comment 타입 정의 (`features/comments/types/comment.ts` - Comment, 대댓글 중첩)
+- [x] 8-2. Comment API 함수 (`features/comments/api/commentApi.ts` - getComments, createComment, createReply, updateComment, deleteComment)
+- [x] 8-3. useComments 훅 (useInfiniteQuery)
+- [x] 8-4. useCreateComment 훅 (useMutation + 캐시 무효화)
+- [x] 8-5. useCreateReply 훅
+- [x] 8-6. Comment Zod 스키마 (content 1~1000자)
+- [x] 8-7. CommentForm 컴포넌트 (댓글 입력)
+- [x] 8-8. ReplyForm 컴포넌트 (인라인 대댓글 입력)
+- [x] 8-9. CommentItem 컴포넌트 (댓글 1개 표시 + 대댓글 중첩 + 수정/삭제 + AI 배지)
+- [x] 8-10. CommentList 컴포넌트 (CommentItem 반복 + 무한스크롤 + CommentForm)
+- [x] 8-11. PostDetailPage에 CommentList 통합
 
 ---
 
