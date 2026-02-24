@@ -1,9 +1,29 @@
-// TODO: Phase 6+ 에서 실제 구현 예정
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'sonner';
+import { PostForm } from '@/features/posts/components/PostForm';
+import { useCreatePost } from '@/features/posts/hooks/useCreatePost';
+import type { PostFormData } from '@/features/posts/schemas/postSchema';
+
 export default function PostCreatePage() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const defaultBoardId = Number(searchParams.get('boardId')) || 0;
+  const { mutateAsync } = useCreatePost();
+
+  const handleSubmit = async (data: PostFormData, attachmentIds: number[]) => {
+    const result = await mutateAsync({ ...data, attachmentIds });
+    toast.success('게시글이 작성되었습니다.');
+    navigate(`/posts/${result.id}`, { replace: true });
+  };
+
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">PostCreate</h1>
-      <p className="text-muted-foreground">이 페이지는 준비 중입니다.</p>
+      <h1 className="text-xl font-bold">글쓰기</h1>
+      <PostForm
+        defaultValues={defaultBoardId ? { boardId: defaultBoardId } : undefined}
+        onSubmit={handleSubmit}
+        submitLabel="작성"
+      />
     </div>
   );
 }

@@ -93,31 +93,31 @@
 
 ## Phase 7. 게시판 & 게시글 기능
 
-- [ ] 7-1. Board 타입 정의 (`features/boards/types/board.ts`)
-- [ ] 7-2. Board API 함수 (`features/boards/api/boardApi.ts` - getBoards)
-- [ ] 7-3. useBoards 훅 (`features/boards/hooks/useBoards.ts`)
-- [ ] 7-4. Sidebar 게시판 목록 연동 (boards API 데이터로 사이드바 게시판 링크 렌더링)
-- [ ] 7-5. Post 타입 정의 (`features/posts/types/post.ts` - PostListItem, PostResponse, CreatePostRequest)
-- [ ] 7-6. Post API 함수 (`features/posts/api/postApi.ts` - getList, getDetail, create, update, delete, toggleLike, report)
-- [ ] 7-7. usePostList 훅 (useInfiniteQuery, Cursor 페이지네이션)
-- [ ] 7-8. usePostDetail 훅
-- [ ] 7-9. useCreatePost 훅 (useMutation + 캐시 무효화)
-- [ ] 7-10. useUpdatePost 훅
-- [ ] 7-11. useToggleLike 훅 (낙관적 업데이트 + 롤백)
-- [ ] 7-12. Post Zod 스키마 (`features/posts/schemas/postSchema.ts` - 제목 1~200, 내용 1~10000)
-- [ ] 7-13. FileUpload 공통 컴포넌트 (`components/common/FileUpload.tsx` - 파일 선택/업로드/삭제, 크기/타입/개수 검증)
-- [ ] 7-14. PostSearchBar 컴포넌트 (keyword + searchType 선택 + 디바운스)
-- [ ] 7-15. PostListItem 컴포넌트 (제목, 작성자, 조회수, 좋아요수, 댓글수, 작성일, AI 배지)
-- [ ] 7-16. PostList 컴포넌트 (PostListItem 반복 + 무한스크롤 + 정렬 + 빈 상태)
-- [ ] 7-17. BoardPostListPage (`/boards/:boardId` - PostSearchBar + PostList)
-- [ ] 7-18. LikeButton 컴포넌트 (좋아요 토글, 하트 아이콘 + 카운트)
-- [ ] 7-19. ReportModal 컴포넌트 (신고 사유 입력 다이얼로그)
-- [ ] 7-20. PostDetail 컴포넌트 (게시글 상세 표시 + 좋아요 + 신고 + 수정/삭제 버튼)
-- [ ] 7-21. PostDetailPage (`/posts/:postId` - PostDetail + 댓글 영역)
-- [ ] 7-22. PostForm 컴포넌트 (게시판 선택 + 제목 + 내용 + FileUpload, 작성/수정 공용)
-- [ ] 7-23. PostCreatePage (`/posts/new`)
-- [ ] 7-24. PostEditPage (`/posts/:postId/edit` - 기존 데이터 로드 + PostForm)
-- [ ] 7-25. BoardListPage (`/boards` - 전체 게시판 카드/리스트)
+- [x] 7-1. Board 타입 정의 (`features/boards/types/board.ts`)
+- [x] 7-2. Board API 함수 (`features/boards/api/boardApi.ts` - getBoards)
+- [x] 7-3. useBoards 훅 (`features/boards/hooks/useBoards.ts`)
+- [x] 7-4. Sidebar 게시판 목록 연동 (boards API 데이터로 사이드바 게시판 링크 렌더링)
+- [x] 7-5. Post 타입 정의 (`features/posts/types/post.ts` - PostListItem, PostDetail, CreatePostRequest, UpdatePostRequest)
+- [x] 7-6. Post API 함수 (`features/posts/api/postApi.ts` - getList, getDetail, create, update, delete, toggleLike, report)
+- [x] 7-7. usePostList 훅 (useInfiniteQuery, Cursor 페이지네이션)
+- [x] 7-8. usePostDetail 훅
+- [x] 7-9. useCreatePost 훅 (useMutation + 캐시 무효화)
+- [x] 7-10. useUpdatePost 훅
+- [x] 7-11. useToggleLike 훅 (낙관적 업데이트 + 롤백)
+- [x] 7-12. Post Zod 스키마 (`features/posts/schemas/postSchema.ts` - 제목 1~200, 내용 1~10000)
+- [x] 7-13. FileUpload 공통 컴포넌트 (`components/common/FileUpload.tsx` - 파일 선택/업로드/삭제, 크기/타입/개수 검증)
+- [x] 7-14. PostSearchBar 컴포넌트 (keyword + searchType 선택 + 디바운스)
+- [x] 7-15. PostListItem 컴포넌트 (제목, 작성자, 조회수, 좋아요수, 댓글수, 작성일, AI 배지)
+- [x] 7-16. PostList 컴포넌트 (PostListItem 반복 + 무한스크롤 + 정렬 + 빈 상태)
+- [x] 7-17. BoardPostListPage (`/boards/:boardId` - PostSearchBar + PostList)
+- [x] 7-18. LikeButton 컴포넌트 (좋아요 토글, 하트 아이콘 + 카운트)
+- [x] 7-19. ReportModal 컴포넌트 (신고 사유 입력 다이얼로그)
+- [x] 7-20. PostDetail 컴포넌트 (게시글 상세 표시 + 좋아요 + 신고 + 수정/삭제 버튼)
+- [x] 7-21. PostDetailPage (`/posts/:postId` - PostDetail + 댓글 영역)
+- [x] 7-22. PostForm 컴포넌트 (게시판 선택 + 제목 + 내용 + FileUpload, 작성/수정 공용)
+- [x] 7-23. PostCreatePage (`/posts/new`)
+- [x] 7-24. PostEditPage (`/posts/:postId/edit` - 기존 데이터 로드 + PostForm)
+- [x] 7-25. BoardListPage (`/boards` - 전체 게시판 카드/리스트)
 
 ---
 

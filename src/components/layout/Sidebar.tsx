@@ -2,16 +2,11 @@ import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, HelpCircle, GitPullRequestArrow, ChevronRight } from 'lucide-react';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useUiStore } from '@/stores/uiStore';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useBoards } from '@/features/boards/hooks/useBoards';
 import { cn } from '@/lib/utils';
-
-// Phase 7에서 API 연동 예정. 현재는 플레이스홀더.
-const PLACEHOLDER_BOARDS = [
-  { id: 1, name: '자유게시판' },
-  { id: 2, name: '유머게시판' },
-  { id: 3, name: '정보게시판' },
-];
 
 const NAV_LINKS = [
   { to: '/boards', label: '전체 게시판', icon: LayoutDashboard },
@@ -21,6 +16,7 @@ const NAV_LINKS = [
 
 function SidebarContent() {
   const location = useLocation();
+  const { data: boards, isLoading } = useBoards();
 
   return (
     <nav className="flex flex-col gap-1 py-4">
@@ -30,19 +26,27 @@ function SidebarContent() {
           게시판
         </h3>
       </div>
-      {PLACEHOLDER_BOARDS.map((board) => (
-        <Link
-          key={board.id}
-          to={`/boards/${board.id}`}
-          className={cn(
-            'mx-2 flex items-center justify-between rounded-md px-3 py-2 text-sm transition-colors hover:bg-accent',
-            location.pathname === `/boards/${board.id}` && 'bg-accent font-medium',
-          )}
-        >
-          {board.name}
-          <ChevronRight className="h-4 w-4 text-muted-foreground" />
-        </Link>
-      ))}
+      {isLoading ? (
+        <div className="space-y-2 px-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-8 w-full" />
+          ))}
+        </div>
+      ) : (
+        boards?.map((board) => (
+          <Link
+            key={board.id}
+            to={`/boards/${board.id}`}
+            className={cn(
+              'mx-2 flex items-center justify-between rounded-md px-3 py-2 text-sm transition-colors hover:bg-accent',
+              location.pathname === `/boards/${board.id}` && 'bg-accent font-medium',
+            )}
+          >
+            {board.name}
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          </Link>
+        ))
+      )}
 
       <Separator className="my-3" />
 

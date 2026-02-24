@@ -1,9 +1,28 @@
-// TODO: Phase 6+ 에서 실제 구현 예정
+import { useParams } from 'react-router-dom';
+import { PostDetail } from '@/features/posts/components/PostDetail';
+import { usePostDetail } from '@/features/posts/hooks/usePostDetail';
+import { SkeletonLoader } from '@/components/common/SkeletonLoader';
+import { Separator } from '@/components/ui/separator';
+
 export default function PostDetailPage() {
+  const { postId } = useParams<{ postId: string }>();
+  const pid = Number(postId);
+  const { data: post, isLoading } = usePostDetail(pid);
+
+  if (isLoading) {
+    return <SkeletonLoader type="post-detail" />;
+  }
+
+  if (!post) return null;
+
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold">PostDetail</h1>
-      <p className="text-muted-foreground">이 페이지는 준비 중입니다.</p>
+    <div className="space-y-6">
+      <PostDetail post={post} />
+
+      <Separator />
+
+      {/* Phase 8에서 CommentList 통합 예정 */}
+      <div className="text-sm text-muted-foreground">댓글 영역 (Phase 8에서 구현 예정)</div>
     </div>
   );
 }
