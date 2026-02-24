@@ -117,6 +117,7 @@ export function FileUpload({ value, onChange, maxCount = MAX_FILE_COUNT }: FileU
                 variant="ghost"
                 size="icon"
                 className="h-6 w-6 shrink-0"
+                aria-label="파일 삭제"
                 onClick={() => handleRemove(file.id)}
               >
                 <X className="h-3 w-3" />

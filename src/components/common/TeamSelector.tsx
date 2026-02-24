@@ -139,6 +139,7 @@ export function TeamSelector({ value, onChange, error }: TeamSelectorProps) {
                 variant="ghost"
                 size="icon"
                 className="h-4 w-4 hover:bg-transparent"
+                aria-label="팀 삭제"
                 onClick={() => handleRemoveTeam(pair.sportId, pair.teamId)}
               >
                 <X className="h-3 w-3" />

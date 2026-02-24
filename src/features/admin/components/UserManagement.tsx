@@ -81,55 +81,57 @@ export function UserManagement() {
       {isLoading ? (
         <SkeletonLoader type="post-list" count={5} />
       ) : (
-        <div className="rounded-lg border">
-          <div className="grid grid-cols-[1fr_1fr_80px_80px_120px] gap-2 border-b bg-muted/50 px-4 py-2 text-xs font-medium text-muted-foreground">
-            <span>닉네임</span>
-            <span>이메일</span>
-            <span>역할</span>
-            <span>상태</span>
-            <span>관리</span>
-          </div>
-          {users.map((user) => (
-            <div
-              key={user.userId}
-              className="grid grid-cols-[1fr_1fr_80px_80px_120px] items-center gap-2 border-b px-4 py-2 text-sm last:border-b-0"
-            >
-              <span className="truncate">{user.nickname}</span>
-              <span className="truncate text-muted-foreground">{user.email}</span>
-              <Badge variant={user.role === 'ADMIN' ? 'default' : 'secondary'} className="w-fit">
-                {user.role}
-              </Badge>
-              <span>
-                {user.isSuspended ? (
-                  <Badge variant="destructive" className="w-fit">
-                    정지
-                  </Badge>
-                ) : (
-                  <span className="text-xs text-muted-foreground">
-                    {formatDate(user.createdAt)}
-                  </span>
-                )}
-              </span>
-              <div>
-                {user.role !== 'ADMIN' &&
-                  (user.isSuspended ? (
-                    <Button variant="outline" size="sm" onClick={() => unsuspend(user.userId)}>
-                      해제
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() =>
-                        setSuspendTarget({ userId: user.userId, nickname: user.nickname })
-                      }
-                    >
-                      정지
-                    </Button>
-                  ))}
-              </div>
+        <div className="overflow-x-auto rounded-lg border">
+          <div className="min-w-[600px]">
+            <div className="grid grid-cols-[1fr_1fr_80px_80px_120px] gap-2 border-b bg-muted/50 px-4 py-2 text-xs font-medium text-muted-foreground">
+              <span>닉네임</span>
+              <span>이메일</span>
+              <span>역할</span>
+              <span>상태</span>
+              <span>관리</span>
             </div>
-          ))}
+            {users.map((user) => (
+              <div
+                key={user.userId}
+                className="grid grid-cols-[1fr_1fr_80px_80px_120px] items-center gap-2 border-b px-4 py-2 text-sm last:border-b-0"
+              >
+                <span className="truncate">{user.nickname}</span>
+                <span className="truncate text-muted-foreground">{user.email}</span>
+                <Badge variant={user.role === 'ADMIN' ? 'default' : 'secondary'} className="w-fit">
+                  {user.role}
+                </Badge>
+                <span>
+                  {user.isSuspended ? (
+                    <Badge variant="destructive" className="w-fit">
+                      정지
+                    </Badge>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">
+                      {formatDate(user.createdAt)}
+                    </span>
+                  )}
+                </span>
+                <div>
+                  {user.role !== 'ADMIN' &&
+                    (user.isSuspended ? (
+                      <Button variant="outline" size="sm" onClick={() => unsuspend(user.userId)}>
+                        해제
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() =>
+                          setSuspendTarget({ userId: user.userId, nickname: user.nickname })
+                        }
+                      >
+                        정지
+                      </Button>
+                    ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
       {isFetchingNextPage && <SkeletonLoader type="post-list" count={2} />}

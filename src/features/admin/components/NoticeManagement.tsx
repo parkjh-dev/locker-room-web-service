@@ -115,59 +115,65 @@ export function NoticeManagement() {
       {isLoading ? (
         <SkeletonLoader type="post-list" count={5} />
       ) : (
-        <div className="rounded-lg border">
-          <div className="grid grid-cols-[1fr_60px_80px_80px_100px] gap-2 border-b bg-muted/50 px-4 py-2 text-xs font-medium text-muted-foreground">
-            <span>제목</span>
-            <span>고정</span>
-            <span>조회</span>
-            <span>날짜</span>
-            <span>관리</span>
-          </div>
-          {notices.map((notice) => (
-            <div
-              key={notice.id}
-              className="grid grid-cols-[1fr_60px_80px_80px_100px] items-center gap-2 border-b px-4 py-2 text-sm last:border-b-0"
-            >
-              <span className="truncate">{notice.title}</span>
-              <span>
-                {notice.isPinned && (
-                  <Badge variant="secondary" className="gap-1">
-                    <Pin className="h-3 w-3" />
-                    고정
-                  </Badge>
-                )}
-              </span>
-              <span className="text-muted-foreground">{notice.viewCount}</span>
-              <span className="text-xs text-muted-foreground">{formatDate(notice.createdAt)}</span>
-              <div className="flex gap-1">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7"
-                  onClick={() => {
-                    setEditId(notice.id);
-                    form.reset({
-                      title: notice.title,
-                      content: '',
-                      isPinned: notice.isPinned,
-                      boardIds: [],
-                    });
-                    setFormOpen(true);
-                  }}
-                >
-                  <Pencil className="h-3.5 w-3.5" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 text-destructive"
-                  onClick={() => setDeleteId(notice.id)}
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </Button>
-              </div>
+        <div className="overflow-x-auto rounded-lg border">
+          <div className="min-w-[500px]">
+            <div className="grid grid-cols-[1fr_60px_80px_80px_100px] gap-2 border-b bg-muted/50 px-4 py-2 text-xs font-medium text-muted-foreground">
+              <span>제목</span>
+              <span>고정</span>
+              <span>조회</span>
+              <span>날짜</span>
+              <span>관리</span>
             </div>
-          ))}
+            {notices.map((notice) => (
+              <div
+                key={notice.id}
+                className="grid grid-cols-[1fr_60px_80px_80px_100px] items-center gap-2 border-b px-4 py-2 text-sm last:border-b-0"
+              >
+                <span className="truncate">{notice.title}</span>
+                <span>
+                  {notice.isPinned && (
+                    <Badge variant="secondary" className="gap-1">
+                      <Pin className="h-3 w-3" />
+                      고정
+                    </Badge>
+                  )}
+                </span>
+                <span className="text-muted-foreground">{notice.viewCount}</span>
+                <span className="text-xs text-muted-foreground">
+                  {formatDate(notice.createdAt)}
+                </span>
+                <div className="flex gap-1">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7"
+                    aria-label="수정"
+                    onClick={() => {
+                      setEditId(notice.id);
+                      form.reset({
+                        title: notice.title,
+                        content: '',
+                        isPinned: notice.isPinned,
+                        boardIds: [],
+                      });
+                      setFormOpen(true);
+                    }}
+                  >
+                    <Pencil className="h-3.5 w-3.5" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 text-destructive"
+                    aria-label="삭제"
+                    onClick={() => setDeleteId(notice.id)}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
       {isFetchingNextPage && <SkeletonLoader type="post-list" count={2} />}

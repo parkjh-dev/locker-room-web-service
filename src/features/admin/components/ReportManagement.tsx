@@ -68,80 +68,82 @@ export function ReportManagement() {
       {isLoading ? (
         <SkeletonLoader type="post-list" count={5} />
       ) : (
-        <div className="rounded-lg border">
-          <div className="grid grid-cols-[60px_60px_1fr_80px_80px_80px_160px] gap-2 border-b bg-muted/50 px-4 py-2 text-xs font-medium text-muted-foreground">
-            <span>유형</span>
-            <span>ID</span>
-            <span>사유</span>
-            <span>신고자</span>
-            <span>상태</span>
-            <span>날짜</span>
-            <span>처리</span>
-          </div>
-          {reports.map((report) => {
-            const cfg = statusConfig[report.status];
-            return (
-              <div
-                key={report.id}
-                className="grid grid-cols-[60px_60px_1fr_80px_80px_80px_160px] items-center gap-2 border-b px-4 py-2 text-sm last:border-b-0"
-              >
-                <Badge variant="outline" className="w-fit">
-                  {report.targetType === 'POST' ? '게시글' : '댓글'}
-                </Badge>
-                <span className="text-muted-foreground">#{report.targetId}</span>
-                <span className="truncate">{report.reason}</span>
-                <span className="truncate text-muted-foreground">{report.reporterNickname}</span>
-                <Badge variant={cfg.variant} className="w-fit">
-                  {cfg.label}
-                </Badge>
-                <span className="text-xs text-muted-foreground">
-                  {formatDate(report.createdAt)}
-                </span>
-                <div className="flex gap-1">
-                  {report.status === 'PENDING' && (
-                    <>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() =>
-                          processReport({
-                            reportId: report.id,
-                            data: { action: 'DELETE_POST' },
-                          })
-                        }
-                      >
-                        삭제
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() =>
-                          processReport({
-                            reportId: report.id,
-                            data: { action: 'SUSPEND_USER' },
-                          })
-                        }
-                      >
-                        정지
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() =>
-                          processReport({
-                            reportId: report.id,
-                            data: { action: 'REJECT' },
-                          })
-                        }
-                      >
-                        반려
-                      </Button>
-                    </>
-                  )}
+        <div className="overflow-x-auto rounded-lg border">
+          <div className="min-w-[700px]">
+            <div className="grid grid-cols-[60px_60px_1fr_80px_80px_80px_160px] gap-2 border-b bg-muted/50 px-4 py-2 text-xs font-medium text-muted-foreground">
+              <span>유형</span>
+              <span>ID</span>
+              <span>사유</span>
+              <span>신고자</span>
+              <span>상태</span>
+              <span>날짜</span>
+              <span>처리</span>
+            </div>
+            {reports.map((report) => {
+              const cfg = statusConfig[report.status];
+              return (
+                <div
+                  key={report.id}
+                  className="grid grid-cols-[60px_60px_1fr_80px_80px_80px_160px] items-center gap-2 border-b px-4 py-2 text-sm last:border-b-0"
+                >
+                  <Badge variant="outline" className="w-fit">
+                    {report.targetType === 'POST' ? '게시글' : '댓글'}
+                  </Badge>
+                  <span className="text-muted-foreground">#{report.targetId}</span>
+                  <span className="truncate">{report.reason}</span>
+                  <span className="truncate text-muted-foreground">{report.reporterNickname}</span>
+                  <Badge variant={cfg.variant} className="w-fit">
+                    {cfg.label}
+                  </Badge>
+                  <span className="text-xs text-muted-foreground">
+                    {formatDate(report.createdAt)}
+                  </span>
+                  <div className="flex gap-1">
+                    {report.status === 'PENDING' && (
+                      <>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            processReport({
+                              reportId: report.id,
+                              data: { action: 'DELETE_POST' },
+                            })
+                          }
+                        >
+                          삭제
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() =>
+                            processReport({
+                              reportId: report.id,
+                              data: { action: 'SUSPEND_USER' },
+                            })
+                          }
+                        >
+                          정지
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() =>
+                            processReport({
+                              reportId: report.id,
+                              data: { action: 'REJECT' },
+                            })
+                          }
+                        >
+                          반려
+                        </Button>
+                      </>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       )}
       {isFetchingNextPage && <SkeletonLoader type="post-list" count={2} />}

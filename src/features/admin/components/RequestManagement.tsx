@@ -122,46 +122,48 @@ export function RequestManagement() {
       {isLoading ? (
         <SkeletonLoader type="post-list" count={5} />
       ) : (
-        <div className="rounded-lg border">
-          <div className="grid grid-cols-[60px_1fr_80px_80px_80px_140px] gap-2 border-b bg-muted/50 px-4 py-2 text-xs font-medium text-muted-foreground">
-            <span>유형</span>
-            <span>이름</span>
-            <span>요청자</span>
-            <span>상태</span>
-            <span>날짜</span>
-            <span>처리</span>
-          </div>
-          {requests.map((req) => {
-            const cfg = statusConfig[req.status];
-            return (
-              <div
-                key={req.id}
-                className="grid grid-cols-[60px_1fr_80px_80px_80px_140px] items-center gap-2 border-b px-4 py-2 text-sm last:border-b-0"
-              >
-                <Badge variant="outline" className="w-fit">
-                  {typeLabels[req.type]}
-                </Badge>
-                <span className="truncate">{req.name}</span>
-                <span className="truncate text-muted-foreground">{req.nickname}</span>
-                <Badge variant={cfg.variant} className="w-fit">
-                  {cfg.label}
-                </Badge>
-                <span className="text-xs text-muted-foreground">{formatDate(req.createdAt)}</span>
-                <div className="flex gap-1">
-                  {req.status === 'PENDING' && (
-                    <>
-                      <Button size="sm" onClick={() => approve(req.id)}>
-                        승인
-                      </Button>
-                      <Button size="sm" variant="destructive" onClick={() => setRejectId(req.id)}>
-                        반려
-                      </Button>
-                    </>
-                  )}
+        <div className="overflow-x-auto rounded-lg border">
+          <div className="min-w-[600px]">
+            <div className="grid grid-cols-[60px_1fr_80px_80px_80px_140px] gap-2 border-b bg-muted/50 px-4 py-2 text-xs font-medium text-muted-foreground">
+              <span>유형</span>
+              <span>이름</span>
+              <span>요청자</span>
+              <span>상태</span>
+              <span>날짜</span>
+              <span>처리</span>
+            </div>
+            {requests.map((req) => {
+              const cfg = statusConfig[req.status];
+              return (
+                <div
+                  key={req.id}
+                  className="grid grid-cols-[60px_1fr_80px_80px_80px_140px] items-center gap-2 border-b px-4 py-2 text-sm last:border-b-0"
+                >
+                  <Badge variant="outline" className="w-fit">
+                    {typeLabels[req.type]}
+                  </Badge>
+                  <span className="truncate">{req.name}</span>
+                  <span className="truncate text-muted-foreground">{req.nickname}</span>
+                  <Badge variant={cfg.variant} className="w-fit">
+                    {cfg.label}
+                  </Badge>
+                  <span className="text-xs text-muted-foreground">{formatDate(req.createdAt)}</span>
+                  <div className="flex gap-1">
+                    {req.status === 'PENDING' && (
+                      <>
+                        <Button size="sm" onClick={() => approve(req.id)}>
+                          승인
+                        </Button>
+                        <Button size="sm" variant="destructive" onClick={() => setRejectId(req.id)}>
+                          반려
+                        </Button>
+                      </>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       )}
       {isFetchingNextPage && <SkeletonLoader type="post-list" count={2} />}

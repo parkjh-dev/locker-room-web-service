@@ -109,43 +109,45 @@ export function InquiryManagement() {
       {isLoading ? (
         <SkeletonLoader type="post-list" count={5} />
       ) : (
-        <div className="rounded-lg border">
-          <div className="grid grid-cols-[60px_1fr_80px_80px_80px_80px] gap-2 border-b bg-muted/50 px-4 py-2 text-xs font-medium text-muted-foreground">
-            <span>유형</span>
-            <span>제목</span>
-            <span>작성자</span>
-            <span>상태</span>
-            <span>날짜</span>
-            <span>관리</span>
-          </div>
-          {inquiries.map((inquiry) => {
-            const cfg = statusConfig[inquiry.status];
-            return (
-              <div
-                key={inquiry.id}
-                className="grid grid-cols-[60px_1fr_80px_80px_80px_80px] items-center gap-2 border-b px-4 py-2 text-sm last:border-b-0"
-              >
-                <Badge variant="outline" className="w-fit">
-                  {typeLabels[inquiry.type]}
-                </Badge>
-                <span className="truncate">{inquiry.title}</span>
-                <span className="truncate text-muted-foreground">{inquiry.nickname}</span>
-                <Badge variant={cfg.variant} className="w-fit">
-                  {cfg.label}
-                </Badge>
-                <span className="text-xs text-muted-foreground">
-                  {formatDate(inquiry.createdAt)}
-                </span>
-                <div>
-                  {inquiry.status === 'PENDING' && (
-                    <Button size="sm" onClick={() => setAnswerId(inquiry.id)}>
-                      답변
-                    </Button>
-                  )}
+        <div className="overflow-x-auto rounded-lg border">
+          <div className="min-w-[600px]">
+            <div className="grid grid-cols-[60px_1fr_80px_80px_80px_80px] gap-2 border-b bg-muted/50 px-4 py-2 text-xs font-medium text-muted-foreground">
+              <span>유형</span>
+              <span>제목</span>
+              <span>작성자</span>
+              <span>상태</span>
+              <span>날짜</span>
+              <span>관리</span>
+            </div>
+            {inquiries.map((inquiry) => {
+              const cfg = statusConfig[inquiry.status];
+              return (
+                <div
+                  key={inquiry.id}
+                  className="grid grid-cols-[60px_1fr_80px_80px_80px_80px] items-center gap-2 border-b px-4 py-2 text-sm last:border-b-0"
+                >
+                  <Badge variant="outline" className="w-fit">
+                    {typeLabels[inquiry.type]}
+                  </Badge>
+                  <span className="truncate">{inquiry.title}</span>
+                  <span className="truncate text-muted-foreground">{inquiry.nickname}</span>
+                  <Badge variant={cfg.variant} className="w-fit">
+                    {cfg.label}
+                  </Badge>
+                  <span className="text-xs text-muted-foreground">
+                    {formatDate(inquiry.createdAt)}
+                  </span>
+                  <div>
+                    {inquiry.status === 'PENDING' && (
+                      <Button size="sm" onClick={() => setAnswerId(inquiry.id)}>
+                        답변
+                      </Button>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       )}
       {isFetchingNextPage && <SkeletonLoader type="post-list" count={2} />}
