@@ -76,18 +76,18 @@
 
 ## Phase 6. 인증 (Auth) 기능
 
-- [ ] 6-1. Auth 타입 정의 (`features/auth/types/auth.ts`)
-- [ ] 6-2. Auth API 함수 (`features/auth/api/authApi.ts` - signup, profileComplete)
-- [ ] 6-3. useAuth 훅 (`features/auth/hooks/useAuth.ts` - login, logout, SSO login)
-- [ ] 6-4. 회원가입 Zod 스키마 (`features/auth/schemas/signupSchema.ts`)
-- [ ] 6-5. 프로필 보완 Zod 스키마 (`features/auth/schemas/profileCompleteSchema.ts`)
-- [ ] 6-6. TeamSelector 공통 컴포넌트 (`components/common/TeamSelector.tsx` - 종목→팀 2단계 선택, GET /sports, GET /sports/{id}/teams)
-- [ ] 6-7. SsoButtons 컴포넌트 (`features/auth/components/SsoButtons.tsx` - Google, Kakao, Naver 버튼)
-- [ ] 6-8. LoginPage (`/auth/login` - Keycloak 리다이렉트 + SSO 버튼)
-- [ ] 6-9. SignupPage (`/auth/signup` - SignupForm + TeamSelector)
-- [ ] 6-10. OAuthCallbackPage (`/auth/oauth/callback` - 토큰 수령 → GET /users/me → 분기)
-- [ ] 6-11. ProfileCompletePage (`/auth/profile/complete` - 닉네임 + 팀 선택)
-- [ ] 6-12. PasswordFindPage (`/auth/password/find` - Keycloak Forgot Password 리다이렉트)
+- [x] 6-1. Auth 타입 정의 (`features/auth/types/auth.ts`)
+- [x] 6-2. Auth API 함수 (`features/auth/api/authApi.ts` - signup, profileComplete)
+- [x] 6-3. useAuth 훅 (`features/auth/hooks/useAuth.ts` - login, logout, SSO login)
+- [x] 6-4. 회원가입 Zod 스키마 (`features/auth/schemas/signupSchema.ts`)
+- [x] 6-5. 프로필 보완 Zod 스키마 (`features/auth/schemas/profileCompleteSchema.ts`)
+- [x] 6-6. TeamSelector 공통 컴포넌트 (`components/common/TeamSelector.tsx` - 종목→팀 2단계 선택, GET /sports, GET /sports/{id}/teams)
+- [x] 6-7. SsoButtons 컴포넌트 (`features/auth/components/SsoButtons.tsx` - Google, Kakao, Naver 버튼)
+- [x] 6-8. LoginPage (`/auth/login` - Keycloak 리다이렉트 + SSO 버튼)
+- [x] 6-9. SignupPage (`/auth/signup` - SignupForm + TeamSelector)
+- [x] 6-10. OAuthCallbackPage (`/auth/oauth/callback` - 토큰 수령 → GET /users/me → 분기)
+- [x] 6-11. ProfileCompletePage (`/auth/profile/complete` - 닉네임 + 팀 선택)
+- [x] 6-12. PasswordFindPage (`/auth/password/find` - Keycloak Forgot Password 리다이렉트)
 
 ---
 
