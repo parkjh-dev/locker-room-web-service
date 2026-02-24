@@ -1,9 +1,20 @@
-// TODO: Phase 6+ 에서 실제 구현 예정
+import { Link, useParams } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { RequestDetail } from '@/features/requests/components/RequestDetail';
+
 export default function RequestDetailPage() {
+  const { requestId } = useParams<{ requestId: string }>();
+
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">RequestDetail</h1>
-      <p className="text-muted-foreground">이 페이지는 준비 중입니다.</p>
+      <Button variant="ghost" size="sm" asChild>
+        <Link to="/requests">
+          <ArrowLeft className="mr-1 h-4 w-4" />
+          목록
+        </Link>
+      </Button>
+      <RequestDetail requestId={Number(requestId)} />
     </div>
   );
 }

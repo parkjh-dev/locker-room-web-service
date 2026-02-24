@@ -200,16 +200,16 @@
 
 ## Phase 13. 요청 (종목/구단 추가) 기능
 
-- [ ] 13-1. Request 타입 정의 (`features/requests/types/request.ts`)
-- [ ] 13-2. Request API 함수 (`features/requests/api/requestApi.ts` - getRequests, getRequestDetail, createRequest)
-- [ ] 13-3. useRequests 훅, useCreateRequest 훅
-- [ ] 13-4. Request Zod 스키마 (type, name 1~100, reason 1~1000)
-- [ ] 13-5. RequestForm 컴포넌트 (유형 선택 + 이름 + 사유)
-- [ ] 13-6. RequestList 컴포넌트
-- [ ] 13-7. RequestDetail 컴포넌트 (처리 상태 + 반려 사유)
-- [ ] 13-8. RequestListPage (`/requests`)
-- [ ] 13-9. RequestCreatePage (`/requests/new`)
-- [ ] 13-10. RequestDetailPage (`/requests/:requestId`)
+- [x] 13-1. Request 타입 정의 (`features/requests/types/request.ts`)
+- [x] 13-2. Request API 함수 (`features/requests/api/requestApi.ts` - getRequests, getRequestDetail, createRequest)
+- [x] 13-3. useRequests 훅, useCreateRequest 훅
+- [x] 13-4. Request Zod 스키마 (type, name 1~100, reason 1~1000)
+- [x] 13-5. RequestForm 컴포넌트 (유형 선택 + 이름 + 사유)
+- [x] 13-6. RequestList 컴포넌트
+- [x] 13-7. RequestDetail 컴포넌트 (처리 상태 + 반려 사유)
+- [x] 13-8. RequestListPage (`/requests`)
+- [x] 13-9. RequestCreatePage (`/requests/new`)
+- [x] 13-10. RequestDetailPage (`/requests/:requestId`)
 
 ---
 
