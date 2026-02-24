@@ -1,9 +1,14 @@
-// TODO: Phase 6+ 에서 실제 구현 예정
+import { Bell } from 'lucide-react';
+import { NotificationList } from '@/features/notifications/components/NotificationList';
+
 export default function NotificationListPage() {
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">NotificationList</h1>
-      <p className="text-muted-foreground">이 페이지는 준비 중입니다.</p>
+      <div className="flex items-center gap-2">
+        <Bell className="h-5 w-5" />
+        <h1 className="text-lg font-bold">알림</h1>
+      </div>
+      <NotificationList />
     </div>
   );
 }

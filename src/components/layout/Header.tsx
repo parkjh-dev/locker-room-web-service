@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { Bell, Menu, Search, User, LogOut, Settings, FileText, MessageSquare } from 'lucide-react';
+import { Menu, Search, User, LogOut, Settings, FileText, MessageSquare } from 'lucide-react';
+import { NotificationDropdown } from '@/features/notifications/components/NotificationDropdown';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -57,13 +58,8 @@ export function Header() {
                 <span className="sr-only">검색</span>
               </Button>
 
-              {/* 알림 */}
-              <Button variant="ghost" size="icon" asChild>
-                <Link to="/notifications" className="relative">
-                  <Bell className="h-5 w-5" />
-                  <span className="sr-only">알림</span>
-                </Link>
-              </Button>
+              {/* 알림 드롭다운 */}
+              <NotificationDropdown />
 
               {/* 프로필 드롭다운 */}
               <DropdownMenu>

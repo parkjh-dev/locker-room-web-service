@@ -172,14 +172,14 @@
 
 ## Phase 11. 알림 기능
 
-- [ ] 11-1. Notification 타입 정의 (`features/notifications/types/notification.ts`)
-- [ ] 11-2. Notification API 함수 (`features/notifications/api/notificationApi.ts` - getNotifications, getUnreadCount, markAsRead, markAllAsRead)
-- [ ] 11-3. useNotifications 훅, useUnreadCount 훅
-- [ ] 11-4. NotificationItem 컴포넌트 (유형 아이콘 + 메시지 + 읽음/안읽음 스타일)
-- [ ] 11-5. NotificationDropdown 컴포넌트 (헤더 알림 아이콘 → 드롭다운 미리보기)
-- [ ] 11-6. Header에 알림 드롭다운 통합 (미읽음 배지 + NotificationDropdown)
-- [ ] 11-7. NotificationList 컴포넌트 (전체 알림 목록 + 전체 읽음 버튼 + 무한스크롤)
-- [ ] 11-8. NotificationListPage (`/notifications`)
+- [x] 11-1. Notification 타입 정의 (`features/notifications/types/notification.ts`)
+- [x] 11-2. Notification API 함수 (`features/notifications/api/notificationApi.ts` - getNotifications, getUnreadCount, markAsRead, markAllAsRead)
+- [x] 11-3. useNotifications 훅, useUnreadCount 훅
+- [x] 11-4. NotificationItem 컴포넌트 (유형 아이콘 + 메시지 + 읽음/안읽음 스타일)
+- [x] 11-5. NotificationDropdown 컴포넌트 (헤더 알림 아이콘 → 드롭다운 미리보기)
+- [x] 11-6. Header에 알림 드롭다운 통합 (미읽음 배지 + NotificationDropdown)
+- [x] 11-7. NotificationList 컴포넌트 (전체 알림 목록 + 전체 읽음 버튼 + 무한스크롤)
+- [x] 11-8. NotificationListPage (`/notifications`)
 
 ---
 
