@@ -185,16 +185,16 @@
 
 ## Phase 12. 고객센터 (문의) 기능
 
-- [ ] 12-1. Inquiry 타입 정의 (`features/inquiries/types/inquiry.ts`)
-- [ ] 12-2. Inquiry API 함수 (`features/inquiries/api/inquiryApi.ts` - getInquiries, getInquiryDetail, createInquiry)
-- [ ] 12-3. useInquiries 훅, useCreateInquiry 훅
-- [ ] 12-4. Inquiry Zod 스키마 (type, title 1~200, content 1~5000)
-- [ ] 12-5. InquiryForm 컴포넌트 (유형 선택 + 제목 + 내용 + FileUpload)
-- [ ] 12-6. InquiryList 컴포넌트 (유형, 제목, 상태, 작성일)
-- [ ] 12-7. InquiryDetail 컴포넌트 (문의 내용 + 첨부파일 + 관리자 답변)
-- [ ] 12-8. InquiryListPage (`/inquiries`)
-- [ ] 12-9. InquiryCreatePage (`/inquiries/new`)
-- [ ] 12-10. InquiryDetailPage (`/inquiries/:inquiryId`)
+- [x] 12-1. Inquiry 타입 정의 (`features/inquiries/types/inquiry.ts`)
+- [x] 12-2. Inquiry API 함수 (`features/inquiries/api/inquiryApi.ts` - getInquiries, getInquiryDetail, createInquiry)
+- [x] 12-3. useInquiries 훅, useCreateInquiry 훅
+- [x] 12-4. Inquiry Zod 스키마 (type, title 1~200, content 1~5000)
+- [x] 12-5. InquiryForm 컴포넌트 (유형 선택 + 제목 + 내용 + FileUpload)
+- [x] 12-6. InquiryList 컴포넌트 (유형, 제목, 상태, 작성일)
+- [x] 12-7. InquiryDetail 컴포넌트 (문의 내용 + 첨부파일 + 관리자 답변)
+- [x] 12-8. InquiryListPage (`/inquiries`)
+- [x] 12-9. InquiryCreatePage (`/inquiries/new`)
+- [x] 12-10. InquiryDetailPage (`/inquiries/:inquiryId`)
 
 ---
 
