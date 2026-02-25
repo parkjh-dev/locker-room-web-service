@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Pin, Eye, Megaphone } from 'lucide-react';
+import { Pin, Megaphone } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { SkeletonLoader } from '@/components/common/SkeletonLoader';
 import { EmptyState } from '@/components/common/EmptyState';
@@ -60,13 +60,9 @@ export function NoticeList({
             </Badge>
           )}
           <h3 className="min-w-0 flex-1 truncate text-sm font-medium">{notice.title}</h3>
-          <div className="flex shrink-0 items-center gap-3 text-xs text-muted-foreground">
-            <span className="flex items-center gap-0.5">
-              <Eye className="h-3 w-3" />
-              {notice.viewCount}
-            </span>
-            <span>{formatDate(notice.createdAt)}</span>
-          </div>
+          <span className="shrink-0 text-xs text-muted-foreground">
+            {formatDate(notice.createdAt)}
+          </span>
         </Link>
       ))}
       {isFetchingNextPage && <SkeletonLoader type="post-list" count={2} />}

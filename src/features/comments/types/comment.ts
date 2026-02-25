@@ -1,15 +1,13 @@
-/** 댓글 */
+import type { AuthorInfo } from '@/features/posts/types/post';
+
+/** 댓글 (백엔드 CommentResponse 매칭) */
 export interface Comment {
   id: number;
-  postId: number;
-  userId: number;
-  nickname: string;
+  author: AuthorInfo;
   content: string;
   isAiGenerated: boolean;
-  isDeleted: boolean;
-  replies: Comment[];
   createdAt: string;
-  updatedAt: string;
+  replies: Comment[];
 }
 
 /** 댓글 작성 요청 */

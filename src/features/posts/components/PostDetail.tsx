@@ -39,7 +39,7 @@ export function PostDetail({ post }: PostDetailProps) {
   const [reportOpen, setReportOpen] = useState(false);
   const { mutateAsync: deletePost, isPending: deleting } = useDeletePost(post.id, post.boardId);
 
-  const isOwner = user?.userId === post.userId;
+  const isOwner = user?.id === post.author.id;
 
   const handleDelete = async () => {
     try {
@@ -71,8 +71,8 @@ export function PostDetail({ post }: PostDetailProps) {
         </div>
         <h1 className="text-xl font-bold">{post.title}</h1>
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
-          <span className={`font-medium ${post.nickname ? 'text-foreground' : 'text-muted-foreground'}`}>
-            {post.nickname || '탈퇴한 사용자'}
+          <span className={`font-medium ${post.author.nickname ? 'text-foreground' : 'text-muted-foreground'}`}>
+            {post.author.nickname || '탈퇴한 사용자'}
           </span>
           <span className="flex items-center gap-1">
             <Calendar className="h-3.5 w-3.5" />
@@ -91,22 +91,22 @@ export function PostDetail({ post }: PostDetailProps) {
       <div className="prose prose-sm max-w-none whitespace-pre-wrap">{post.content}</div>
 
       {/* 첨부파일 */}
-      {post.attachments.length > 0 && (
+      {post.files.length > 0 && (
         <div className="space-y-2 rounded-lg border p-3">
           <p className="text-xs font-medium text-muted-foreground">첨부파일</p>
           <ul className="space-y-1">
-            {post.attachments.map((file) => (
+            {post.files.map((file) => (
               <li key={file.id}>
                 <a
-                  href={file.fileUrl}
+                  href={file.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 text-sm text-primary hover:underline"
                 >
                   <FileIcon className="h-4 w-4" />
-                  {file.fileName}
+                  {file.originalName}
                   <span className="text-xs text-muted-foreground">
-                    ({formatFileSize(file.fileSize)})
+                    ({formatFileSize(file.size)})
                   </span>
                 </a>
               </li>

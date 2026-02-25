@@ -32,10 +32,9 @@ export default function BoardListPage() {
             >
               <div className="min-w-0 flex-1">
                 <h2 className="font-medium">{board.name}</h2>
-                {board.description && (
-                  <p className="mt-1 truncate text-sm text-muted-foreground">{board.description}</p>
+                {board.teamName && (
+                  <p className="mt-1 truncate text-sm text-muted-foreground">{board.teamName}</p>
                 )}
-                <p className="mt-1 text-xs text-muted-foreground">게시글 {board.postCount}개</p>
               </div>
               <ChevronRight className="ml-2 h-5 w-5 shrink-0 text-muted-foreground" />
             </Link>

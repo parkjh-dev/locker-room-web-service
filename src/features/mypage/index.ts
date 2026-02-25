@@ -17,7 +17,8 @@ export { WithdrawForm } from './components/WithdrawForm';
 export type {
   UserProfile,
   UpdateProfileRequest,
-  ChangePasswordRequest,
   WithdrawRequest,
+  MyPostItem,
   MyCommentItem,
+  MyLikeItem,
 } from './types/user';

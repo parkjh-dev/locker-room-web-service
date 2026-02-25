@@ -92,7 +92,7 @@ export function UserManagement() {
             </div>
             {users.map((user) => (
               <div
-                key={user.userId}
+                key={user.id}
                 className="grid grid-cols-[1fr_1fr_80px_80px_120px] items-center gap-2 border-b px-4 py-2 text-sm last:border-b-0"
               >
                 <span className="truncate">{user.nickname}</span>
@@ -114,7 +114,7 @@ export function UserManagement() {
                 <div>
                   {user.role !== 'ADMIN' &&
                     (user.isSuspended ? (
-                      <Button variant="outline" size="sm" onClick={() => unsuspend(user.userId)}>
+                      <Button variant="outline" size="sm" onClick={() => unsuspend(user.id)}>
                         해제
                       </Button>
                     ) : (
@@ -122,7 +122,7 @@ export function UserManagement() {
                         variant="destructive"
                         size="sm"
                         onClick={() =>
-                          setSuspendTarget({ userId: user.userId, nickname: user.nickname })
+                          setSuspendTarget({ userId: user.id, nickname: user.nickname })
                         }
                       >
                         정지

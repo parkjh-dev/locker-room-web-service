@@ -13,13 +13,13 @@ function DevSimulator() {
 
   const loginAsUser = () => {
     setTokens('dev-token', 'dev-refresh');
-    setUser({ userId: 1, email: 'user@test.com', nickname: '테스트유저', role: 'USER', teams: [] });
+    setUser({ id: 1, email: 'user@test.com', nickname: '테스트유저', role: 'USER', teams: [] });
   };
 
   const loginAsAdmin = () => {
     setTokens('dev-token', 'dev-refresh');
     setUser({
-      userId: 99,
+      id: 99,
       email: 'admin@test.com',
       nickname: '관리자',
       role: 'ADMIN',

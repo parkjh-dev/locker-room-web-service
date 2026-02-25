@@ -1,4 +1,4 @@
-import { Calendar, Eye, Pin } from 'lucide-react';
+import { Calendar, Pin } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import type { NoticeDetail as NoticeDetailType } from '../types/notice';
@@ -34,10 +34,6 @@ export function NoticeDetail({ notice }: NoticeDetailProps) {
           <span className="flex items-center gap-1">
             <Calendar className="h-3.5 w-3.5" />
             {formatDate(notice.createdAt)}
-          </span>
-          <span className="flex items-center gap-1">
-            <Eye className="h-3.5 w-3.5" />
-            {notice.viewCount}
           </span>
         </div>
       </div>

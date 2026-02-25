@@ -113,7 +113,7 @@ export function TeamSelector({ value, onChange, error }: TeamSelectorProps) {
                 {teams?.map((team) => (
                   <SelectItem key={team.id} value={team.id.toString()}>
                     <span className="flex items-center gap-2">
-                      {team.logo && <img src={team.logo} alt="" className="h-4 w-4 rounded-full" loading="lazy" />}
+                      {team.logoUrl && <img src={team.logoUrl} alt="" className="h-4 w-4 rounded-full" loading="lazy" />}
                       {team.name}
                     </span>
                   </SelectItem>

@@ -14,15 +14,17 @@ export interface ProfileCompleteRequest {
   teams: SportTeamPair[];
 }
 
-/** 종목 */
+/** 종목 (백엔드 SportResponse 매칭) */
 export interface Sport {
   id: number;
   name: string;
+  isActive: boolean;
 }
 
-/** 팀 */
+/** 팀 (백엔드 TeamResponse 매칭) */
 export interface Team {
   id: number;
   name: string;
-  logo: string | null;
+  logoUrl: string | null;
+  isActive: boolean;
 }

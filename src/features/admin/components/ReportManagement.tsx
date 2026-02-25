@@ -31,7 +31,7 @@ export function ReportManagement() {
   const [status, setStatus] = useState<string>('');
   const [confirmAction, setConfirmAction] = useState<{
     reportId: number;
-    action: ProcessReportRequest['action'];
+    action: string;
   } | null>(null);
   const queryClient = useQueryClient();
   const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useAdminReports({
@@ -49,11 +49,13 @@ export function ReportManagement() {
     },
   });
 
-  const handleAction = (reportId: number, action: ProcessReportRequest['action']) => {
+  const handleAction = (reportId: number, action: string) => {
     if (action === 'DELETE_POST' || action === 'SUSPEND_USER') {
       setConfirmAction({ reportId, action });
+    } else if (action === 'REJECT') {
+      processReport({ reportId, data: { status: 'REJECTED' } });
     } else {
-      processReport({ reportId, data: { action } });
+      processReport({ reportId, data: { status: 'APPROVED', action } });
     }
   };
 
@@ -89,9 +91,8 @@ export function ReportManagement() {
       ) : (
         <div className="overflow-x-auto rounded-lg border">
           <div className="min-w-[700px]">
-            <div className="grid grid-cols-[60px_60px_1fr_80px_80px_80px_160px] gap-2 border-b bg-muted/50 px-4 py-2 text-xs font-medium text-muted-foreground">
-              <span>유형</span>
-              <span>ID</span>
+            <div className="grid grid-cols-[1fr_1fr_80px_80px_80px_160px] gap-2 border-b bg-muted/50 px-4 py-2 text-xs font-medium text-muted-foreground">
+              <span>게시글</span>
               <span>사유</span>
               <span>신고자</span>
               <span>상태</span>
@@ -103,12 +104,9 @@ export function ReportManagement() {
               return (
                 <div
                   key={report.id}
-                  className="grid grid-cols-[60px_60px_1fr_80px_80px_80px_160px] items-center gap-2 border-b px-4 py-2 text-sm last:border-b-0"
+                  className="grid grid-cols-[1fr_1fr_80px_80px_80px_160px] items-center gap-2 border-b px-4 py-2 text-sm last:border-b-0"
                 >
-                  <Badge variant="outline" className="w-fit">
-                    {report.targetType === 'POST' ? '게시글' : '댓글'}
-                  </Badge>
-                  <span className="text-muted-foreground">#{report.targetId}</span>
+                  <span className="truncate text-muted-foreground">{report.postTitle}</span>
                   <span className="truncate">{report.reason}</span>
                   <span className="truncate text-muted-foreground">{report.reporterNickname}</span>
                   <Badge variant={cfg.variant} className="w-fit">
@@ -164,7 +162,10 @@ export function ReportManagement() {
         loading={processing}
         onConfirm={() => {
           if (confirmAction) {
-            processReport({ reportId: confirmAction.reportId, data: { action: confirmAction.action } });
+            processReport({
+              reportId: confirmAction.reportId,
+              data: { status: 'APPROVED', action: confirmAction.action },
+            });
           }
         }}
       />

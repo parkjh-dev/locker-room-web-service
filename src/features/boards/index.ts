@@ -4,4 +4,4 @@
 export { useBoards } from './hooks/useBoards';
 
 // Types
-export type { Board } from './types/board';
+export type { BoardType, Board } from './types/board';

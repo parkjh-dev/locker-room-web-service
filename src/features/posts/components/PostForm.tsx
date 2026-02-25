@@ -27,15 +27,16 @@ import { postSchema, type PostFormData } from '../schemas/postSchema';
 
 interface UploadedFile {
   id: number;
-  fileName: string;
-  fileUrl: string;
-  fileSize: number;
+  originalName: string;
+  url: string;
+  size: number;
+  mimeType?: string;
 }
 
 interface PostFormProps {
   defaultValues?: Partial<PostFormData>;
   defaultFiles?: UploadedFile[];
-  onSubmit: (data: PostFormData, attachmentIds: number[]) => Promise<void>;
+  onSubmit: (data: PostFormData, fileIds: number[]) => Promise<void>;
   submitLabel: string;
   /** 수정 모드에서 게시판 변경 불가 */
   disableBoardSelect?: boolean;

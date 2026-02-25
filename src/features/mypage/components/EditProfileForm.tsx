@@ -101,7 +101,7 @@ function PasswordSection() {
 
   const onSubmit = async (data: ChangePasswordFormData) => {
     try {
-      await userApi.changePassword({
+      await userApi.updateMe({
         currentPassword: data.currentPassword,
         newPassword: data.newPassword,
       });

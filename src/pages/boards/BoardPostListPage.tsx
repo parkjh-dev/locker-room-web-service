@@ -23,7 +23,7 @@ export default function BoardPostListPage() {
   const [searchParams] = useSearchParams();
   const urlKeyword = searchParams.get('keyword') || '';
   const { isAuthenticated } = useAuthStore();
-  const [sort, setSort] = useState<Sort>('created_at');
+  const [sort, setSort] = useState<Sort>('createdAt');
   const [keyword, setKeyword] = useState(urlKeyword);
   const [searchType, setSearchType] = useState<SearchType>('TITLE_CONTENT');
 
@@ -65,8 +65,8 @@ export default function BoardPostListPage() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="created_at">최신순</SelectItem>
-            <SelectItem value="like_count">인기순</SelectItem>
+            <SelectItem value="createdAt">최신순</SelectItem>
+            <SelectItem value="likeCount">인기순</SelectItem>
           </SelectContent>
         </Select>
       </div>

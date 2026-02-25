@@ -12,6 +12,7 @@ export { NotificationList } from './components/NotificationList';
 // Types
 export type {
   NotificationType,
+  TargetType,
   NotificationItem as NotificationItemType,
   UnreadCountResponse,
 } from './types/notification';

@@ -35,9 +35,10 @@ const typeLabels = {
 
 interface UploadedFile {
   id: number;
-  fileName: string;
-  fileUrl: string;
-  fileSize: number;
+  originalName: string;
+  url: string;
+  size: number;
+  mimeType?: string;
 }
 
 export function InquiryForm() {
@@ -54,7 +55,7 @@ export function InquiryForm() {
     try {
       await mutateAsync({
         ...data,
-        attachmentIds: files.map((f) => f.id),
+        fileIds: files.map((f) => f.id),
       });
       toast.success('문의가 등록되었습니다.');
       navigate('/inquiries');

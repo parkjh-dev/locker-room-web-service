@@ -283,15 +283,63 @@
 
 ## Phase 20. API 백엔드 서버 일치 여부 점검
 
-> **⚠️ 사전 조건**: 작업 시작 전 반드시 사용자에게 백엔드 API resource 파일 경로(컨트롤러, DTO, 에러코드 등)를 확인할 것.
+> **백엔드 참조**: `/Users/park/Desktop/dev_personal/locker-room-resource-service`
+> **점검 기준**: 백엔드 컨트롤러, DTO(request/response), ErrorCode.java
 
-- [ ] 20-1. API 엔드포인트 경로/메서드 일치 점검 (프론트엔드 API 함수의 URL, HTTP 메서드가 백엔드 컨트롤러와 일치하는지 확인)
-- [ ] 20-2. 요청 DTO 필드 일치 점검 (프론트엔드 Request 타입/인터페이스 필드가 백엔드 DTO와 일치하는지 확인)
-- [ ] 20-3. 응답 DTO 필드 일치 점검 (프론트엔드 Response 타입/인터페이스 필드가 백엔드 DTO와 일치하는지 확인)
-- [ ] 20-4. 페이지네이션 파라미터 일치 점검 (cursor, size, sort 등 쿼리 파라미터 이름/형식이 백엔드와 일치하는지 확인)
-- [ ] 20-5. 에러 코드/메시지 매핑 일치 점검 (프론트엔드 에러 코드 분기 처리가 백엔드 에러 코드 체계와 일치하는지 확인)
-- [ ] 20-6. 인증/인가 헤더 일치 점검 (Authorization 헤더 형식, 토큰 갱신 흐름이 백엔드 인증 설정과 일치하는지 확인)
-- [ ] 20-7. 불일치 항목 수정 및 빌드 검증
+- [x] 20-1. API 엔드포인트 경로/메서드 일치 점검 → 불일치 1건 수정 (`/admin/inquiries/{id}/answer` → `/reply`)
+- [x] 20-2. 요청 DTO 필드 일치 점검 → 불일치 6건 수정 (`attachmentIds`→`fileIds`, `SuspendRequest`, `ReportProcess`, `RequestProcess`, `AdminNotice`, `UserUpdate`)
+- [x] 20-3. 응답 DTO 필드 일치 점검 → 불일치 18건 수정 (PostDetail author 객체화, Board 필드 변경, Notice/Notification/Inquiry/Admin 타입 전체 교정 등)
+- [x] 20-4. 페이지네이션 파라미터 일치 점검 → sort 값 snake_case→camelCase 수정 (`created_at`→`createdAt`, `like_count`→`likeCount`)
+- [x] 20-5. 에러 코드/메시지 매핑 일치 점검 → 백엔드 ErrorCode.java를 숫자 코드(USER_001)에서 의미적 코드(USER_SUSPENDED)로 변경, api.md와 프론트엔드 일치
+- [x] 20-6. 인증/인가 헤더 일치 점검 → Authorization Bearer, Idempotency-Key 동일 확인 (일치)
+- [x] 20-7. 불일치 항목 수정 및 빌드 검증 → 프론트엔드 타입 12개, API 2개, 컴포넌트 30+개 수정, `tsc -b` 통과
+
+### 20-7 수정 상세
+
+**백엔드 수정 (1건)**
+- `ErrorCode.java`: 숫자 코드 → api.md 의미적 코드로 변경, 누락 코드 추가 (`FILE_TYPE_NOT_ALLOWED`, `FILE_COUNT_EXCEEDED`, `RATE_LIMIT_EXCEEDED`)
+
+**프론트엔드 타입 수정 (12건)**
+- `types/api.ts`: sort 값 camelCase 변경
+- `types/common.ts`: UserTeam 필드를 백엔드 UserTeamInfo와 일치
+- `features/auth/types/auth.ts`: Sport/Team에 isActive 추가, Team.logo → logoUrl
+- `features/posts/types/post.ts`: AuthorInfo/FileInfo 타입 신설, PostDetail author 객체화, files 필드명 교정, CreatePost/UpdatePost에 fileIds 사용
+- `features/comments/types/comment.ts`: Comment.author 객체화, 불필요 필드 제거
+- `features/boards/types/board.ts`: BoardType 추가, type/teamId/teamName 필드로 변경
+- `features/notices/types/notice.ts`: NoticeScope 추가, scope/teamName/adminNickname 필드 교정
+- `features/notifications/types/notification.ts`: TargetType 추가, targetType/readAt 필드 추가, count→unreadCount
+- `features/inquiries/types/inquiry.ts`: InquiryReply 타입 신설, files/replies 필드 교정, fileIds 사용
+- `features/requests/types/request.ts`: processedAt 필드 추가
+- `features/mypage/types/user.ts`: UserProfile.id 변경, MyPostItem/MyLikeItem 분리, ChangePasswordRequest 제거 → UpdateProfileRequest 통합
+- `features/admin/types/admin.ts`: AdminUser.id 변경, SuspendRequest suspendedUntil, ReportProcess status+action, AdminNotice scope, AdminInquiry/Request userNickname
+
+**프론트엔드 API 수정 (2건)**
+- `features/mypage/api/userApi.ts`: changePassword 제거, MyPostItem/MyLikeItem 반환 타입
+- `features/admin/api/adminApi.ts`: `/answer` → `/reply`
+
+**프론트엔드 컴포넌트 수정 (30+건)**
+- 게시글: PostListItem, PostDetail, PostForm, PostCreatePage, PostEditPage, FileUpload
+- 댓글: CommentItem
+- 게시판/공지: BoardListPage, HomePage, NoticeList, NoticeDetail
+- 알림: NotificationList, NotificationDropdown
+- 문의: InquiryDetail, InquiryForm
+- 마이페이지: MyProfile, MyPostList, MyLikeList, EditProfileForm
+- 관리자: UserManagement, InquiryManagement, RequestManagement, ReportManagement, SuspendModal, NoticeManagement, TeamSelector
+- App.tsx (DevSimulator userId → id)
+
+### 백엔드 추가 예정 사항 (별도 작업)
+
+> 아래 항목은 프론트엔드에서 사용 중이나 현재 백엔드에 미구현된 사항. 백엔드에 추가 예정.
+
+| 항목 | 프론트엔드 엔드포인트 | 현재 상태 |
+|------|----------------------|----------|
+| 관리자 대시보드 | `GET /admin/dashboard` | 백엔드 미구현 |
+| 관리자 공지 목록 | `GET /admin/notices` | 백엔드 미구현 |
+| 인기 게시글 | `GET /posts/popular` | 백엔드 미구현 |
+| 회원 정지 해제 | `PUT /admin/users/{id}/unsuspend` | 백엔드 미구현 |
+| 댓글 Cursor 페이지네이션 | `GET /posts/{postId}/comments` | 백엔드 List 반환 → Cursor 페이지네이션 추가 예정 |
+| AuthorInfo.teamName | PostDetail/Comment author | 백엔드 AuthorInfo에 teamName 필드 추가 예정 |
+| UserTeamInfo.teamLogoUrl | UserProfile teams | 백엔드 UserTeamInfo에 로고 URL 추가 예정 |
 
 ---
 

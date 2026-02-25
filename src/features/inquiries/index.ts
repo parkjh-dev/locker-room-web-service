@@ -14,7 +14,7 @@ export type {
   InquiryType,
   InquiryStatus,
   InquiryListItem,
-  InquiryAnswer,
+  InquiryReply,
   InquiryDetail as InquiryDetailType,
   CreateInquiryRequest,
 } from './types/inquiry';

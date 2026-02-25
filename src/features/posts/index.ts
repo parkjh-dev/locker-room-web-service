@@ -21,7 +21,8 @@ export { ReportModal } from './components/ReportModal';
 export type {
   PostListItem as PostListItemType,
   PostDetail as PostDetailType,
-  Attachment,
+  AuthorInfo,
+  FileInfo,
   CreatePostRequest,
   UpdatePostRequest,
 } from './types/post';

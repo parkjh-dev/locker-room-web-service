@@ -43,7 +43,7 @@ export function NoticeManagement() {
 
   const form = useForm<AdminNoticeFormData>({
     resolver: zodResolver(adminNoticeSchema),
-    defaultValues: { title: '', content: '', isPinned: false, boardIds: [] },
+    defaultValues: { title: '', content: '', isPinned: false, scope: 'ALL' as const, teamId: null },
   });
 
   const { mutateAsync: createNotice, isPending: isCreating } = useMutation({
@@ -84,7 +84,7 @@ export function NoticeManagement() {
   };
 
   const openCreate = () => {
-    form.reset({ title: '', content: '', isPinned: false, boardIds: [] });
+    form.reset({ title: '', content: '', isPinned: false, scope: 'ALL' as const, teamId: null });
     setEditId(null);
     setFormOpen(true);
   };
@@ -120,7 +120,7 @@ export function NoticeManagement() {
             <div className="grid grid-cols-[1fr_60px_80px_80px_100px] gap-2 border-b bg-muted/50 px-4 py-2 text-xs font-medium text-muted-foreground">
               <span>제목</span>
               <span>고정</span>
-              <span>조회</span>
+              <span>범위</span>
               <span>날짜</span>
               <span>관리</span>
             </div>
@@ -138,7 +138,9 @@ export function NoticeManagement() {
                     </Badge>
                   )}
                 </span>
-                <span className="text-muted-foreground">{notice.viewCount}</span>
+                <span className="text-xs text-muted-foreground">
+                  {notice.scope === 'TEAM' ? notice.teamName ?? '팀' : '전체'}
+                </span>
                 <span className="text-xs text-muted-foreground">
                   {formatDate(notice.createdAt)}
                 </span>
@@ -154,7 +156,8 @@ export function NoticeManagement() {
                         title: notice.title,
                         content: '',
                         isPinned: notice.isPinned,
-                        boardIds: [],
+                        scope: notice.scope,
+                        teamId: null,
                       });
                       setFormOpen(true);
                     }}

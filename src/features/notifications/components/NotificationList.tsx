@@ -33,7 +33,7 @@ export function NotificationList() {
   }
 
   const notifications = data?.pages.flatMap((page) => page.items) ?? [];
-  const unreadCount = unread?.count ?? 0;
+  const unreadCount = unread?.unreadCount ?? 0;
 
   if (notifications.length === 0) {
     return (

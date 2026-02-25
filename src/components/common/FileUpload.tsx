@@ -13,9 +13,10 @@ const ALLOWED_TYPES = [...IMAGE_TYPES, 'application/pdf', 'text/plain'];
 
 interface UploadedFile {
   id: number;
-  fileName: string;
-  fileUrl: string;
-  fileSize: number;
+  originalName: string;
+  url: string;
+  size: number;
+  mimeType?: string;
 }
 
 interface FileUploadProps {
@@ -113,9 +114,9 @@ export function FileUpload({ value, onChange, maxCount = MAX_FILE_COUNT }: FileU
               className="flex items-center gap-2 rounded-md border px-3 py-2 text-sm"
             >
               <FileIcon className="h-4 w-4 shrink-0 text-muted-foreground" />
-              <span className="min-w-0 flex-1 truncate">{file.fileName}</span>
+              <span className="min-w-0 flex-1 truncate">{file.originalName}</span>
               <span className="shrink-0 text-xs text-muted-foreground">
-                {formatSize(file.fileSize)}
+                {formatSize(file.size)}
               </span>
               <Button
                 type="button"

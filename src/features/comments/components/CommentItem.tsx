@@ -42,7 +42,7 @@ export function CommentItem({ comment, postId, isReply = false }: CommentItemPro
 
   const { mutateAsync: createReply } = useCreateReply(postId);
   const { mutateAsync: deleteComment, isPending: deleting } = useDeleteComment(postId);
-  const isOwner = user?.userId === comment.userId;
+  const isOwner = user?.id === comment.author.id;
 
   const handleReplySubmit = async (data: CommentFormData) => {
     await createReply({ commentId: comment.id, data });
@@ -73,25 +73,13 @@ export function CommentItem({ comment, postId, isReply = false }: CommentItemPro
     }
   };
 
-  // 삭제된 댓글
-  if (comment.isDeleted) {
-    return (
-      <div className={isReply ? 'ml-8 border-l pl-4' : ''}>
-        <p className="py-3 text-sm text-muted-foreground italic">삭제된 댓글입니다.</p>
-        {comment.replies?.map((reply) => (
-          <CommentItem key={reply.id} comment={reply} postId={postId} isReply />
-        ))}
-      </div>
-    );
-  }
-
   return (
     <div className={isReply ? 'ml-8 border-l pl-4' : ''}>
       <div className="py-3">
         {/* 헤더 */}
         <div className="flex items-center gap-2 text-sm">
-          <span className={`font-medium ${comment.nickname ? '' : 'text-muted-foreground'}`}>
-            {comment.nickname || '탈퇴한 사용자'}
+          <span className={`font-medium ${comment.author.nickname ? '' : 'text-muted-foreground'}`}>
+            {comment.author.nickname || '탈퇴한 사용자'}
           </span>
           {comment.isAiGenerated && (
             <Badge variant="outline" className="gap-0.5 text-xs">
@@ -100,9 +88,6 @@ export function CommentItem({ comment, postId, isReply = false }: CommentItemPro
             </Badge>
           )}
           <span className="text-xs text-muted-foreground">{formatDate(comment.createdAt)}</span>
-          {comment.updatedAt !== comment.createdAt && (
-            <span className="text-xs text-muted-foreground">(수정됨)</span>
-          )}
         </div>
 
         {/* 내용 */}

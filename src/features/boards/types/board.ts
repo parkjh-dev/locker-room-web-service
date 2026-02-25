@@ -1,7 +1,11 @@
-/** 게시판 */
+/** 게시판 유형 */
+export type BoardType = 'COMMON' | 'TEAM' | 'QNA' | 'NEWS';
+
+/** 게시판 (백엔드 BoardResponse 매칭) */
 export interface Board {
   id: number;
   name: string;
-  description: string | null;
-  postCount: number;
+  type: BoardType;
+  teamId: number | null;
+  teamName: string | null;
 }

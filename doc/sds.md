@@ -354,7 +354,7 @@ interface ValidationErrorData {
 interface CursorPageParams {
   cursor?: string;
   size?: number;
-  sort?: 'created_at' | 'like_count';
+  sort?: 'createdAt' | 'likeCount';
 }
 
 interface SearchParams extends CursorPageParams {
@@ -362,6 +362,8 @@ interface SearchParams extends CursorPageParams {
   searchType?: 'TITLE' | 'CONTENT' | 'TITLE_CONTENT' | 'NICKNAME';
 }
 ```
+
+> **sort 값은 camelCase**: 백엔드 `CursorPageRequest.sort` 기본값이 `"createdAt"`이므로 snake_case가 아닌 camelCase 사용
 
 ---
 
@@ -387,7 +389,7 @@ export default keycloak;
 import { create } from 'zustand';
 
 interface AuthUser {
-  userId: number;
+  id: number;
   email: string;
   nickname: string;
   role: 'USER' | 'ADMIN';
@@ -601,23 +603,25 @@ export const queryClient = new QueryClient({
 ```typescript
 import api from '@/lib/axios';
 import type { ApiResponse, CursorPageResponse, SearchParams } from '@/types/api';
-import type { PostResponse, PostListItem, CreatePostRequest } from '../types/post';
+import type { PostListItem, PostDetail, CreatePostRequest, UpdatePostRequest } from '../types/post';
 
 export const postApi = {
   getList: (boardId: number, params: SearchParams) =>
     api.get<ApiResponse<CursorPageResponse<PostListItem>>>(
-      `/boards/${boardId}/posts`,
-      { params }
-    ),
+      `/boards/${boardId}/posts`, { params }
+    ).then((r) => r.data.data),
 
   getDetail: (postId: number) =>
-    api.get<ApiResponse<PostResponse>>(`/posts/${postId}`),
+    api.get<ApiResponse<PostDetail>>(`/posts/${postId}`)
+      .then((r) => r.data.data),
 
   create: (data: CreatePostRequest) =>
-    api.post<ApiResponse<{ id: number }>>('/posts', data),
+    api.post<ApiResponse<{ id: number }>>('/posts', data)
+      .then((r) => r.data.data),
 
-  update: (postId: number, data: CreatePostRequest) =>
-    api.put<ApiResponse<{ id: number }>>(`/posts/${postId}`, data),
+  update: (postId: number, data: UpdatePostRequest) =>
+    api.put<ApiResponse<{ id: number }>>(`/posts/${postId}`, data)
+      .then((r) => r.data.data),
 
   delete: (postId: number) =>
     api.delete(`/posts/${postId}`),
@@ -625,12 +629,14 @@ export const postApi = {
   toggleLike: (postId: number) =>
     api.post<ApiResponse<{ postId: number; isLiked: boolean; likeCount: number }>>(
       `/posts/${postId}/like`
-    ),
+    ).then((r) => r.data.data),
 
   report: (postId: number, reason: string) =>
     api.post(`/posts/${postId}/report`, { reason }),
 };
 ```
+
+> **CreatePostRequest/UpdatePostRequest** 필드: `boardId`, `title`, `content`, `fileIds` (백엔드와 일치)
 
 ### 6.4 커스텀 훅 패턴 (예: `features/posts/hooks/usePostList.ts`)
 
@@ -1483,3 +1489,4 @@ export default defineConfig({
 | 1.0 | 2026-02-23 | - | 초안 작성 |
 | 1.1 | 2026-02-23 | - | Phase 1 반영: 기술 스택 버전 고정 (Tailwind v3, Zod v4, shadcn CLI v2.3.0), 디렉토리 구조 보정 (index.css, lib/utils.ts), Tailwind config/CSS 변수를 실제 구현과 동기화 |
 | 1.2 | 2026-02-24 | - | Phase 3~5 반영: pages/ 디렉토리 추가, FullScreenLoader 추가, App.tsx 진입점 구조 명시, 레이아웃 디자인 기준(블라인드 스타일, max-w 1140px, 왼쪽 사이드바) 추가 |
+| 1.3 | 2026-02-25 | - | Phase 20 반영: 백엔드 API 일치 점검 결과 반영. CursorPageParams sort 값 camelCase 변경, AuthUser.userId→id, PostDetail author 객체화, FileInfo/AuthorInfo 타입 신설, postApi 예시 코드 실제 구현과 동기화 |

@@ -63,20 +63,20 @@ export function InquiryDetail({ inquiryId }: InquiryDetailProps) {
       <div className="whitespace-pre-wrap text-sm leading-relaxed">{inquiry.content}</div>
 
       {/* 첨부파일 */}
-      {inquiry.attachments.length > 0 && (
+      {inquiry.files.length > 0 && (
         <div className="space-y-2">
           <p className="text-sm font-medium text-muted-foreground">첨부파일</p>
           <ul className="space-y-1">
-            {inquiry.attachments.map((file) => (
+            {inquiry.files.map((file) => (
               <li key={file.id}>
                 <a
-                  href={file.fileUrl}
+                  href={file.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
                 >
                   <FileIcon className="h-4 w-4" />
-                  {file.fileName}
+                  {file.originalName}
                 </a>
               </li>
             ))}
@@ -89,14 +89,18 @@ export function InquiryDetail({ inquiryId }: InquiryDetailProps) {
       {/* 관리자 답변 */}
       <div className="space-y-2">
         <h3 className="text-sm font-bold">관리자 답변</h3>
-        {inquiry.answer ? (
-          <div className="rounded-lg border bg-muted/50 p-4">
-            <div className="whitespace-pre-wrap text-sm leading-relaxed">
-              {inquiry.answer.content}
-            </div>
-            <p className="mt-2 text-xs text-muted-foreground">
-              {formatDate(inquiry.answer.createdAt)}
-            </p>
+        {inquiry.replies.length > 0 ? (
+          <div className="space-y-3">
+            {inquiry.replies.map((reply) => (
+              <div key={reply.id} className="rounded-lg border bg-muted/50 p-4">
+                <div className="whitespace-pre-wrap text-sm leading-relaxed">
+                  {reply.content}
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  {reply.adminNickname} · {formatDate(reply.createdAt)}
+                </p>
+              </div>
+            ))}
           </div>
         ) : (
           <p className="text-sm text-muted-foreground">아직 답변이 등록되지 않았습니다.</p>

@@ -4,11 +4,10 @@ export interface SportTeamPair {
   teamId: number;
 }
 
-/** 유저가 응원하는 팀 정보 */
+/** 유저가 응원하는 팀 정보 (백엔드 UserTeamInfo 매칭) */
 export interface UserTeam {
-  sportId: number;
-  sportName: string;
   teamId: number;
   teamName: string;
-  teamLogo: string | null;
+  sportId: number;
+  sportName: string;
 }

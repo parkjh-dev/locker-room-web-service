@@ -1,28 +1,25 @@
 import api from '@/lib/axios';
 import type { ApiResponse, CursorPageResponse, CursorPageParams } from '@/types/api';
-import type { PostListItem } from '@/features/posts/types/post';
 import type {
   UserProfile,
   UpdateProfileRequest,
-  ChangePasswordRequest,
   WithdrawRequest,
+  MyPostItem,
   MyCommentItem,
+  MyLikeItem,
 } from '../types/user';
 
 export const userApi = {
   getMe: () => api.get<ApiResponse<UserProfile>>('/users/me').then((r) => r.data.data),
 
   updateMe: (data: UpdateProfileRequest) =>
-    api.put<ApiResponse<{ id: number }>>('/users/me', data).then((r) => r.data.data),
-
-  changePassword: (data: ChangePasswordRequest) =>
-    api.put<ApiResponse<void>>('/users/me/password', data),
+    api.put<ApiResponse<{ id: number; nickname: string }>>('/users/me', data).then((r) => r.data.data),
 
   deleteMe: (data: WithdrawRequest) => api.delete('/users/me', { data }),
 
   getMyPosts: (params?: CursorPageParams) =>
     api
-      .get<ApiResponse<CursorPageResponse<PostListItem>>>('/users/me/posts', { params })
+      .get<ApiResponse<CursorPageResponse<MyPostItem>>>('/users/me/posts', { params })
       .then((r) => r.data.data),
 
   getMyComments: (params?: CursorPageParams) =>
@@ -32,6 +29,6 @@ export const userApi = {
 
   getMyLikes: (params?: CursorPageParams) =>
     api
-      .get<ApiResponse<CursorPageResponse<PostListItem>>>('/users/me/likes', { params })
+      .get<ApiResponse<CursorPageResponse<MyLikeItem>>>('/users/me/likes', { params })
       .then((r) => r.data.data),
 };

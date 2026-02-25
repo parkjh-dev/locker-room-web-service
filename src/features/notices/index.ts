@@ -9,4 +9,4 @@ export { NoticeList } from './components/NoticeList';
 export { NoticeDetail } from './components/NoticeDetail';
 
 // Types
-export type { NoticeListItem, NoticeDetail as NoticeDetailType } from './types/notice';
+export type { NoticeScope, NoticeListItem, NoticeDetail as NoticeDetailType } from './types/notice';

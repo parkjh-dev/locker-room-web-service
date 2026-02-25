@@ -132,7 +132,7 @@
 | PAGE-POSTLIST-001 | 인증 | 선택 (팀 전용 게시판은 해당 팀 회원만) |
 | PAGE-POSTLIST-002 | 표시 정보 | 제목, 작성자 닉네임, 조회수, 좋아요수, 댓글수, 작성일 |
 | PAGE-POSTLIST-003 | 페이지네이션 | Cursor 기반 무한스크롤 또는 "더보기" 버튼 |
-| PAGE-POSTLIST-004 | 정렬 | created_at(기본), like_count |
+| PAGE-POSTLIST-004 | 정렬 | createdAt(기본), likeCount (백엔드 CursorPageRequest 기준 camelCase) |
 | PAGE-POSTLIST-005 | 검색 | keyword + searchType (TITLE, CONTENT, TITLE_CONTENT, NICKNAME) |
 | PAGE-POSTLIST-006 | AI 게시글 표시 | isAiGenerated=true인 게시글에 AI 배지 표시 |
 | PAGE-POSTLIST-007 | 접근 제어 | POST_ACCESS_DENIED(403) 시 접근 권한 없음 안내 |
@@ -173,7 +173,7 @@
 | PAGE-WRITE-003 | 제목 | 1~200자 |
 | PAGE-WRITE-004 | 내용 | 1~10000자 |
 | PAGE-WRITE-005 | 첨부파일 | 최대 5개, 이미지(10MB, jpeg/png/gif/webp), 일반(20MB, pdf/txt) |
-| PAGE-WRITE-006 | 파일 업로드 | 게시글 작성 전 파일 개별 업로드 → fileIds 수집 → 게시글 작성 시 전달 |
+| PAGE-WRITE-006 | 파일 업로드 | 게시글 작성 전 POST /files로 파일 개별 업로드 → fileIds 수집 → 게시글 작성 시 전달 |
 | PAGE-WRITE-007 | 멱등성 | POST 요청 시 Idempotency-Key 자동 생성 |
 | PAGE-WRITE-008 | 성공 후 | 작성된 게시글 상세 페이지로 이동 |
 | PAGE-WRITE-009 | API | POST /posts, POST /files |
@@ -275,12 +275,12 @@
 |----|----------|------|
 | PAGE-ADM-001 | 접근 제어 | role=ADMIN만 접근 가능 (AdminRoute 가드) |
 | PAGE-ADM-002 | 대시보드 | 미처리 신고/문의/요청 카운트 요약 |
-| PAGE-ADM-003 | 회원 관리 | 회원 목록 검색(닉네임/이메일), 역할 필터, 정지 처리 모달(사유+기간) |
+| PAGE-ADM-003 | 회원 관리 | 회원 목록 검색(닉네임/이메일), 역할 필터, 정지 처리 모달(사유+해제일시) |
 | PAGE-ADM-004 | 신고 관리 | 신고 목록 (상태 필터), 승인/반려 처리 (DELETE_POST, SUSPEND_USER 액션) |
-| PAGE-ADM-005 | 공지사항 관리 | 공지 작성(제목/내용/상단고정/노출범위), 수정, 삭제 |
+| PAGE-ADM-005 | 공지사항 관리 | 공지 작성(제목/내용/상단고정/scope:ALL\|TEAM/teamId), 수정, 삭제 |
 | PAGE-ADM-006 | 문의 관리 | 문의 목록 (상태/유형 필터), 답변 작성 |
 | PAGE-ADM-007 | 요청 관리 | 요청 목록 (상태/유형 필터), 승인/반려 처리 |
-| PAGE-ADM-008 | API | GET/PUT /admin/users, GET/PUT /admin/reports, POST/PUT/DELETE /admin/notices, GET/POST /admin/inquiries, GET/PUT /admin/requests |
+| PAGE-ADM-008 | API | GET /admin/users, PUT /admin/users/{id}/suspend, GET/PUT /admin/reports, POST/PUT/DELETE /admin/notices, GET /admin/inquiries, POST /admin/inquiries/{id}/reply, GET/PUT /admin/requests |
 
 ---
 
@@ -428,3 +428,4 @@
 | 1.0 | 2026-02-23 | - | 초안 작성 |
 | 1.1 | 2026-02-23 | - | 기술 스택 버전 명시 (Tailwind v3, Zod v4, shadcn CLI v2.3.0 등) |
 | 1.2 | 2026-02-24 | - | 레이아웃 요구사항 보완: 블라인드 스타일 참고, 최대 너비 1140px, 왼쪽 사이드바, 검색바, 푸터 추가 |
+| 1.3 | 2026-02-25 | - | Phase 20 반영: 정렬 파라미터 camelCase 통일, 관리자 API 경로 상세화(suspend, reply), 공지 scope/teamId 명시, 정지 처리 사유+해제일시 |

@@ -19,8 +19,8 @@ export default function PostEditPage() {
 
   if (!post) return null;
 
-  const handleSubmit = async (data: PostFormData, attachmentIds: number[]) => {
-    await mutateAsync({ title: data.title, content: data.content, attachmentIds });
+  const handleSubmit = async (data: PostFormData, fileIds: number[]) => {
+    await mutateAsync({ title: data.title, content: data.content, fileIds });
     toast.success('게시글이 수정되었습니다.');
     navigate(`/posts/${pid}`, { replace: true });
   };
@@ -34,7 +34,7 @@ export default function PostEditPage() {
           title: post.title,
           content: post.content,
         }}
-        defaultFiles={post.attachments}
+        defaultFiles={post.files}
         onSubmit={handleSubmit}
         submitLabel="수정"
         disableBoardSelect

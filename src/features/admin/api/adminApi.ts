@@ -15,11 +15,9 @@ import type {
 } from '../types/admin';
 
 export const adminApi = {
-  // 대시보드
   getDashboard: () =>
     api.get<ApiResponse<AdminDashboardSummary>>('/admin/dashboard').then((r) => r.data.data),
 
-  // 회원 관리
   getUsers: (params?: CursorPageParams & { keyword?: string; role?: string }) =>
     api
       .get<ApiResponse<CursorPageResponse<AdminUser>>>('/admin/users', { params })
@@ -30,7 +28,6 @@ export const adminApi = {
 
   unsuspendUser: (userId: number) => api.put<ApiResponse<void>>(`/admin/users/${userId}/unsuspend`),
 
-  // 신고 관리
   getReports: (params?: CursorPageParams & { status?: string }) =>
     api
       .get<ApiResponse<CursorPageResponse<AdminReport>>>('/admin/reports', { params })
@@ -39,7 +36,6 @@ export const adminApi = {
   processReport: (reportId: number, data: ProcessReportRequest) =>
     api.put<ApiResponse<void>>(`/admin/reports/${reportId}`, data),
 
-  // 공지 관리
   getNotices: (params?: CursorPageParams) =>
     api
       .get<ApiResponse<CursorPageResponse<AdminNotice>>>('/admin/notices', { params })
@@ -53,16 +49,14 @@ export const adminApi = {
 
   deleteNotice: (noticeId: number) => api.delete(`/admin/notices/${noticeId}`),
 
-  // 문의 관리
   getInquiries: (params?: CursorPageParams & { status?: string; type?: string }) =>
     api
       .get<ApiResponse<CursorPageResponse<AdminInquiry>>>('/admin/inquiries', { params })
       .then((r) => r.data.data),
 
   answerInquiry: (inquiryId: number, data: AnswerInquiryRequest) =>
-    api.post<ApiResponse<void>>(`/admin/inquiries/${inquiryId}/answer`, data),
+    api.post<ApiResponse<void>>(`/admin/inquiries/${inquiryId}/reply`, data),
 
-  // 요청 관리
   getRequests: (params?: CursorPageParams & { status?: string; type?: string }) =>
     api
       .get<ApiResponse<CursorPageResponse<AdminRequest>>>('/admin/requests', { params })

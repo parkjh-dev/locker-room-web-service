@@ -22,7 +22,7 @@ export interface ValidationErrorData {
 export interface CursorPageParams {
   cursor?: string;
   size?: number;
-  sort?: 'created_at' | 'like_count';
+  sort?: 'createdAt' | 'likeCount';
 }
 
 export interface SearchParams extends CursorPageParams {

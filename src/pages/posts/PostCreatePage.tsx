@@ -10,8 +10,8 @@ export default function PostCreatePage() {
   const defaultBoardId = Number(searchParams.get('boardId')) || 0;
   const { mutateAsync } = useCreatePost();
 
-  const handleSubmit = async (data: PostFormData, attachmentIds: number[]) => {
-    const result = await mutateAsync({ ...data, attachmentIds });
+  const handleSubmit = async (data: PostFormData, fileIds: number[]) => {
+    const result = await mutateAsync({ ...data, fileIds });
     toast.success('게시글이 작성되었습니다.');
     navigate(`/posts/${result.id}`, { replace: true });
   };

@@ -4,7 +4,7 @@ export type RequestType = 'SPORT' | 'TEAM';
 /** 요청 상태 */
 export type RequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
-/** 요청 목록 아이템 */
+/** 요청 목록 아이템 (백엔드 RequestListResponse 매칭) */
 export interface RequestListItem {
   id: number;
   type: RequestType;
@@ -13,7 +13,7 @@ export interface RequestListItem {
   createdAt: string;
 }
 
-/** 요청 상세 */
+/** 요청 상세 (백엔드 RequestDetailResponse 매칭) */
 export interface RequestDetail {
   id: number;
   type: RequestType;
@@ -21,6 +21,7 @@ export interface RequestDetail {
   reason: string;
   status: RequestStatus;
   rejectReason: string | null;
+  processedAt: string | null;
   createdAt: string;
 }
 

@@ -42,7 +42,7 @@ export function PostListItem({ post }: PostListItemProps) {
 
       {/* 메타 정보 행 */}
       <div className="flex items-center gap-3 text-xs text-muted-foreground">
-        <span>{post.nickname}</span>
+        <span>{post.authorNickname}</span>
         <span>{formatDate(post.createdAt)}</span>
         <span className="flex items-center gap-0.5">
           <Eye className="h-3 w-3" />

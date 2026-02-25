@@ -130,7 +130,7 @@ export function InquiryManagement() {
                     {typeLabels[inquiry.type]}
                   </Badge>
                   <span className="truncate">{inquiry.title}</span>
-                  <span className="truncate text-muted-foreground">{inquiry.nickname}</span>
+                  <span className="truncate text-muted-foreground">{inquiry.userNickname}</span>
                   <Badge variant={cfg.variant} className="w-fit">
                     {cfg.label}
                   </Badge>

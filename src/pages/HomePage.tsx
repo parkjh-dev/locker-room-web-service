@@ -92,10 +92,9 @@ function BoardGrid() {
               className="flex flex-col gap-1 rounded-lg border p-3 transition-colors hover:bg-accent/50"
             >
               <span className="font-medium text-sm">{board.name}</span>
-              {board.description && (
-                <span className="truncate text-xs text-muted-foreground">{board.description}</span>
+              {board.teamName && (
+                <span className="truncate text-xs text-muted-foreground">{board.teamName}</span>
               )}
-              <span className="text-xs text-muted-foreground">게시글 {board.postCount}개</span>
             </Link>
           ))}
         </div>
@@ -129,9 +128,6 @@ function PopularPosts() {
             to={`/posts/${post.id}`}
             className="flex items-center gap-3 border-b px-3 py-2.5 text-sm transition-colors last:border-b-0 hover:bg-accent/50"
           >
-            <Badge variant="outline" className="shrink-0 text-xs">
-              {post.boardName}
-            </Badge>
             <span className="min-w-0 flex-1 truncate">{post.title}</span>
             {post.commentCount > 0 && (
               <span className="shrink-0 text-xs font-medium text-primary">

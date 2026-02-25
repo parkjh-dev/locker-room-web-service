@@ -38,7 +38,14 @@ export function SuspendModal({ open, onOpenChange, userId, nickname }: SuspendMo
   });
 
   const { mutateAsync, isPending } = useMutation({
-    mutationFn: (data: SuspendUserFormData) => adminApi.suspendUser(userId, data),
+    mutationFn: (data: SuspendUserFormData) => {
+      const until = new Date();
+      until.setDate(until.getDate() + data.days);
+      return adminApi.suspendUser(userId, {
+        reason: data.reason,
+        suspendedUntil: until.toISOString(),
+      });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
       toast.success(`${nickname} 회원이 정지되었습니다.`);

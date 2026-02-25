@@ -19,7 +19,7 @@ export function NotificationDropdown() {
   const { data } = useNotifications();
 
   const notifications = data?.pages[0]?.items.slice(0, 5) ?? [];
-  const unreadCount = unread?.count ?? 0;
+  const unreadCount = unread?.unreadCount ?? 0;
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>

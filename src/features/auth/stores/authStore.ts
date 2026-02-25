@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import type { UserTeam } from '@/types/common';
 
 export interface AuthUser {
-  userId: number;
+  id: number;
   email: string;
   nickname: string;
   role: 'USER' | 'ADMIN';

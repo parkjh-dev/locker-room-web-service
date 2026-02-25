@@ -67,7 +67,7 @@ export function RequestManagement() {
   };
 
   const { mutate: approve } = useMutation({
-    mutationFn: (requestId: number) => adminApi.processRequest(requestId, { action: 'APPROVE' }),
+    mutationFn: (requestId: number) => adminApi.processRequest(requestId, { status: 'APPROVED' }),
     onSuccess: () => {
       invalidate();
       toast.success('요청이 승인되었습니다.');
@@ -76,7 +76,7 @@ export function RequestManagement() {
 
   const { mutateAsync: reject, isPending: isRejecting } = useMutation({
     mutationFn: ({ id, data }: { id: number; data: RejectRequestFormData }) =>
-      adminApi.processRequest(id, { action: 'REJECT', rejectReason: data.rejectReason }),
+      adminApi.processRequest(id, { status: 'REJECTED', rejectReason: data.rejectReason }),
     onSuccess: () => {
       invalidate();
       toast.success('요청이 반려되었습니다.');
@@ -143,7 +143,7 @@ export function RequestManagement() {
                     {typeLabels[req.type]}
                   </Badge>
                   <span className="truncate">{req.name}</span>
-                  <span className="truncate text-muted-foreground">{req.nickname}</span>
+                  <span className="truncate text-muted-foreground">{req.userNickname}</span>
                   <Badge variant={cfg.variant} className="w-fit">
                     {cfg.label}
                   </Badge>
