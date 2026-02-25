@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import {
   Select,
@@ -10,6 +11,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { SkeletonLoader } from '@/components/common/SkeletonLoader';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
@@ -33,6 +41,8 @@ export function ReportManagement() {
     reportId: number;
     action: string;
   } | null>(null);
+  const [suspendTarget, setSuspendTarget] = useState<number | null>(null);
+  const [suspensionDays, setSuspensionDays] = useState(7);
   const queryClient = useQueryClient();
   const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useAdminReports({
     status: status || undefined,
@@ -50,7 +60,10 @@ export function ReportManagement() {
   });
 
   const handleAction = (reportId: number, action: string) => {
-    if (action === 'DELETE_POST' || action === 'SUSPEND_USER') {
+    if (action === 'SUSPEND_USER') {
+      setSuspendTarget(reportId);
+      setSuspensionDays(7);
+    } else if (action === 'DELETE_POST') {
       setConfirmAction({ reportId, action });
     } else if (action === 'REJECT') {
       processReport({ reportId, data: { status: 'REJECTED' } });
@@ -60,7 +73,10 @@ export function ReportManagement() {
   };
 
   const confirmLabels: Record<string, { title: string; description: string }> = {
-    DELETE_POST: { title: '게시글 삭제', description: '해당 게시글을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.' },
+    DELETE_POST: {
+      title: '게시글 삭제',
+      description: '해당 게시글을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
+    },
     SUSPEND_USER: { title: '사용자 정지', description: '해당 사용자를 정지하시겠습니까?' },
   };
 
@@ -151,12 +167,14 @@ export function ReportManagement() {
       {isFetchingNextPage && <SkeletonLoader type="post-list" count={2} />}
       <div ref={scrollRef} className="h-1" />
 
-      {/* 파괴적 액션 확인 다이얼로그 */}
+      {/* 게시글 삭제 확인 다이얼로그 */}
       <ConfirmDialog
         open={!!confirmAction}
-        onOpenChange={(open) => { if (!open) setConfirmAction(null); }}
-        title={confirmAction ? confirmLabels[confirmAction.action]?.title ?? '확인' : '확인'}
-        description={confirmAction ? confirmLabels[confirmAction.action]?.description ?? '' : ''}
+        onOpenChange={(open) => {
+          if (!open) setConfirmAction(null);
+        }}
+        title={confirmAction ? (confirmLabels[confirmAction.action]?.title ?? '확인') : '확인'}
+        description={confirmAction ? (confirmLabels[confirmAction.action]?.description ?? '') : ''}
         confirmLabel="확인"
         variant="destructive"
         loading={processing}
@@ -169,6 +187,50 @@ export function ReportManagement() {
           }
         }}
       />
+
+      {/* 사용자 정지 다이얼로그 (정지 기간 입력) */}
+      <Dialog
+        open={!!suspendTarget}
+        onOpenChange={(open) => {
+          if (!open) setSuspendTarget(null);
+        }}
+      >
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>사용자 정지</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">정지 기간 (일)</label>
+            <Input
+              type="number"
+              min={1}
+              max={365}
+              value={suspensionDays}
+              onChange={(e) => setSuspensionDays(e.target.valueAsNumber || 1)}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSuspendTarget(null)} disabled={processing}>
+              취소
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={processing}
+              onClick={() => {
+                if (suspendTarget) {
+                  processReport({
+                    reportId: suspendTarget,
+                    data: { status: 'APPROVED', action: 'SUSPEND_USER', suspensionDays },
+                  });
+                  setSuspendTarget(null);
+                }
+              }}
+            >
+              {processing ? '처리 중...' : '정지'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -78,7 +78,10 @@ api.interceptors.response.use(
 
     // 409: 충돌 에러
     if (status === 409) {
-      const message = ERROR_MESSAGES[errorCode] || error.response?.data?.message || '요청이 충돌했습니다. 다시 시도해주세요.';
+      const message =
+        ERROR_MESSAGES[errorCode] ||
+        error.response?.data?.message ||
+        '요청이 충돌했습니다. 다시 시도해주세요.';
       toast.error(message);
       return Promise.reject(error);
     }

@@ -43,7 +43,7 @@ export function SuspendModal({ open, onOpenChange, userId, nickname }: SuspendMo
       until.setDate(until.getDate() + data.days);
       return adminApi.suspendUser(userId, {
         reason: data.reason,
-        suspendedUntil: until.toISOString(),
+        suspendedUntil: until.toISOString().replace('Z', ''),
       });
     },
     onSuccess: () => {

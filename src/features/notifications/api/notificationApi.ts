@@ -15,5 +15,8 @@ export const notificationApi = {
 
   markAsRead: (id: number) => api.put<ApiResponse<void>>(`/notifications/${id}/read`),
 
-  markAllAsRead: () => api.put<ApiResponse<void>>('/notifications/read-all'),
+  markAllAsRead: () =>
+    api
+      .put<ApiResponse<{ updatedCount: number }>>('/notifications/read-all')
+      .then((r) => r.data.data),
 };

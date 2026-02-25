@@ -59,7 +59,9 @@ export function Header() {
                 className="pl-9"
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') handleSearchSubmit(); }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleSearchSubmit();
+                }}
               />
             </div>
           </div>
@@ -73,7 +75,12 @@ export function Header() {
           {isAuthenticated ? (
             <>
               {/* 모바일 검색 버튼 */}
-              <Button variant="ghost" size="icon" className="sm:hidden" onClick={() => navigate('/boards')}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="sm:hidden"
+                onClick={() => navigate('/boards')}
+              >
                 <Search className="h-5 w-5" />
                 <span className="sr-only">검색</span>
               </Button>

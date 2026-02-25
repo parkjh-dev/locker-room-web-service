@@ -13,7 +13,9 @@ export const userApi = {
   getMe: () => api.get<ApiResponse<UserProfile>>('/users/me').then((r) => r.data.data),
 
   updateMe: (data: UpdateProfileRequest) =>
-    api.put<ApiResponse<{ id: number; nickname: string }>>('/users/me', data).then((r) => r.data.data),
+    api
+      .put<ApiResponse<{ id: number; nickname: string }>>('/users/me', data)
+      .then((r) => r.data.data),
 
   deleteMe: (data: WithdrawRequest) => api.delete('/users/me', { data }),
 

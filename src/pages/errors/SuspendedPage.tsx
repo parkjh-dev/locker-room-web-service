@@ -23,9 +23,7 @@ export default function SuspendedPage() {
     <div className="flex min-h-screen flex-col items-center justify-center gap-4 p-8">
       <Ban className="h-16 w-16 text-destructive" />
       <h1 className="text-3xl font-bold">계정 정지</h1>
-      <p className="text-center text-muted-foreground">
-        회원님의 계정이 정지되었습니다.
-      </p>
+      <p className="text-center text-muted-foreground">회원님의 계정이 정지되었습니다.</p>
 
       {(reason || until) && (
         <div className="w-full max-w-sm space-y-2 rounded-lg border p-4">

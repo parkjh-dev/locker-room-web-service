@@ -1,5 +1,10 @@
 /** 알림 유형 */
-export type NotificationType = 'COMMENT' | 'REPLY' | 'NOTICE' | 'INQUIRY_REPLY';
+export type NotificationType =
+  | 'COMMENT'
+  | 'REPLY'
+  | 'NOTICE'
+  | 'INQUIRY_REPLY'
+  | 'REPORT_PROCESSED';
 
 /** 알림 대상 유형 */
 export type TargetType = 'POST' | 'COMMENT' | 'NOTICE' | 'INQUIRY';

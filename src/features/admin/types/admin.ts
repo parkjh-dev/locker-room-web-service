@@ -37,6 +37,7 @@ export interface AdminReport {
 export interface ProcessReportRequest {
   status: 'APPROVED' | 'REJECTED';
   action?: string;
+  suspensionDays?: number;
 }
 
 /** 관리자 - 공지 작성/수정 요청 (백엔드 NoticeCreateRequest 매칭) */
@@ -88,4 +89,5 @@ export interface AdminRequest {
 export interface ProcessRequestRequest {
   status: 'APPROVED' | 'REJECTED';
   rejectReason?: string;
+  sportId?: number;
 }

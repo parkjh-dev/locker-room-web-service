@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { MessageSquare, Reply, Megaphone, HelpCircle } from 'lucide-react';
+import { MessageSquare, Reply, Megaphone, HelpCircle, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { notificationApi } from '../api/notificationApi';
 import type { NotificationItem as NotificationItemType } from '../types/notification';
@@ -13,6 +13,11 @@ const typeConfig = {
     icon: HelpCircle,
     label: '문의 답변',
     getPath: (id: number) => `/inquiries/${id}`,
+  },
+  REPORT_PROCESSED: {
+    icon: ShieldCheck,
+    label: '신고 처리',
+    getPath: (id: number) => `/posts/${id}`,
   },
 } as const;
 

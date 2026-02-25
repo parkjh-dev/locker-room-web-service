@@ -71,7 +71,9 @@ export function PostDetail({ post }: PostDetailProps) {
         </div>
         <h1 className="text-xl font-bold">{post.title}</h1>
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
-          <span className={`font-medium ${post.author.nickname ? 'text-foreground' : 'text-muted-foreground'}`}>
+          <span
+            className={`font-medium ${post.author.nickname ? 'text-foreground' : 'text-muted-foreground'}`}
+          >
             {post.author.nickname || '탈퇴한 사용자'}
           </span>
           <span className="flex items-center gap-1">

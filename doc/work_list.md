@@ -352,12 +352,12 @@
 
 ### 21.1 [Major] Enum 타입 누락값 추가
 
-- [ ] 21-1. `BoardType`에 `NOTICE` 추가 (`features/boards/types/board.ts`)
+- [x] 21-1. `BoardType`에 `NOTICE` 추가 (`features/boards/types/board.ts`)
   - 현재: `'COMMON' | 'TEAM' | 'QNA' | 'NEWS'` (4개)
   - 수정: `'COMMON' | 'TEAM' | 'QNA' | 'NOTICE' | 'NEWS'` (5개)
   - 백엔드 `BoardType` enum: `TEAM, COMMON, QNA, NOTICE, NEWS`
   - `NOTICE` 타입 게시판이 내려올 경우 타입 안전성 깨짐 방지
-- [ ] 21-2. `NotificationType`에 `REPORT_PROCESSED` 추가 (`features/notifications/types/notification.ts`)
+- [x] 21-2. `NotificationType`에 `REPORT_PROCESSED` 추가 (`features/notifications/types/notification.ts`)
   - 현재: `'COMMENT' | 'REPLY' | 'NOTICE' | 'INQUIRY_REPLY'` (4개)
   - 수정: `'COMMENT' | 'REPLY' | 'NOTICE' | 'INQUIRY_REPLY' | 'REPORT_PROCESSED'` (5개)
   - 백엔드 `NotificationType` enum: `COMMENT, REPLY, NOTICE, INQUIRY_REPLY, REPORT_PROCESSED`
@@ -366,12 +366,12 @@
 
 ### 21.2 [Major] 요청 DTO 누락 필드 추가
 
-- [ ] 21-3. `ProcessReportRequest`에 `suspensionDays` 필드 추가 (`features/admin/types/admin.ts`)
+- [x] 21-3. `ProcessReportRequest`에 `suspensionDays` 필드 추가 (`features/admin/types/admin.ts`)
   - 현재: `{ status: 'APPROVED' | 'REJECTED'; action?: string }`
   - 수정: `{ status: 'APPROVED' | 'REJECTED'; action?: string; suspensionDays?: number }`
   - 백엔드 `ReportProcessRequest`: `(ReportStatus status, String action, Integer suspensionDays)`
   - `ReportManagement.tsx`에서 `SUSPEND_USER` 액션 시 정지 기간 입력 UI 추가
-- [ ] 21-4. `ProcessRequestRequest`에 `sportId` 필드 추가 (`features/admin/types/admin.ts`)
+- [x] 21-4. `ProcessRequestRequest`에 `sportId` 필드 추가 (`features/admin/types/admin.ts`)
   - 현재: `{ status: 'APPROVED' | 'REJECTED'; rejectReason?: string }`
   - 수정: `{ status: 'APPROVED' | 'REJECTED'; rejectReason?: string; sportId?: number }`
   - 백엔드 `RequestProcessRequest`: `(RequestStatus status, String rejectReason, Long sportId)`
@@ -379,12 +379,12 @@
 
 ### 21.3 [Minor] 응답 타입 보완
 
-- [ ] 21-5. `markAllAsRead` 응답 타입 수정 (`features/notifications/api/notificationApi.ts`)
+- [x] 21-5. `markAllAsRead` 응답 타입 수정 (`features/notifications/api/notificationApi.ts`)
   - 현재: `api.put<ApiResponse<void>>('/notifications/read-all')`
   - 수정: `api.put<ApiResponse<{ updatedCount: number }>>('/notifications/read-all')`
   - 백엔드 `MarkAllReadResponse`: `(int updatedCount)`
   - 읽음 처리 건수를 Toast 메시지 등에 활용 가능
-- [ ] 21-6. `SuspendModal` 날짜 형식 호환성 수정 (`features/admin/components/SuspendModal.tsx`)
+- [x] 21-6. `SuspendModal` 날짜 형식 호환성 수정 (`features/admin/components/SuspendModal.tsx`)
   - 현재: `until.toISOString()` → `"2026-03-04T15:30:00.000Z"` (UTC, `Z` suffix)
   - 수정: `until.toISOString().replace('Z', '')` 또는 `toLocaleDateString` 계열로 `LocalDateTime` 호환 형식 생성
   - 백엔드 `SuspendRequest.suspendedUntil`: `LocalDateTime` (타임존 없음)

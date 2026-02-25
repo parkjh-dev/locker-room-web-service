@@ -139,7 +139,7 @@ export function NoticeManagement() {
                   )}
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  {notice.scope === 'TEAM' ? notice.teamName ?? '팀' : '전체'}
+                  {notice.scope === 'TEAM' ? (notice.teamName ?? '팀') : '전체'}
                 </span>
                 <span className="text-xs text-muted-foreground">
                   {formatDate(notice.createdAt)}

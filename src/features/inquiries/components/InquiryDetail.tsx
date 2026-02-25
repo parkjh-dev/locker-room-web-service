@@ -93,9 +93,7 @@ export function InquiryDetail({ inquiryId }: InquiryDetailProps) {
           <div className="space-y-3">
             {inquiry.replies.map((reply) => (
               <div key={reply.id} className="rounded-lg border bg-muted/50 p-4">
-                <div className="whitespace-pre-wrap text-sm leading-relaxed">
-                  {reply.content}
-                </div>
+                <div className="whitespace-pre-wrap text-sm leading-relaxed">{reply.content}</div>
                 <p className="mt-2 text-xs text-muted-foreground">
                   {reply.adminNickname} · {formatDate(reply.createdAt)}
                 </p>

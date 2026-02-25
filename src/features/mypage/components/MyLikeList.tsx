@@ -59,7 +59,9 @@ export function MyLikeList() {
             <span className="shrink-0 text-xs text-muted-foreground">{post.boardName}</span>
             <h3 className="min-w-0 flex-1 truncate text-sm font-medium">{post.title}</h3>
             {post.commentCount > 0 && (
-              <span className="shrink-0 text-xs font-medium text-primary">[{post.commentCount}]</span>
+              <span className="shrink-0 text-xs font-medium text-primary">
+                [{post.commentCount}]
+              </span>
             )}
           </div>
           <div className="flex items-center gap-3 text-xs text-muted-foreground">

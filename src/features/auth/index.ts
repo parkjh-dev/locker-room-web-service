@@ -11,9 +11,4 @@ export { useAuthStore } from './stores/authStore';
 
 // Types
 export type { AuthUser } from './stores/authStore';
-export type {
-  SignupRequest,
-  ProfileCompleteRequest,
-  Sport,
-  Team,
-} from './types/auth';
+export type { SignupRequest, ProfileCompleteRequest, Sport, Team } from './types/auth';

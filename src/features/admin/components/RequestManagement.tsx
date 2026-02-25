@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -32,6 +32,7 @@ import { SkeletonLoader } from '@/components/common/SkeletonLoader';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useAdminRequests } from '../hooks/useAdminRequests';
 import { adminApi } from '../api/adminApi';
+import { authApi } from '@/features/auth/api/authApi';
 import { rejectRequestSchema, type RejectRequestFormData } from '../schemas/adminSchema';
 
 const typeLabels = { SPORT: '종목', TEAM: '구단' } as const;
@@ -49,7 +50,17 @@ export function RequestManagement() {
   const [status, setStatus] = useState('');
   const [type, setType] = useState('');
   const [rejectId, setRejectId] = useState<number | null>(null);
+  const [approveTarget, setApproveTarget] = useState<{ id: number; type: 'SPORT' | 'TEAM' } | null>(
+    null,
+  );
+  const [selectedSportId, setSelectedSportId] = useState<string>('');
   const queryClient = useQueryClient();
+
+  const { data: sports } = useQuery({
+    queryKey: ['sports'],
+    queryFn: () => authApi.getSports(),
+    enabled: !!approveTarget,
+  });
 
   const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useAdminRequests({
     status: status || undefined,
@@ -66,13 +77,25 @@ export function RequestManagement() {
     queryClient.invalidateQueries({ queryKey: ['admin', 'dashboard'] });
   };
 
-  const { mutate: approve } = useMutation({
-    mutationFn: (requestId: number) => adminApi.processRequest(requestId, { status: 'APPROVED' }),
+  const { mutate: approve, isPending: isApproving } = useMutation({
+    mutationFn: ({ requestId, sportId }: { requestId: number; sportId?: number }) =>
+      adminApi.processRequest(requestId, { status: 'APPROVED', sportId }),
     onSuccess: () => {
       invalidate();
+      setApproveTarget(null);
+      setSelectedSportId('');
       toast.success('요청이 승인되었습니다.');
     },
   });
+
+  const handleApprove = (req: { id: number; type: 'SPORT' | 'TEAM' }) => {
+    if (req.type === 'TEAM') {
+      setApproveTarget(req);
+      setSelectedSportId('');
+    } else {
+      approve({ requestId: req.id });
+    }
+  };
 
   const { mutateAsync: reject, isPending: isRejecting } = useMutation({
     mutationFn: ({ id, data }: { id: number; data: RejectRequestFormData }) =>
@@ -151,7 +174,7 @@ export function RequestManagement() {
                   <div className="flex gap-1">
                     {req.status === 'PENDING' && (
                       <>
-                        <Button size="sm" onClick={() => approve(req.id)}>
+                        <Button size="sm" onClick={() => handleApprove(req)}>
                           승인
                         </Button>
                         <Button size="sm" variant="destructive" onClick={() => setRejectId(req.id)}>
@@ -205,6 +228,50 @@ export function RequestManagement() {
               </DialogFooter>
             </form>
           </Form>
+        </DialogContent>
+      </Dialog>
+
+      {/* TEAM 타입 승인 시 종목 선택 다이얼로그 */}
+      <Dialog
+        open={!!approveTarget}
+        onOpenChange={(open) => {
+          if (!open) setApproveTarget(null);
+        }}
+      >
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>구단 추가 - 종목 선택</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">소속 종목</label>
+            <Select value={selectedSportId} onValueChange={setSelectedSportId}>
+              <SelectTrigger>
+                <SelectValue placeholder="종목을 선택해주세요" />
+              </SelectTrigger>
+              <SelectContent>
+                {sports?.map((sport) => (
+                  <SelectItem key={sport.id} value={String(sport.id)}>
+                    {sport.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setApproveTarget(null)} disabled={isApproving}>
+              취소
+            </Button>
+            <Button
+              disabled={!selectedSportId || isApproving}
+              onClick={() => {
+                if (approveTarget && selectedSportId) {
+                  approve({ requestId: approveTarget.id, sportId: Number(selectedSportId) });
+                }
+              }}
+            >
+              {isApproving ? '처리 중...' : '승인'}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
