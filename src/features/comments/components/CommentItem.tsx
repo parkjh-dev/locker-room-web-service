@@ -4,6 +4,7 @@ import { MessageSquare, Pencil, Trash2, Bot } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { ReplyForm } from './ReplyForm';
 import { useAuthStore } from '@/features/auth/stores/authStore';
@@ -29,7 +30,11 @@ function formatDate(dateStr: string) {
   if (diffMin < 1) return '방금';
   if (diffMin < 60) return `${diffMin}분 전`;
   if (diffHour < 24) return `${diffHour}시간 전`;
-  return date.toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit' });
+  return date.toLocaleDateString('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
 }
 
 export function CommentItem({ comment, postId, isReply = false }: CommentItemProps) {
@@ -78,6 +83,14 @@ export function CommentItem({ comment, postId, isReply = false }: CommentItemPro
       <div className="py-3">
         {/* 헤더 */}
         <div className="flex items-center gap-2 text-sm">
+          <Avatar className="h-7 w-7">
+            {comment.author.profileImageUrl && (
+              <AvatarImage src={comment.author.profileImageUrl} alt={comment.author.nickname} />
+            )}
+            <AvatarFallback className="text-xs">
+              {comment.author.nickname?.charAt(0) || '?'}
+            </AvatarFallback>
+          </Avatar>
           <span className={`font-medium ${comment.author.nickname ? '' : 'text-muted-foreground'}`}>
             {comment.author.nickname || '탈퇴한 사용자'}
           </span>

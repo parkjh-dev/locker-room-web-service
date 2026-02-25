@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { Eye, Calendar, Flag, Pencil, Trash2, Bot, FileIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { LikeButton } from './LikeButton';
@@ -71,10 +72,20 @@ export function PostDetail({ post }: PostDetailProps) {
         </div>
         <h1 className="text-xl font-bold">{post.title}</h1>
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
-          <span
-            className={`font-medium ${post.author.nickname ? 'text-foreground' : 'text-muted-foreground'}`}
-          >
-            {post.author.nickname || '탈퇴한 사용자'}
+          <span className="flex items-center gap-1.5">
+            <Avatar className="h-6 w-6">
+              {post.author.profileImageUrl && (
+                <AvatarImage src={post.author.profileImageUrl} alt={post.author.nickname} />
+              )}
+              <AvatarFallback className="text-xs">
+                {post.author.nickname?.charAt(0) || '?'}
+              </AvatarFallback>
+            </Avatar>
+            <span
+              className={`font-medium ${post.author.nickname ? 'text-foreground' : 'text-muted-foreground'}`}
+            >
+              {post.author.nickname || '탈퇴한 사용자'}
+            </span>
           </span>
           <span className="flex items-center gap-1">
             <Calendar className="h-3.5 w-3.5" />

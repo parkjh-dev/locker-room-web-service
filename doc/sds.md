@@ -1518,3 +1518,4 @@ export default defineConfig({
 | 1.1 | 2026-02-23 | - | Phase 1 반영: 기술 스택 버전 고정 (Tailwind v3, Zod v4, shadcn CLI v2.3.0), 디렉토리 구조 보정 (index.css, lib/utils.ts), Tailwind config/CSS 변수를 실제 구현과 동기화 |
 | 1.2 | 2026-02-24 | - | Phase 3~5 반영: pages/ 디렉토리 추가, FullScreenLoader 추가, App.tsx 진입점 구조 명시, 레이아웃 디자인 기준(블라인드 스타일, max-w 1140px, 왼쪽 사이드바) 추가 |
 | 1.3 | 2026-02-25 | - | Phase 20 반영: 백엔드 API 일치 점검 결과 반영. CursorPageParams sort 값 camelCase 변경, AuthUser.userId→id, PostDetail author 객체화, FileInfo/AuthorInfo 타입 신설, postApi 예시 코드 실제 구현과 동기화 |
+| 1.4 | 2026-02-25 | - | AuthorInfo에 profileImageUrl 필드 추가, 댓글/게시글 프로필 아바타 UI 추가 (Avatar 컴포넌트), 댓글 날짜 포맷에 년도 포함 |

@@ -3,6 +3,7 @@ export interface AuthorInfo {
   id: number;
   nickname: string;
   teamName?: string;
+  profileImageUrl?: string | null;
 }
 
 /** 파일 정보 (백엔드 FileResponse 매칭) */

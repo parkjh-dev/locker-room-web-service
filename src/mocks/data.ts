@@ -170,7 +170,7 @@ export const postDetail: PostDetail = {
   id: 1,
   boardId: 1,
   boardName: '자유게시판',
-  author: { id: 10, nickname: '축구광팬', teamName: '전북 현대 모터스' },
+  author: { id: 10, nickname: '축구광팬', teamName: '전북 현대 모터스', profileImageUrl: null },
   title: '이번 시즌 전북 전력 분석',
   content: `안녕하세요, 이번 시즌 전북 현대 모터스의 전력을 분석해보려 합니다.
 
@@ -201,7 +201,7 @@ export const postDetail: PostDetail = {
 export const comments: Comment[] = [
   {
     id: 1,
-    author: { id: 11, nickname: '야구좋아', teamName: 'LG 트윈스' },
+    author: { id: 11, nickname: '야구좋아', teamName: 'LG 트윈스', profileImageUrl: null },
     content: '전북 올해 진짜 기대됩니다. 새 외국인 선수 영입이 신의 한 수인 것 같아요.',
     isAiGenerated: false,
     createdAt: '2026-02-24T15:00:00',
@@ -212,6 +212,7 @@ export const comments: Comment[] = [
           id: 10,
           nickname: '축구광팬',
           teamName: '전북 현대 모터스',
+          profileImageUrl: null,
         },
         content: '@야구좋아 감사합니다! 저도 그렇게 생각합니다. 특히 빌드업 능력이 출중하더라고요.',
         isAiGenerated: false,
@@ -222,7 +223,7 @@ export const comments: Comment[] = [
   },
   {
     id: 3,
-    author: { id: 12, nickname: '슬램덩크' },
+    author: { id: 12, nickname: '슬램덩크', profileImageUrl: null },
     content: '수비 보강이 잘 된 것 같네요. ACL 충분히 가능할 듯!',
     isAiGenerated: false,
     createdAt: '2026-02-24T16:20:00',
@@ -230,14 +231,14 @@ export const comments: Comment[] = [
   },
   {
     id: 4,
-    author: { id: 13, nickname: '배구매니아' },
+    author: { id: 13, nickname: '배구매니아', profileImageUrl: null },
     content: '전북 유스 시스템은 진짜 대한민국 최고인 것 같습니다. 매년 좋은 선수가 올라오네요.',
     isAiGenerated: false,
     createdAt: '2026-02-24T17:30:00',
     replies: [
       {
         id: 5,
-        author: { id: 14, nickname: '축구전문가' },
+        author: { id: 14, nickname: '축구전문가', profileImageUrl: null },
         content: '@배구매니아 맞아요. 특히 이번에 올라온 CB가 정말 기대됩니다.',
         isAiGenerated: false,
         createdAt: '2026-02-24T18:00:00',
