@@ -1196,6 +1196,34 @@ interface FileUploadProps {
 
 ---
 
+## 12-1. 댓글 멘션 설계
+
+### 12-1.1 ReplyForm 멘션 자동삽입
+
+`ReplyForm` 컴포넌트에 `replyToNickname?: string` prop을 추가하여 대댓글 작성 시 `@닉네임 ` 텍스트를 자동 프리필한다.
+
+```typescript
+interface ReplyFormProps {
+  onSubmit: (data: CommentFormData) => Promise<void>;
+  onCancel: () => void;
+  replyToNickname?: string;
+}
+```
+
+- `defaultValues.content`: `replyToNickname`이 있으면 `` `@${replyToNickname} ` ``, 없으면 빈 문자열
+- `placeholder`: `replyToNickname`이 있으면 `@닉네임님에게 답글`, 없으면 기본값
+- `@닉네임`은 content 문자열에 포함되는 순수 텍스트 방식 (백엔드 변경 없음)
+
+### 12-1.2 멘션 하이라이트 렌더링
+
+`CommentItem`에서 댓글 본문의 `@닉네임` 패턴을 파싱하여 시각적으로 구분한다.
+
+- **정규식**: `/@[가-힣a-zA-Z0-9]+/g` — 한글, 영문, 숫자로 구성된 닉네임 매칭
+- **스타일**: `text-primary font-medium` (프로젝트 Primary 컬러 + 중간 굵기)
+- `String.split()` + 캡처 그룹으로 텍스트/멘션을 분리하여 React 엘리먼트 배열로 렌더링
+
+---
+
 ## 13. 무한스크롤 설계
 
 ### 13.1 useInfiniteScroll 훅

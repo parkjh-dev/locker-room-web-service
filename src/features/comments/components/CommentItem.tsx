@@ -116,7 +116,17 @@ export function CommentItem({ comment, postId, isReply = false }: CommentItemPro
             </div>
           </div>
         ) : (
-          <p className="mt-1 whitespace-pre-wrap text-sm">{comment.content}</p>
+          <p className="mt-1 whitespace-pre-wrap text-sm">
+            {comment.content.split(/(@[가-힣a-zA-Z0-9]+)/g).map((part, i) =>
+              /^@[가-힣a-zA-Z0-9]+$/.test(part) ? (
+                <span key={i} className="text-primary font-medium">
+                  {part}
+                </span>
+              ) : (
+                part
+              ),
+            )}
+          </p>
         )}
 
         {/* 액션 */}
@@ -160,7 +170,11 @@ export function CommentItem({ comment, postId, isReply = false }: CommentItemPro
 
         {/* 인라인 답글 폼 */}
         {replyOpen && (
-          <ReplyForm onSubmit={handleReplySubmit} onCancel={() => setReplyOpen(false)} />
+          <ReplyForm
+            onSubmit={handleReplySubmit}
+            onCancel={() => setReplyOpen(false)}
+            replyToNickname={comment.author.nickname}
+          />
         )}
       </div>
 

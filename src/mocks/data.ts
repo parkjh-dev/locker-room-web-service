@@ -213,7 +213,7 @@ export const comments: Comment[] = [
           nickname: '축구광팬',
           teamName: '전북 현대 모터스',
         },
-        content: '감사합니다! 저도 그렇게 생각합니다. 특히 빌드업 능력이 출중하더라고요.',
+        content: '@야구좋아 감사합니다! 저도 그렇게 생각합니다. 특히 빌드업 능력이 출중하더라고요.',
         isAiGenerated: false,
         createdAt: '2026-02-24T15:10:00',
         replies: [],
@@ -238,7 +238,7 @@ export const comments: Comment[] = [
       {
         id: 5,
         author: { id: 14, nickname: '축구전문가' },
-        content: '맞아요. 특히 이번에 올라온 CB가 정말 기대됩니다.',
+        content: '@배구매니아 맞아요. 특히 이번에 올라온 CB가 정말 기대됩니다.',
         isAiGenerated: false,
         createdAt: '2026-02-24T18:00:00',
         replies: [],

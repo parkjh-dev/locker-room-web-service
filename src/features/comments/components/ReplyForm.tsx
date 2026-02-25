@@ -9,12 +9,13 @@ import { commentSchema, type CommentFormData } from '../schemas/commentSchema';
 interface ReplyFormProps {
   onSubmit: (data: CommentFormData) => Promise<void>;
   onCancel: () => void;
+  replyToNickname?: string;
 }
 
-export function ReplyForm({ onSubmit, onCancel }: ReplyFormProps) {
+export function ReplyForm({ onSubmit, onCancel, replyToNickname }: ReplyFormProps) {
   const form = useForm<CommentFormData>({
     resolver: zodResolver(commentSchema),
-    defaultValues: { content: '' },
+    defaultValues: { content: replyToNickname ? `@${replyToNickname} ` : '' },
   });
 
   const handleSubmit = async (data: CommentFormData) => {
@@ -31,7 +32,14 @@ export function ReplyForm({ onSubmit, onCancel }: ReplyFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Textarea placeholder="답글을 입력하세요" rows={2} maxLength={1000} {...field} />
+                <Textarea
+                  placeholder={
+                    replyToNickname ? `@${replyToNickname}님에게 답글` : '답글을 입력하세요'
+                  }
+                  rows={2}
+                  maxLength={1000}
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

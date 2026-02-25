@@ -162,7 +162,9 @@
 | PAGE-CMT-005 | 수정/삭제 | 작성자 본인만 |
 | PAGE-CMT-006 | 삭제된 댓글 | 대댓글이 있는 삭제 댓글은 "삭제된 댓글입니다." 표시 |
 | PAGE-CMT-007 | AI 댓글 | isAiGenerated=true인 댓글에 AI 배지 표시 |
-| PAGE-CMT-008 | API | GET /posts/{postId}/comments, POST /posts/{postId}/comments, POST /comments/{commentId}/replies, PUT /comments/{commentId}, DELETE /comments/{commentId} |
+| PAGE-CMT-008 | 멘션 자동삽입 | 대댓글 작성 시 `@닉네임 ` 텍스트를 입력 필드에 자동 프리필. content 문자열에 포함되는 순수 텍스트 방식 |
+| PAGE-CMT-009 | 멘션 하이라이트 | 댓글 본문의 `@닉네임` 패턴을 시각적으로 구분하여 표시 (text-primary, font-medium) |
+| PAGE-CMT-010 | API | GET /posts/{postId}/comments, POST /posts/{postId}/comments, POST /comments/{commentId}/replies, PUT /comments/{commentId}, DELETE /comments/{commentId} |
 
 ### 3.8 게시글 작성 (`/posts/new`)
 
