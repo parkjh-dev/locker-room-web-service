@@ -66,7 +66,7 @@ export default function SignupPage() {
       </div>
 
       {/* SSO */}
-      <SsoButtons />
+      <SsoButtons returnUrl={returnUrl || undefined} />
 
       {/* 구분선 */}
       <div className="relative my-6">

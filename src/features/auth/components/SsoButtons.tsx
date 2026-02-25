@@ -9,7 +9,7 @@ export function SsoButtons({ returnUrl }: SsoButtonsProps) {
   const { login } = useAuth();
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex w-full flex-col gap-3">
       {/* Google: 밝은 테마 — 흰색 배경, #747775 테두리, #1F1F1F 텍스트, 공식 컬러 G 로고 */}
       <Button
         type="button"
@@ -41,7 +41,7 @@ export function SsoButtons({ returnUrl }: SsoButtonsProps) {
       {/* Kakao: #FEE500 배경, 검정 심볼, rgba(0,0,0,0.85) 텍스트, 12px radius */}
       <Button
         type="button"
-        className="w-full rounded-xl border-0 bg-[#FEE500] text-[rgba(0,0,0,0.85)] hover:bg-[#FEE500]/90"
+        className="w-full border-0 bg-[#FEE500] text-[rgba(0,0,0,0.85)] hover:bg-[#FEE500]/90"
         onClick={() => login('kakao', returnUrl)}
       >
         <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24" fill="#000000">
