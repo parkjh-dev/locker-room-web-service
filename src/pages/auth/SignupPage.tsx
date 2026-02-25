@@ -60,7 +60,7 @@ export default function SignupPage() {
     <div className="mx-auto max-w-sm px-4 py-8">
       {/* 헤더 */}
       <div className="mb-8 flex flex-col items-center gap-2">
-        <img src="/logo.png" alt="Locker Room" className="h-16 w-16" />
+        <img src="/logo.png" alt="Locker Room" className="h-16 w-16" loading="lazy" />
         <h1 className="text-2xl font-bold">회원가입</h1>
         <p className="text-sm text-muted-foreground">Locker Room에 오신 것을 환영합니다</p>
       </div>

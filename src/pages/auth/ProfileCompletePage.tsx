@@ -49,7 +49,7 @@ export default function ProfileCompletePage() {
     <div className="mx-auto max-w-sm px-4 py-8">
       {/* 헤더 */}
       <div className="mb-8 flex flex-col items-center gap-2">
-        <img src="/logo.png" alt="Locker Room" className="h-16 w-16" />
+        <img src="/logo.png" alt="Locker Room" className="h-16 w-16" loading="lazy" />
         <h1 className="text-2xl font-bold">프로필 설정</h1>
         <p className="text-sm text-muted-foreground">닉네임과 응원팀을 설정해주세요</p>
       </div>

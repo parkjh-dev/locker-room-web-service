@@ -45,7 +45,7 @@ export function Header() {
 
         {/* 로고 */}
         <Link to="/" className="flex items-center gap-2 whitespace-nowrap">
-          <img src="/logo.png" alt="Locker Room" className="h-9 w-9" />
+          <img src="/logo.png" alt="Locker Room" className="h-9 w-9" loading="lazy" />
           <span className="hidden font-bold text-lg text-primary sm:inline">Locker Room</span>
         </Link>
 

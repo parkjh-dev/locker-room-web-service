@@ -274,10 +274,10 @@
 
 ## Phase 19. SRS/SDS 누락 보완 — 낮음 (코드 품질/컨벤션)
 
-- [ ] 19-1. 이미지 lazy loading 적용 (코드베이스 내 `<img>` 태그에 `loading="lazy"` 속성 추가) [PERF-FE-006]
-- [ ] 19-2. useIntersectionObserver 훅 분리 (`hooks/useIntersectionObserver.ts` 생성, useInfiniteScroll에서 분리하여 범용 IntersectionObserver 훅 제공) [SDS 2.1]
-- [ ] 19-3. Feature barrel export 구현 (각 `features/*/index.ts`에서 hooks, components, types re-export) [SDS 3.2]
-- [ ] 19-4. 탈퇴 사용자 표시 처리 (PostDetail, CommentItem에서 탈퇴 사용자 닉네임을 "탈퇴한 사용자"로 표시하는 프론트엔드 로직 추가 또는 백엔드 응답 필드 확인) [PAGE-POST-007]
+- [x] 19-1. 이미지 lazy loading 적용 (코드베이스 내 `<img>` 태그에 `loading="lazy"` 속성 추가) [PERF-FE-006]
+- [x] 19-2. useIntersectionObserver 훅 분리 (`hooks/useIntersectionObserver.ts` 생성, useInfiniteScroll에서 분리하여 범용 IntersectionObserver 훅 제공) [SDS 2.1]
+- [x] 19-3. Feature barrel export 구현 (각 `features/*/index.ts`에서 hooks, components, types re-export) [SDS 3.2]
+- [x] 19-4. 탈퇴 사용자 표시 처리 (PostDetail, CommentItem에서 탈퇴 사용자 닉네임을 "탈퇴한 사용자"로 표시하는 프론트엔드 로직 추가) [PAGE-POST-007]
 
 ---
 

@@ -90,7 +90,9 @@ export function CommentItem({ comment, postId, isReply = false }: CommentItemPro
       <div className="py-3">
         {/* 헤더 */}
         <div className="flex items-center gap-2 text-sm">
-          <span className="font-medium">{comment.nickname}</span>
+          <span className={`font-medium ${comment.nickname ? '' : 'text-muted-foreground'}`}>
+            {comment.nickname || '탈퇴한 사용자'}
+          </span>
           {comment.isAiGenerated && (
             <Badge variant="outline" className="gap-0.5 text-xs">
               <Bot className="h-3 w-3" />

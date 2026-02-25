@@ -71,7 +71,9 @@ export function PostDetail({ post }: PostDetailProps) {
         </div>
         <h1 className="text-xl font-bold">{post.title}</h1>
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
-          <span className="font-medium text-foreground">{post.nickname}</span>
+          <span className={`font-medium ${post.nickname ? 'text-foreground' : 'text-muted-foreground'}`}>
+            {post.nickname || '탈퇴한 사용자'}
+          </span>
           <span className="flex items-center gap-1">
             <Calendar className="h-3.5 w-3.5" />
             {formatDate(post.createdAt)}

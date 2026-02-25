@@ -86,7 +86,7 @@ export function Sidebar() {
     <Sheet open={isSidebarOpen} onOpenChange={setSidebarOpen}>
       <SheetContent side="left" className="w-[280px] p-0">
         <SheetTitle className="flex items-center gap-2 px-4 pt-6 text-lg font-bold text-primary">
-          <img src="/logo.png" alt="Locker Room" className="h-8 w-8" />
+          <img src="/logo.png" alt="Locker Room" className="h-8 w-8" loading="lazy" />
           Locker Room
         </SheetTitle>
         <SidebarContent />

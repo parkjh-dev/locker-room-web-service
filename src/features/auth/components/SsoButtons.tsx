@@ -15,6 +15,7 @@ export function SsoButtons({ returnUrl }: SsoButtonsProps) {
           src="https://www.svgrepo.com/show/475656/google-color.svg"
           alt=""
           className="mr-2 h-5 w-5"
+          loading="lazy"
         />
         Google로 계속하기
       </Button>

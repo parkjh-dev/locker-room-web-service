@@ -13,7 +13,7 @@ export default function LoginPage() {
     <div className="mx-auto flex min-h-[60vh] max-w-sm flex-col items-center justify-center px-4">
       {/* 로고 + 타이틀 */}
       <div className="mb-8 flex flex-col items-center gap-2">
-        <img src="/logo.png" alt="Locker Room" className="h-16 w-16" />
+        <img src="/logo.png" alt="Locker Room" className="h-16 w-16" loading="lazy" />
         <h1 className="text-2xl font-bold">Locker Room</h1>
         <p className="text-sm text-muted-foreground">스포츠 팬 커뮤니티</p>
       </div>

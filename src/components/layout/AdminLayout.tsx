@@ -23,7 +23,7 @@ function AdminHeader() {
     <header className="sticky top-0 z-40 border-b bg-background">
       <div className="flex h-16 items-center gap-4 px-6">
         <Link to="/admin" className="flex items-center gap-2 font-bold text-lg">
-          <img src="/logo.png" alt="Locker Room" className="h-8 w-8" />
+          <img src="/logo.png" alt="Locker Room" className="h-8 w-8" loading="lazy" />
           <span className="text-primary">Admin</span>
         </Link>
         <div className="flex-1" />

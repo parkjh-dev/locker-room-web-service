@@ -51,7 +51,7 @@ export function MyProfile({ profile }: MyProfileProps) {
             {profile.teams.map((team) => (
               <Badge key={`${team.sportId}-${team.teamId}`} variant="secondary" className="gap-1.5">
                 {team.teamLogo && (
-                  <img src={team.teamLogo} alt="" className="h-4 w-4 rounded-full" />
+                  <img src={team.teamLogo} alt="" className="h-4 w-4 rounded-full" loading="lazy" />
                 )}
                 {team.sportName} - {team.teamName}
               </Badge>
