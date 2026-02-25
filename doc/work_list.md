@@ -327,19 +327,68 @@
 - 관리자: UserManagement, InquiryManagement, RequestManagement, ReportManagement, SuspendModal, NoticeManagement, TeamSelector
 - App.tsx (DevSimulator userId → id)
 
-### 백엔드 추가 예정 사항 (별도 작업)
+### 백엔드 추가 예정 사항 (리소스 서비스 Phase 12에서 처리)
 
-> 아래 항목은 프론트엔드에서 사용 중이나 현재 백엔드에 미구현된 사항. 백엔드에 추가 예정.
+> 아래 항목은 프론트엔드에서 사용 중이나 현재 백엔드에 미구현된 사항.
+> → `locker-room-resource-service/doc/work_list.md` Phase 12 참조.
 
-| 항목 | 프론트엔드 엔드포인트 | 현재 상태 |
-|------|----------------------|----------|
-| 관리자 대시보드 | `GET /admin/dashboard` | 백엔드 미구현 |
-| 관리자 공지 목록 | `GET /admin/notices` | 백엔드 미구현 |
-| 인기 게시글 | `GET /posts/popular` | 백엔드 미구현 |
-| 회원 정지 해제 | `PUT /admin/users/{id}/unsuspend` | 백엔드 미구현 |
-| 댓글 Cursor 페이지네이션 | `GET /posts/{postId}/comments` | 백엔드 List 반환 → Cursor 페이지네이션 추가 예정 |
-| AuthorInfo.teamName | PostDetail/Comment author | 백엔드 AuthorInfo에 teamName 필드 추가 예정 |
-| UserTeamInfo.teamLogoUrl | UserProfile teams | 백엔드 UserTeamInfo에 로고 URL 추가 예정 |
+| 항목 | 프론트엔드 엔드포인트 | 현재 상태 | 리소스 서비스 작업 |
+|------|----------------------|----------|------------------|
+| 관리자 대시보드 | `GET /admin/dashboard` | 백엔드 미구현 | Phase 12.1 |
+| 관리자 공지 목록 | `GET /admin/notices` | 백엔드 미구현 | Phase 12.1 |
+| 인기 게시글 | `GET /posts/popular` | 백엔드 미구현 | Phase 12.1 |
+| 회원 정지 해제 | `PUT /admin/users/{id}/unsuspend` | 백엔드 미구현 | Phase 12.1 |
+| AuthorInfo.teamName | PostDetail/Comment author | 백엔드 AuthorInfo에 teamName 필드 추가 예정 | Phase 12.2 |
+| SuspendRequest 날짜 형식 | `PUT /admin/users/{id}/suspend` | LocalDateTime vs ISO 8601 호환 | Phase 12.3 |
+| UserTeamInfo.teamLogoUrl | UserProfile teams | 백엔드 UserTeamInfo에 로고 URL 추가 예정 | 미배정 |
+
+---
+
+## Phase 21. 리소스 서비스 정합성 보완
+
+> 점검 일시: 2026-02-25
+> 대상: `locker-room-resource-service`와의 타입/DTO 불일치 해소
+> 참조: 리소스 서비스 `work_list.md` Phase 12와 병행 작업
+
+### 21.1 [Major] Enum 타입 누락값 추가
+
+- [ ] 21-1. `BoardType`에 `NOTICE` 추가 (`features/boards/types/board.ts`)
+  - 현재: `'COMMON' | 'TEAM' | 'QNA' | 'NEWS'` (4개)
+  - 수정: `'COMMON' | 'TEAM' | 'QNA' | 'NOTICE' | 'NEWS'` (5개)
+  - 백엔드 `BoardType` enum: `TEAM, COMMON, QNA, NOTICE, NEWS`
+  - `NOTICE` 타입 게시판이 내려올 경우 타입 안전성 깨짐 방지
+- [ ] 21-2. `NotificationType`에 `REPORT_PROCESSED` 추가 (`features/notifications/types/notification.ts`)
+  - 현재: `'COMMENT' | 'REPLY' | 'NOTICE' | 'INQUIRY_REPLY'` (4개)
+  - 수정: `'COMMENT' | 'REPLY' | 'NOTICE' | 'INQUIRY_REPLY' | 'REPORT_PROCESSED'` (5개)
+  - 백엔드 `NotificationType` enum: `COMMENT, REPLY, NOTICE, INQUIRY_REPLY, REPORT_PROCESSED`
+  - 신고 처리 완료 알림 수신 시 타입 에러 방지
+  - `NotificationItem`, `NotificationDropdown` 등에서 `REPORT_PROCESSED` 아이콘/라벨 처리 추가
+
+### 21.2 [Major] 요청 DTO 누락 필드 추가
+
+- [ ] 21-3. `ProcessReportRequest`에 `suspensionDays` 필드 추가 (`features/admin/types/admin.ts`)
+  - 현재: `{ status: 'APPROVED' | 'REJECTED'; action?: string }`
+  - 수정: `{ status: 'APPROVED' | 'REJECTED'; action?: string; suspensionDays?: number }`
+  - 백엔드 `ReportProcessRequest`: `(ReportStatus status, String action, Integer suspensionDays)`
+  - `ReportManagement.tsx`에서 `SUSPEND_USER` 액션 시 정지 기간 입력 UI 추가
+- [ ] 21-4. `ProcessRequestRequest`에 `sportId` 필드 추가 (`features/admin/types/admin.ts`)
+  - 현재: `{ status: 'APPROVED' | 'REJECTED'; rejectReason?: string }`
+  - 수정: `{ status: 'APPROVED' | 'REJECTED'; rejectReason?: string; sportId?: number }`
+  - 백엔드 `RequestProcessRequest`: `(RequestStatus status, String rejectReason, Long sportId)`
+  - `RequestManagement.tsx`에서 SPORT 타입 요청 승인 시 sportId 선택 UI 추가 (또는 자동 생성으로 위임)
+
+### 21.3 [Minor] 응답 타입 보완
+
+- [ ] 21-5. `markAllAsRead` 응답 타입 수정 (`features/notifications/api/notificationApi.ts`)
+  - 현재: `api.put<ApiResponse<void>>('/notifications/read-all')`
+  - 수정: `api.put<ApiResponse<{ updatedCount: number }>>('/notifications/read-all')`
+  - 백엔드 `MarkAllReadResponse`: `(int updatedCount)`
+  - 읽음 처리 건수를 Toast 메시지 등에 활용 가능
+- [ ] 21-6. `SuspendModal` 날짜 형식 호환성 수정 (`features/admin/components/SuspendModal.tsx`)
+  - 현재: `until.toISOString()` → `"2026-03-04T15:30:00.000Z"` (UTC, `Z` suffix)
+  - 수정: `until.toISOString().replace('Z', '')` 또는 `toLocaleDateString` 계열로 `LocalDateTime` 호환 형식 생성
+  - 백엔드 `SuspendRequest.suspendedUntil`: `LocalDateTime` (타임존 없음)
+  - `Z` suffix가 Jackson `LocalDateTime` 디시리얼라이저에서 파싱 실패 가능
 
 ---
 
@@ -367,4 +416,5 @@
 | 18 | SRS/SDS 누락 보완 — 중간 | 6 |
 | 19 | SRS/SDS 누락 보완 — 낮음 | 4 |
 | 20 | API 백엔드 서버 일치 여부 점검 | 7 |
-| **합계** | | **187** |
+| 21 | 리소스 서비스 정합성 보완 | 6 |
+| **합계** | | **193** |
