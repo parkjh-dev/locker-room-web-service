@@ -12,15 +12,24 @@ function DevSimulator() {
   const { isAuthenticated, user, setTokens, setUser, clear } = useAuthStore();
 
   const loginAsUser = () => {
-    setTokens('dev-token', 'dev-refresh');
-    setUser({ id: 1, email: 'user@test.com', nickname: '테스트유저', role: 'USER', teams: [] });
+    setTokens('dev-user-token', 'dev-refresh');
+    setUser({
+      id: 10,
+      email: 'soccer_fan@example.com',
+      nickname: '축구광팬',
+      role: 'USER',
+      teams: [
+        { teamId: 101, teamName: '전북 현대 모터스', sportId: 1, sportName: '축구' },
+        { teamId: 201, teamName: 'LG 트윈스', sportId: 2, sportName: '야구' },
+      ],
+    });
   };
 
   const loginAsAdmin = () => {
-    setTokens('dev-token', 'dev-refresh');
+    setTokens('dev-admin-token', 'dev-refresh');
     setUser({
-      id: 99,
-      email: 'admin@test.com',
+      id: 1,
+      email: 'admin@lockerroom.kr',
       nickname: '관리자',
       role: 'ADMIN',
       teams: [],

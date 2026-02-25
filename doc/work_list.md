@@ -392,6 +392,29 @@
 
 ---
 
+## Phase 22. MSW Mock 환경 구축 & 롤백
+
+> MSW(Mock Service Worker) v2를 이용한 프론트엔드 단독 개발/점검 환경
+> 백엔드 없이 UI 레이아웃을 면밀히 점검하기 위한 임시 환경
+
+### 22.1 MSW 구축
+
+- [x] 22-1. MSW v2 설치 및 서비스 워커 초기화 (`yarn add -D msw`, `npx msw init public/`)
+- [x] 22-2. Mock 데이터 정의 (`src/mocks/data.ts` — 종목/팀/게시판/게시글/댓글/공지/알림/문의/요청/관리자 데이터)
+- [x] 22-3. API 핸들러 정의 (`src/mocks/handlers.ts` — ~40개 엔드포인트 핸들러)
+- [x] 22-4. MSW 워커 설정 (`src/mocks/browser.ts`)
+- [x] 22-5. main.tsx에 MSW 조건부 시작 (development 모드에서만 동적 import)
+
+### 22.2 MSW 롤백 (UI 점검 완료 후)
+
+- [ ] 22-6. `src/mocks/` 디렉토리 삭제
+- [ ] 22-7. `src/main.tsx` 원복 (enableMocking 제거)
+- [ ] 22-8. `public/mockServiceWorker.js` 삭제
+- [ ] 22-9. `yarn remove msw` 및 `package.json` msw 설정 제거
+- [ ] 22-10. 빌드 검증
+
+---
+
 ## 요약
 
 | Phase | 영역 | 작업 수 |
@@ -417,4 +440,5 @@
 | 19 | SRS/SDS 누락 보완 — 낮음 | 4 |
 | 20 | API 백엔드 서버 일치 여부 점검 | 7 |
 | 21 | 리소스 서비스 정합성 보완 | 6 |
-| **합계** | | **193** |
+| 22 | MSW Mock 환경 구축 & 롤백 | 10 |
+| **합계** | | **203** |
