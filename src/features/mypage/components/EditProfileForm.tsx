@@ -4,6 +4,8 @@ import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import {
   Form,
@@ -13,7 +15,6 @@ import {
   FormControl,
   FormMessage,
 } from '@/components/ui/form';
-import { TeamSelector } from '@/components/common/TeamSelector';
 import { useUpdateProfile } from '../hooks/useUpdateProfile';
 import { userApi } from '../api/userApi';
 import {
@@ -34,7 +35,6 @@ function ProfileSection({ profile }: EditProfileFormProps) {
     resolver: zodResolver(editProfileSchema),
     defaultValues: {
       nickname: profile.nickname,
-      teams: profile.teams.map((t) => ({ sportId: t.sportId, teamId: t.teamId })),
     },
   });
 
@@ -69,23 +69,17 @@ function ProfileSection({ profile }: EditProfileFormProps) {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="teams"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>응원팀</FormLabel>
-              <FormControl>
-                <TeamSelector
-                  value={field.value}
-                  onChange={field.onChange}
-                  error={form.formState.errors.teams?.message}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="space-y-2">
+          <Label>응원팀</Label>
+          <div className="flex flex-wrap gap-2">
+            {profile.teams.map((team) => (
+              <Badge key={`${team.sportId}-${team.teamId}`} variant="secondary">
+                {team.sportName} - {team.teamName}
+              </Badge>
+            ))}
+          </div>
+          <p className="text-xs text-muted-foreground">응원팀은 변경할 수 없습니다.</p>
+        </div>
 
         <Button type="submit" disabled={form.formState.isSubmitting}>
           {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

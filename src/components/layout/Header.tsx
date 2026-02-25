@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Menu, Search, User, LogOut, Settings, FileText, MessageSquare } from 'lucide-react';
 import { NotificationDropdown } from '@/features/notifications/components/NotificationDropdown';
 import { Button } from '@/components/ui/button';
@@ -17,6 +18,19 @@ import { useUiStore } from '@/stores/uiStore';
 export function Header() {
   const { isAuthenticated, user } = useAuthStore();
   const { toggleSidebar } = useUiStore();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [searchKeyword, setSearchKeyword] = useState('');
+
+  const handleSearchSubmit = () => {
+    if (!searchKeyword.trim()) return;
+    const boardMatch = location.pathname.match(/^\/boards\/(\d+)/);
+    if (boardMatch) {
+      navigate(`/boards/${boardMatch[1]}?keyword=${encodeURIComponent(searchKeyword.trim())}`);
+    } else {
+      navigate(`/boards?keyword=${encodeURIComponent(searchKeyword.trim())}`);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background">
@@ -40,7 +54,13 @@ export function Header() {
           <div className="hidden flex-1 justify-center sm:flex">
             <div className="relative w-full max-w-md">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input placeholder="검색어를 입력하세요" className="pl-9" />
+              <Input
+                placeholder="검색어를 입력하세요"
+                className="pl-9"
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleSearchSubmit(); }}
+              />
             </div>
           </div>
         )}
@@ -53,7 +73,7 @@ export function Header() {
           {isAuthenticated ? (
             <>
               {/* 모바일 검색 버튼 */}
-              <Button variant="ghost" size="icon" className="sm:hidden">
+              <Button variant="ghost" size="icon" className="sm:hidden" onClick={() => navigate('/boards')}>
                 <Search className="h-5 w-5" />
                 <span className="sr-only">검색</span>
               </Button>

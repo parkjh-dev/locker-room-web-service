@@ -15,6 +15,7 @@ type SearchType = NonNullable<SearchParams['searchType']>;
 
 interface PostSearchBarProps {
   onSearch: (keyword: string, searchType: SearchType) => void;
+  initialKeyword?: string;
 }
 
 const SEARCH_TYPES: { value: SearchType; label: string }[] = [
@@ -24,8 +25,8 @@ const SEARCH_TYPES: { value: SearchType; label: string }[] = [
   { value: 'NICKNAME', label: '작성자' },
 ];
 
-export function PostSearchBar({ onSearch }: PostSearchBarProps) {
-  const [keyword, setKeyword] = useState('');
+export function PostSearchBar({ onSearch, initialKeyword }: PostSearchBarProps) {
+  const [keyword, setKeyword] = useState(initialKeyword || '');
   const [searchType, setSearchType] = useState<SearchType>('TITLE_CONTENT');
   const debouncedKeyword = useDebounce(keyword);
 

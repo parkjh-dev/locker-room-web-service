@@ -13,7 +13,6 @@ export interface UserProfile {
 /** 프로필 수정 요청 */
 export interface UpdateProfileRequest {
   nickname: string;
-  teams: { sportId: number; teamId: number }[];
 }
 
 /** 비밀번호 변경 요청 */

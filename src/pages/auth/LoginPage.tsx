@@ -19,7 +19,7 @@ export default function LoginPage() {
       </div>
 
       {/* Keycloak 기본 로그인 */}
-      <Button className="mb-4 w-full" onClick={() => login()}>
+      <Button className="mb-4 w-full" onClick={() => login(undefined, returnUrl || undefined)}>
         이메일로 로그인
       </Button>
 
@@ -32,7 +32,7 @@ export default function LoginPage() {
       </div>
 
       {/* SSO 버튼 */}
-      <SsoButtons />
+      <SsoButtons returnUrl={returnUrl || undefined} />
 
       {/* 하단 링크 */}
       <div className="mt-6 flex flex-col items-center gap-2 text-sm">

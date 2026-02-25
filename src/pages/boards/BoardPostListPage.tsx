@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { PenSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -20,9 +20,11 @@ type SearchType = NonNullable<SearchParams['searchType']>;
 
 export default function BoardPostListPage() {
   const { boardId } = useParams<{ boardId: string }>();
+  const [searchParams] = useSearchParams();
+  const urlKeyword = searchParams.get('keyword') || '';
   const { isAuthenticated } = useAuthStore();
   const [sort, setSort] = useState<Sort>('created_at');
-  const [keyword, setKeyword] = useState('');
+  const [keyword, setKeyword] = useState(urlKeyword);
   const [searchType, setSearchType] = useState<SearchType>('TITLE_CONTENT');
 
   const bid = Number(boardId);
@@ -56,7 +58,7 @@ export default function BoardPostListPage() {
       {/* 검색 + 정렬 */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="flex-1">
-          <PostSearchBar onSearch={handleSearch} />
+          <PostSearchBar onSearch={handleSearch} initialKeyword={urlKeyword} />
         </div>
         <Select value={sort} onValueChange={(v: Sort) => setSort(v)}>
           <SelectTrigger className="w-[120px]">

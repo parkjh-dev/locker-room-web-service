@@ -11,7 +11,7 @@ export default function PostEditPage() {
   const pid = Number(postId);
   const navigate = useNavigate();
   const { data: post, isLoading } = usePostDetail(pid);
-  const { mutateAsync } = useUpdatePost(pid);
+  const { mutateAsync } = useUpdatePost(pid, post?.boardId);
 
   if (isLoading) {
     return <SkeletonLoader type="post-detail" />;

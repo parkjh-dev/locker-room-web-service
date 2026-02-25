@@ -9,6 +9,7 @@ import { ReplyForm } from './ReplyForm';
 import { useAuthStore } from '@/features/auth/stores/authStore';
 import { commentApi } from '../api/commentApi';
 import { useCreateReply } from '../hooks/useCreateReply';
+import { useDeleteComment } from '../hooks/useDeleteComment';
 import type { Comment } from '../types/comment';
 import type { CommentFormData } from '../schemas/commentSchema';
 
@@ -37,10 +38,10 @@ export function CommentItem({ comment, postId, isReply = false }: CommentItemPro
   const [editing, setEditing] = useState(false);
   const [editContent, setEditContent] = useState(comment.content);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deleting, setDeleting] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const { mutateAsync: createReply } = useCreateReply(postId);
+  const { mutateAsync: deleteComment, isPending: deleting } = useDeleteComment(postId);
   const isOwner = user?.userId === comment.userId;
 
   const handleReplySubmit = async (data: CommentFormData) => {
@@ -63,15 +64,12 @@ export function CommentItem({ comment, postId, isReply = false }: CommentItemPro
   };
 
   const handleDelete = async () => {
-    setDeleting(true);
     try {
-      await commentApi.deleteComment(comment.id);
+      await deleteComment(comment.id);
       toast.success('댓글이 삭제되었습니다.');
       setDeleteOpen(false);
     } catch {
       // axios 인터셉터에서 에러 처리
-    } finally {
-      setDeleting(false);
     }
   };
 

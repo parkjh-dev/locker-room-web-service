@@ -252,6 +252,35 @@
 
 ---
 
+## Phase 17. SRS/SDS 누락 보완 — 높음 (기능적 결함)
+
+- [x] 17-1. 헤더 검색바 기능 구현 (`components/layout/Header.tsx` - 검색 Input에 onChange/onSubmit 핸들러 연결, 검색 결과 페이지 라우트 추가 또는 게시판 내 검색으로 연동) [UI-LAYOUT-005]
+- [x] 17-2. 응원팀 수정 불가 처리 (`features/mypage/components/EditProfileForm.tsx` - TeamSelector를 읽기 전용 표시로 변경, 수정 폼에서 팀 변경 차단) [PAGE-MYEDIT-003]
+- [x] 17-3. 로그인 returnUrl 보존 (`features/auth/hooks/useAuth.ts` - login() 함수에 returnUrl 파라미터 추가, Keycloak redirectUri에 returnUrl 쿼리 포함 → OAuthCallbackPage에서 복원) [AUTH-GD-001]
+- [x] 17-4. 게시글/댓글 삭제 캐시 무효화 (게시글 삭제: `useDeletePost` 훅 생성 → `['posts', boardId]`, `['users', 'me', 'posts']` 무효화 / 댓글 삭제: `useDeleteComment` 훅 생성 → `['comments', postId]`, `['posts', postId]` 무효화 / 게시글 수정: boardId 목록 추가 무효화) [SDS 9.4]
+
+---
+
+## Phase 18. SRS/SDS 누락 보완 — 중간 (사양 미충족)
+
+- [ ] 18-1. 탈퇴 사유 입력 필드 추가 (`features/mypage/components/WithdrawForm.tsx` + `schemas/profileSchema.ts` - 선택적 reason Textarea 추가) [PAGE-WITHDRAW-002]
+- [ ] 18-2. 정지 안내 페이지 상세 표시 (`pages/errors/SuspendedPage.tsx` - 정지 사유, 해제일 표시. axios 인터셉터에서 403 USER_SUSPENDED 응답 데이터를 쿼리 파라미터 또는 store로 전달) [AUTH-GD-004]
+- [ ] 18-3. 서버 400 필드 에러 폼 매핑 확대 (PostForm, InquiryForm, RequestForm, EditProfileForm 등 주요 폼에서 서버 400 응답의 field error를 `form.setError()`로 매핑) [API-ERR-001, API-VALID-003]
+- [ ] 18-4. Axios 인터셉터 HTTP 상태코드별 분기 보완 (403 비정지 → "접근 권한이 없습니다" Toast, 409 → 에러 코드별 메시지, 429 → Rate limit Toast, 500 → 서버 오류 Toast 명시적 분기) [API-ERR-004, API-ERR-006, API-ERR-007, API-ERR-008]
+- [ ] 18-5. FileUpload 파일 타입/크기 제한 보완 (`components/common/FileUpload.tsx` - `text/plain` 추가, 일반 파일 20MB / 이미지 10MB 조건부 크기 검증) [SDS 12]
+- [ ] 18-6. 관리자 파괴적 액션 확인 다이얼로그 추가 (`features/admin/components/ReportManagement.tsx` - DELETE_POST, SUSPEND_USER 액션에 ConfirmDialog 적용) [UI-UX-003]
+
+---
+
+## Phase 19. SRS/SDS 누락 보완 — 낮음 (코드 품질/컨벤션)
+
+- [ ] 19-1. 이미지 lazy loading 적용 (코드베이스 내 `<img>` 태그에 `loading="lazy"` 속성 추가) [PERF-FE-006]
+- [ ] 19-2. useIntersectionObserver 훅 분리 (`hooks/useIntersectionObserver.ts` 생성, useInfiniteScroll에서 분리하여 범용 IntersectionObserver 훅 제공) [SDS 2.1]
+- [ ] 19-3. Feature barrel export 구현 (각 `features/*/index.ts`에서 hooks, components, types re-export) [SDS 3.2]
+- [ ] 19-4. 탈퇴 사용자 표시 처리 (PostDetail, CommentItem에서 탈퇴 사용자 닉네임을 "탈퇴한 사용자"로 표시하는 프론트엔드 로직 추가 또는 백엔드 응답 필드 확인) [PAGE-POST-007]
+
+---
+
 ## 요약
 
 | Phase | 영역 | 작업 수 |
@@ -272,4 +301,7 @@
 | 14 | 관리자 | 17 |
 | 15 | 홈페이지 | 1 |
 | 16 | 마무리 & 품질 | 6 |
-| **합계** | | **166** |
+| 17 | SRS/SDS 누락 보완 — 높음 | 4 |
+| 18 | SRS/SDS 누락 보완 — 중간 | 6 |
+| 19 | SRS/SDS 누락 보완 — 낮음 | 4 |
+| **합계** | | **180** |

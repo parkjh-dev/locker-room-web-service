@@ -9,7 +9,7 @@ import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { LikeButton } from './LikeButton';
 import { ReportModal } from './ReportModal';
 import { useAuthStore } from '@/features/auth/stores/authStore';
-import { postApi } from '../api/postApi';
+import { useDeletePost } from '../hooks/useDeletePost';
 import type { PostDetail as PostDetailType } from '../types/post';
 
 interface PostDetailProps {
@@ -37,20 +37,17 @@ export function PostDetail({ post }: PostDetailProps) {
   const { user } = useAuthStore();
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
-  const [deleting, setDeleting] = useState(false);
+  const { mutateAsync: deletePost, isPending: deleting } = useDeletePost(post.id, post.boardId);
 
   const isOwner = user?.userId === post.userId;
 
   const handleDelete = async () => {
-    setDeleting(true);
     try {
-      await postApi.delete(post.id);
+      await deletePost();
       toast.success('게시글이 삭제되었습니다.');
       navigate(`/boards/${post.boardId}`, { replace: true });
     } catch {
       // axios 인터셉터에서 에러 처리
-    } finally {
-      setDeleting(false);
     }
   };
 
