@@ -15,6 +15,7 @@ import {
   FormControl,
   FormMessage,
 } from '@/components/ui/form';
+import { applyFieldErrors } from '@/lib/formError';
 import { useUpdateProfile } from '../hooks/useUpdateProfile';
 import { userApi } from '../api/userApi';
 import {
@@ -46,6 +47,8 @@ function ProfileSection({ profile }: EditProfileFormProps) {
       const err = error as { response?: { data?: { code?: string } } };
       if (err.response?.data?.code === 'USER_NICKNAME_DUPLICATED') {
         form.setError('nickname', { message: '이미 사용 중인 닉네임입니다.' });
+      } else {
+        applyFieldErrors(error, form.setError);
       }
     }
   };
@@ -108,6 +111,8 @@ function PasswordSection() {
       const err = error as { response?: { data?: { code?: string } } };
       if (err.response?.data?.code === 'USER_PASSWORD_MISMATCH') {
         form.setError('currentPassword', { message: '현재 비밀번호가 일치하지 않습니다.' });
+      } else {
+        applyFieldErrors(error, form.setError);
       }
     }
   };

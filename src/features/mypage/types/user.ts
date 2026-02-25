@@ -24,6 +24,7 @@ export interface ChangePasswordRequest {
 /** 회원 탈퇴 요청 */
 export interface WithdrawRequest {
   password: string;
+  reason?: string;
 }
 
 /** 내가 쓴 댓글 아이템 */

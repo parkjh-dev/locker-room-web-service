@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Form,
   FormField,
@@ -22,7 +23,7 @@ export function WithdrawForm() {
 
   const form = useForm<WithdrawFormData>({
     resolver: zodResolver(withdrawSchema),
-    defaultValues: { password: '' },
+    defaultValues: { password: '', reason: '' },
   });
 
   const onSubmit = () => {
@@ -31,7 +32,11 @@ export function WithdrawForm() {
 
   const handleConfirm = async () => {
     try {
-      await mutateAsync({ password: form.getValues('password') });
+      const reason = form.getValues('reason');
+      await mutateAsync({
+        password: form.getValues('password'),
+        ...(reason && { reason }),
+      });
     } catch (error: unknown) {
       setConfirmOpen(false);
       const err = error as { response?: { data?: { code?: string } } };
@@ -50,6 +55,25 @@ export function WithdrawForm() {
               회원 탈퇴 시 작성한 게시글과 댓글은 삭제되지 않으며, 탈퇴 후 복구할 수 없습니다.
             </p>
           </div>
+
+          <FormField
+            control={form.control}
+            name="reason"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>탈퇴 사유 (선택)</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="탈퇴 사유를 알려주시면 서비스 개선에 참고하겠습니다."
+                    rows={3}
+                    maxLength={500}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <FormField
             control={form.control}

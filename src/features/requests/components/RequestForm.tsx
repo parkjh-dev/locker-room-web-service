@@ -21,6 +21,7 @@ import {
   FormControl,
   FormMessage,
 } from '@/components/ui/form';
+import { applyFieldErrors } from '@/lib/formError';
 import { useCreateRequest } from '../hooks/useCreateRequest';
 import { requestSchema, type RequestFormData } from '../schemas/requestSchema';
 
@@ -43,8 +44,8 @@ export function RequestForm() {
       await mutateAsync(data);
       toast.success('요청이 등록되었습니다.');
       navigate('/requests');
-    } catch {
-      // axios 인터셉터에서 에러 토스트 처리
+    } catch (error) {
+      applyFieldErrors(error, form.setError);
     }
   };
 

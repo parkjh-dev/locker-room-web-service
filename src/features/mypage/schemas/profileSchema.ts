@@ -29,6 +29,7 @@ export type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
 
 export const withdrawSchema = z.object({
   password: z.string().min(1, '비밀번호를 입력해주세요.'),
+  reason: z.string().max(500, '탈퇴 사유는 500자 이하여야 합니다.').optional(),
 });
 
 export type WithdrawFormData = z.infer<typeof withdrawSchema>;

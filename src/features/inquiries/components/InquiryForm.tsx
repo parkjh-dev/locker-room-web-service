@@ -23,6 +23,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { FileUpload } from '@/components/common/FileUpload';
+import { applyFieldErrors } from '@/lib/formError';
 import { useCreateInquiry } from '../hooks/useCreateInquiry';
 import { inquirySchema, type InquiryFormData } from '../schemas/inquirySchema';
 
@@ -57,8 +58,8 @@ export function InquiryForm() {
       });
       toast.success('문의가 등록되었습니다.');
       navigate('/inquiries');
-    } catch {
-      // axios 인터셉터에서 에러 토스트 처리
+    } catch (error) {
+      applyFieldErrors(error, form.setError);
     }
   };
 

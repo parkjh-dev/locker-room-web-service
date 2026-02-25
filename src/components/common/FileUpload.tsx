@@ -5,9 +5,11 @@ import { Button } from '@/components/ui/button';
 import api from '@/lib/axios';
 import type { ApiResponse } from '@/types/api';
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
 const MAX_FILE_COUNT = 5;
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'];
+const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+const ALLOWED_TYPES = [...IMAGE_TYPES, 'application/pdf', 'text/plain'];
 
 interface UploadedFile {
   id: number;
@@ -38,12 +40,15 @@ export function FileUpload({ value, onChange, maxCount = MAX_FILE_COUNT }: FileU
 
     // 파일별 검증
     for (const file of files) {
-      if (file.size > MAX_FILE_SIZE) {
-        toast.error(`${file.name}: 파일 크기는 10MB 이하여야 합니다.`);
-        return;
-      }
       if (!ALLOWED_TYPES.includes(file.type)) {
         toast.error(`${file.name}: 허용되지 않은 파일 형식입니다.`);
+        return;
+      }
+      const isImage = IMAGE_TYPES.includes(file.type);
+      const sizeLimit = isImage ? MAX_IMAGE_SIZE : MAX_FILE_SIZE;
+      const sizeLimitLabel = isImage ? '10MB' : '20MB';
+      if (file.size > sizeLimit) {
+        toast.error(`${file.name}: 파일 크기는 ${sizeLimitLabel} 이하여야 합니다.`);
         return;
       }
     }

@@ -58,19 +58,46 @@ api.interceptors.response.use(
       }
     }
 
-    // 403: 정지 계정 처리
-    if (error.response?.status === 403) {
-      const code = error.response.data?.code;
-      if (code === 'USER_SUSPENDED') {
-        window.location.href = '/suspended';
+    const status = error.response?.status;
+    const errorCode = error.response?.data?.code;
+
+    // 403: 정지 계정 또는 권한 없음
+    if (status === 403) {
+      if (errorCode === 'USER_SUSPENDED') {
+        const data = error.response.data?.data;
+        const params = new URLSearchParams();
+        if (data?.reason) params.set('reason', data.reason);
+        if (data?.suspendedUntil) params.set('until', data.suspendedUntil);
+        const qs = params.toString();
+        window.location.href = `/suspended${qs ? `?${qs}` : ''}`;
         return Promise.reject(error);
       }
+      toast.error('접근 권한이 없습니다.');
+      return Promise.reject(error);
     }
 
-    // 공통 에러 Toast 표시
-    const errorCode = error.response?.data?.code;
+    // 409: 충돌 에러
+    if (status === 409) {
+      const message = ERROR_MESSAGES[errorCode] || error.response?.data?.message || '요청이 충돌했습니다. 다시 시도해주세요.';
+      toast.error(message);
+      return Promise.reject(error);
+    }
+
+    // 429: Rate limit
+    if (status === 429) {
+      toast.error('요청이 너무 많습니다. 잠시 후 다시 시도해주세요.');
+      return Promise.reject(error);
+    }
+
+    // 500+: 서버 오류
+    if (status && status >= 500) {
+      toast.error('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      return Promise.reject(error);
+    }
+
+    // 그 외 공통 에러 Toast (400, 404 등)
     const message = ERROR_MESSAGES[errorCode] || error.response?.data?.message;
-    if (message && error.response?.status !== 401) {
+    if (message && status !== 401 && status !== 400) {
       toast.error(message);
     }
 

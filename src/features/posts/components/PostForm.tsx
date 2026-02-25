@@ -21,6 +21,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { FileUpload } from '@/components/common/FileUpload';
+import { applyFieldErrors } from '@/lib/formError';
 import { useBoards } from '@/features/boards/hooks/useBoards';
 import { postSchema, type PostFormData } from '../schemas/postSchema';
 
@@ -61,10 +62,14 @@ export function PostForm({
   const [files, setFiles] = useState<UploadedFile[]>(defaultFiles);
 
   const handleSubmit = async (data: PostFormData) => {
-    await onSubmit(
-      data,
-      files.map((f) => f.id),
-    );
+    try {
+      await onSubmit(
+        data,
+        files.map((f) => f.id),
+      );
+    } catch (error) {
+      applyFieldErrors(error, form.setError);
+    }
   };
 
   return (

@@ -263,12 +263,12 @@
 
 ## Phase 18. SRS/SDS 누락 보완 — 중간 (사양 미충족)
 
-- [ ] 18-1. 탈퇴 사유 입력 필드 추가 (`features/mypage/components/WithdrawForm.tsx` + `schemas/profileSchema.ts` - 선택적 reason Textarea 추가) [PAGE-WITHDRAW-002]
-- [ ] 18-2. 정지 안내 페이지 상세 표시 (`pages/errors/SuspendedPage.tsx` - 정지 사유, 해제일 표시. axios 인터셉터에서 403 USER_SUSPENDED 응답 데이터를 쿼리 파라미터 또는 store로 전달) [AUTH-GD-004]
-- [ ] 18-3. 서버 400 필드 에러 폼 매핑 확대 (PostForm, InquiryForm, RequestForm, EditProfileForm 등 주요 폼에서 서버 400 응답의 field error를 `form.setError()`로 매핑) [API-ERR-001, API-VALID-003]
-- [ ] 18-4. Axios 인터셉터 HTTP 상태코드별 분기 보완 (403 비정지 → "접근 권한이 없습니다" Toast, 409 → 에러 코드별 메시지, 429 → Rate limit Toast, 500 → 서버 오류 Toast 명시적 분기) [API-ERR-004, API-ERR-006, API-ERR-007, API-ERR-008]
-- [ ] 18-5. FileUpload 파일 타입/크기 제한 보완 (`components/common/FileUpload.tsx` - `text/plain` 추가, 일반 파일 20MB / 이미지 10MB 조건부 크기 검증) [SDS 12]
-- [ ] 18-6. 관리자 파괴적 액션 확인 다이얼로그 추가 (`features/admin/components/ReportManagement.tsx` - DELETE_POST, SUSPEND_USER 액션에 ConfirmDialog 적용) [UI-UX-003]
+- [x] 18-1. 탈퇴 사유 입력 필드 추가 (`features/mypage/components/WithdrawForm.tsx` + `schemas/profileSchema.ts` - 선택적 reason Textarea 추가) [PAGE-WITHDRAW-002]
+- [x] 18-2. 정지 안내 페이지 상세 표시 (`pages/errors/SuspendedPage.tsx` - 정지 사유, 해제일 표시. axios 인터셉터에서 403 USER_SUSPENDED 응답 데이터를 쿼리 파라미터로 전달) [AUTH-GD-004]
+- [x] 18-3. 서버 400 필드 에러 폼 매핑 확대 (PostForm, InquiryForm, RequestForm, EditProfileForm 등 주요 폼에서 서버 400 응답의 field error를 `form.setError()`로 매핑) [API-ERR-001, API-VALID-003]
+- [x] 18-4. Axios 인터셉터 HTTP 상태코드별 분기 보완 (403 비정지 → "접근 권한이 없습니다" Toast, 409 → 에러 코드별 메시지, 429 → Rate limit Toast, 500 → 서버 오류 Toast 명시적 분기) [API-ERR-004, API-ERR-006, API-ERR-007, API-ERR-008]
+- [x] 18-5. FileUpload 파일 타입/크기 제한 보완 (`components/common/FileUpload.tsx` - `text/plain` 추가, 일반 파일 20MB / 이미지 10MB 조건부 크기 검증) [SDS 12]
+- [x] 18-6. 관리자 파괴적 액션 확인 다이얼로그 추가 (`features/admin/components/ReportManagement.tsx` - DELETE_POST, SUSPEND_USER 액션에 ConfirmDialog 적용) [UI-UX-003]
 
 ---
 
@@ -278,6 +278,20 @@
 - [ ] 19-2. useIntersectionObserver 훅 분리 (`hooks/useIntersectionObserver.ts` 생성, useInfiniteScroll에서 분리하여 범용 IntersectionObserver 훅 제공) [SDS 2.1]
 - [ ] 19-3. Feature barrel export 구현 (각 `features/*/index.ts`에서 hooks, components, types re-export) [SDS 3.2]
 - [ ] 19-4. 탈퇴 사용자 표시 처리 (PostDetail, CommentItem에서 탈퇴 사용자 닉네임을 "탈퇴한 사용자"로 표시하는 프론트엔드 로직 추가 또는 백엔드 응답 필드 확인) [PAGE-POST-007]
+
+---
+
+## Phase 20. API 백엔드 서버 일치 여부 점검
+
+> **⚠️ 사전 조건**: 작업 시작 전 반드시 사용자에게 백엔드 API resource 파일 경로(컨트롤러, DTO, 에러코드 등)를 확인할 것.
+
+- [ ] 20-1. API 엔드포인트 경로/메서드 일치 점검 (프론트엔드 API 함수의 URL, HTTP 메서드가 백엔드 컨트롤러와 일치하는지 확인)
+- [ ] 20-2. 요청 DTO 필드 일치 점검 (프론트엔드 Request 타입/인터페이스 필드가 백엔드 DTO와 일치하는지 확인)
+- [ ] 20-3. 응답 DTO 필드 일치 점검 (프론트엔드 Response 타입/인터페이스 필드가 백엔드 DTO와 일치하는지 확인)
+- [ ] 20-4. 페이지네이션 파라미터 일치 점검 (cursor, size, sort 등 쿼리 파라미터 이름/형식이 백엔드와 일치하는지 확인)
+- [ ] 20-5. 에러 코드/메시지 매핑 일치 점검 (프론트엔드 에러 코드 분기 처리가 백엔드 에러 코드 체계와 일치하는지 확인)
+- [ ] 20-6. 인증/인가 헤더 일치 점검 (Authorization 헤더 형식, 토큰 갱신 흐름이 백엔드 인증 설정과 일치하는지 확인)
+- [ ] 20-7. 불일치 항목 수정 및 빌드 검증
 
 ---
 
@@ -304,4 +318,5 @@
 | 17 | SRS/SDS 누락 보완 — 높음 | 4 |
 | 18 | SRS/SDS 누락 보완 — 중간 | 6 |
 | 19 | SRS/SDS 누락 보완 — 낮음 | 4 |
-| **합계** | | **180** |
+| 20 | API 백엔드 서버 일치 여부 점검 | 7 |
+| **합계** | | **187** |
