@@ -326,6 +326,7 @@ export const userProfile: UserProfile = {
   nickname: '축구광팬',
   role: 'USER',
   provider: null,
+  profileImageUrl: null,
   teams: [
     {
       teamId: 101,
@@ -344,6 +345,7 @@ export const adminProfile: UserProfile = {
   nickname: '관리자',
   role: 'ADMIN',
   provider: null,
+  profileImageUrl: null,
   teams: [],
   createdAt: '2026-01-01T00:00:00',
 };

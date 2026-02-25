@@ -7,6 +7,7 @@ export interface UserProfile {
   nickname: string;
   role: 'USER' | 'ADMIN';
   provider: string | null;
+  profileImageUrl?: string | null;
   teams: UserTeam[];
   createdAt: string;
 }

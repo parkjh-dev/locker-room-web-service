@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Mail, Calendar, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import type { UserProfile } from '../types/user';
 
@@ -22,15 +23,23 @@ export function MyProfile({ profile }: MyProfileProps) {
     <div className="space-y-6">
       {/* 프로필 헤더 */}
       <div className="flex items-start justify-between">
-        <div className="space-y-1">
-          <h2 className="text-xl font-bold">{profile.nickname}</h2>
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
-            <Mail className="h-4 w-4" />
-            {profile.email}
-          </div>
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
-            <Calendar className="h-4 w-4" />
-            {formatDate(profile.createdAt)} 가입
+        <div className="flex items-center gap-4">
+          <Avatar className="h-16 w-16">
+            {profile.profileImageUrl && (
+              <AvatarImage src={profile.profileImageUrl} alt={profile.nickname} />
+            )}
+            <AvatarFallback className="text-xl">{profile.nickname.charAt(0)}</AvatarFallback>
+          </Avatar>
+          <div className="space-y-1">
+            <h2 className="text-xl font-bold">{profile.nickname}</h2>
+            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+              <Mail className="h-4 w-4" />
+              {profile.email}
+            </div>
+            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+              <Calendar className="h-4 w-4" />
+              {formatDate(profile.createdAt)} 가입
+            </div>
           </div>
         </div>
         <Button variant="outline" size="sm" asChild>
