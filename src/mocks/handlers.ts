@@ -37,9 +37,24 @@ function ok<T>(data: T) {
   return HttpResponse.json({ code: 'SUCCESS', message: '성공', data });
 }
 
-/** CursorPageResponse 래핑 헬퍼 */
-function cursorPage<T>(items: T[]) {
-  return ok({ items, nextCursor: null, hasNext: false });
+/** CursorPageResponse 래핑 헬퍼 (커서 기반 페이지네이션) */
+const PAGE_SIZE = 10;
+function cursorPage<T extends { id: number }>(
+  allItems: T[],
+  request: Request,
+) {
+  const url = new URL(request.url);
+  const cursor = url.searchParams.get('cursor');
+  let startIndex = 0;
+  if (cursor) {
+    const cursorId = Number(cursor);
+    const idx = allItems.findIndex((item) => item.id === cursorId);
+    startIndex = idx === -1 ? 0 : idx + 1;
+  }
+  const items = allItems.slice(startIndex, startIndex + PAGE_SIZE);
+  const hasNext = startIndex + PAGE_SIZE < allItems.length;
+  const nextCursor = hasNext ? String(items[items.length - 1].id) : null;
+  return ok({ items, nextCursor, hasNext });
 }
 
 export const handlers = [
@@ -66,7 +81,7 @@ export const handlers = [
   // ──────────────────────────────────────────────
   // Posts
   // ──────────────────────────────────────────────
-  http.get(`${BASE}/boards/:boardId/posts`, () => cursorPage(postListItems)),
+  http.get(`${BASE}/boards/:boardId/posts`, ({ request }) => cursorPage(postListItems, request)),
   http.get(`${BASE}/posts/popular`, () => ok(postListItems.slice(0, 5))),
   http.get(`${BASE}/posts/:postId`, () => ok(postDetail)),
   http.post(`${BASE}/posts`, () => ok({ id: 100 })),
@@ -78,7 +93,7 @@ export const handlers = [
   // ──────────────────────────────────────────────
   // Comments
   // ──────────────────────────────────────────────
-  http.get(`${BASE}/posts/:postId/comments`, () => cursorPage(comments)),
+  http.get(`${BASE}/posts/:postId/comments`, ({ request }) => cursorPage(comments, request)),
   http.post(`${BASE}/posts/:postId/comments`, () => ok({ id: 100 })),
   http.post(`${BASE}/comments/:commentId/replies`, () => ok({ id: 101 })),
   http.put(`${BASE}/comments/:commentId`, () => ok({ id: 1 })),
@@ -87,7 +102,7 @@ export const handlers = [
   // ──────────────────────────────────────────────
   // Notices
   // ──────────────────────────────────────────────
-  http.get(`${BASE}/notices`, () => cursorPage(noticeListItems)),
+  http.get(`${BASE}/notices`, ({ request }) => cursorPage(noticeListItems, request)),
   http.get(`${BASE}/notices/:noticeId`, () => ok(noticeDetail)),
 
   // ──────────────────────────────────────────────
@@ -109,14 +124,14 @@ export const handlers = [
   }),
   http.put(`${BASE}/users/me`, () => ok({ id: 10, nickname: '축구광팬' })),
   http.delete(`${BASE}/users/me`, () => ok(null)),
-  http.get(`${BASE}/users/me/posts`, () => cursorPage(myPosts)),
-  http.get(`${BASE}/users/me/comments`, () => cursorPage(myComments)),
-  http.get(`${BASE}/users/me/likes`, () => cursorPage(myLikes)),
+  http.get(`${BASE}/users/me/posts`, ({ request }) => cursorPage(myPosts, request)),
+  http.get(`${BASE}/users/me/comments`, ({ request }) => cursorPage(myComments, request)),
+  http.get(`${BASE}/users/me/likes`, ({ request }) => cursorPage(myLikes, request)),
 
   // ──────────────────────────────────────────────
   // Notifications
   // ──────────────────────────────────────────────
-  http.get(`${BASE}/notifications`, () => cursorPage(notifications)),
+  http.get(`${BASE}/notifications`, ({ request }) => cursorPage(notifications, request)),
   http.get(`${BASE}/notifications/unread-count`, () =>
     ok({ unreadCount: notifications.filter((n) => !n.isRead).length }),
   ),
@@ -126,14 +141,14 @@ export const handlers = [
   // ──────────────────────────────────────────────
   // Inquiries
   // ──────────────────────────────────────────────
-  http.get(`${BASE}/inquiries`, () => cursorPage(inquiryListItems)),
+  http.get(`${BASE}/inquiries`, ({ request }) => cursorPage(inquiryListItems, request)),
   http.get(`${BASE}/inquiries/:inquiryId`, () => ok(inquiryDetail)),
   http.post(`${BASE}/inquiries`, () => ok({ id: 100 })),
 
   // ──────────────────────────────────────────────
   // Requests
   // ──────────────────────────────────────────────
-  http.get(`${BASE}/requests`, () => cursorPage(requestListItems)),
+  http.get(`${BASE}/requests`, ({ request }) => cursorPage(requestListItems, request)),
   http.get(`${BASE}/requests/:requestId`, () => ok(requestDetail)),
   http.post(`${BASE}/requests`, () => ok({ id: 100 })),
 
@@ -154,17 +169,17 @@ export const handlers = [
   // Admin
   // ──────────────────────────────────────────────
   http.get(`${BASE}/admin/dashboard`, () => ok(adminDashboard)),
-  http.get(`${BASE}/admin/users`, () => cursorPage(adminUsers)),
+  http.get(`${BASE}/admin/users`, ({ request }) => cursorPage(adminUsers, request)),
   http.put(`${BASE}/admin/users/:userId/suspend`, () => ok(null)),
   http.put(`${BASE}/admin/users/:userId/unsuspend`, () => ok(null)),
-  http.get(`${BASE}/admin/reports`, () => cursorPage(adminReports)),
+  http.get(`${BASE}/admin/reports`, ({ request }) => cursorPage(adminReports, request)),
   http.put(`${BASE}/admin/reports/:reportId`, () => ok(null)),
-  http.get(`${BASE}/admin/notices`, () => cursorPage(adminNotices)),
+  http.get(`${BASE}/admin/notices`, ({ request }) => cursorPage(adminNotices, request)),
   http.post(`${BASE}/admin/notices`, () => ok({ id: 100 })),
   http.put(`${BASE}/admin/notices/:noticeId`, () => ok(null)),
   http.delete(`${BASE}/admin/notices/:noticeId`, () => ok(null)),
-  http.get(`${BASE}/admin/inquiries`, () => cursorPage(adminInquiries)),
+  http.get(`${BASE}/admin/inquiries`, ({ request }) => cursorPage(adminInquiries, request)),
   http.post(`${BASE}/admin/inquiries/:inquiryId/reply`, () => ok(null)),
-  http.get(`${BASE}/admin/requests`, () => cursorPage(adminRequests)),
+  http.get(`${BASE}/admin/requests`, ({ request }) => cursorPage(adminRequests, request)),
   http.put(`${BASE}/admin/requests/:requestId`, () => ok(null)),
 ];
