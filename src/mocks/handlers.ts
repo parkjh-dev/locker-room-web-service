@@ -8,10 +8,10 @@ import {
   teamsBySport,
   boards,
   postListItems,
-  postDetail,
-  comments,
+  postDetailsById,
+  commentsByPost,
   noticeListItems,
-  noticeDetail,
+  noticeDetailsById,
   notifications,
   userProfile,
   adminProfile,
@@ -19,9 +19,9 @@ import {
   myComments,
   myLikes,
   inquiryListItems,
-  inquiryDetail,
+  inquiryDetailsById,
   requestListItems,
-  requestDetail,
+  requestDetailsById,
   adminDashboard,
   adminUsers,
   adminReports,
@@ -37,12 +37,14 @@ function ok<T>(data: T) {
   return HttpResponse.json({ code: 'SUCCESS', message: '성공', data });
 }
 
+/** 404 헬퍼 */
+function notFound(code: string, message: string) {
+  return HttpResponse.json({ code, message, data: null }, { status: 404 });
+}
+
 /** CursorPageResponse 래핑 헬퍼 (커서 기반 페이지네이션) */
 const PAGE_SIZE = 10;
-function cursorPage<T extends { id: number }>(
-  allItems: T[],
-  request: Request,
-) {
+function cursorPage<T extends { id: number }>(allItems: T[], request: Request) {
   const url = new URL(request.url);
   const cursor = url.searchParams.get('cursor');
   let startIndex = 0;
@@ -55,6 +57,35 @@ function cursorPage<T extends { id: number }>(
   const hasNext = startIndex + PAGE_SIZE < allItems.length;
   const nextCursor = hasNext ? String(items[items.length - 1].id) : null;
   return ok({ items, nextCursor, hasNext });
+}
+
+/**
+ * post detail 폴백:
+ * id 매핑이 없는 글이라도 list item을 기반으로 그럴듯한 상세를 만들어 반환.
+ * (라우터에서 임의 id로 들어와도 404가 아닌 풍부한 화면을 보여주기 위함)
+ */
+function fallbackPostDetail(postId: number) {
+  const item = postListItems.find((p) => p.id === postId);
+  if (!item) return null;
+  return {
+    id: item.id,
+    boardId: 1,
+    boardName: '자유게시판',
+    author: { id: 99, nickname: item.authorNickname, teamName: undefined, profileImageUrl: null },
+    title: item.title,
+    content:
+      `${item.title}\n\n` +
+      '아직 상세 본문이 등록되지 않은 게시글입니다.\n' +
+      '목록 데이터 기반으로 자동 생성된 더미 본문이며, 실제 서비스에서는 상세 콘텐츠가 표시됩니다.',
+    viewCount: item.viewCount,
+    likeCount: item.likeCount,
+    commentCount: item.commentCount,
+    isAiGenerated: item.isAiGenerated,
+    isLiked: false,
+    files: [],
+    createdAt: item.createdAt,
+    updatedAt: item.createdAt,
+  };
 }
 
 export const handlers = [
@@ -81,29 +112,70 @@ export const handlers = [
   // ──────────────────────────────────────────────
   // Posts
   // ──────────────────────────────────────────────
-  http.get(`${BASE}/boards/:boardId/posts`, ({ request }) => cursorPage(postListItems, request)),
-  http.get(`${BASE}/posts/popular`, () => ok(postListItems.slice(0, 5))),
-  http.get(`${BASE}/posts/:postId`, () => ok(postDetail)),
+  // boardId가 팀 게시판이면 'AI 어시스턴트' 글은 제외 (팀 게시판은 사용자 글 위주)
+  http.get(`${BASE}/boards/:boardId/posts`, ({ params, request }) => {
+    const boardId = Number(params.boardId);
+    const board = boards.find((b) => b.id === boardId);
+    let list = postListItems;
+    if (board?.type === 'TEAM') {
+      list = postListItems.filter((p) => !p.isAiGenerated);
+    } else if (board?.type === 'NEWS') {
+      list = postListItems.filter((p) => p.isAiGenerated);
+    } else if (board?.type === 'QNA') {
+      // 질문 형태('?'가 들어간 제목) 위주
+      list = postListItems.filter((p) => p.title.includes('?') || p.title.includes('어떻게'));
+    }
+    return cursorPage(list, request);
+  }),
+  http.get(`${BASE}/posts/popular`, ({ request }) => {
+    const url = new URL(request.url);
+    const size = Number(url.searchParams.get('size') ?? '10');
+    const sorted = [...postListItems].sort((a, b) => b.likeCount - a.likeCount).slice(0, size);
+    return ok(sorted);
+  }),
+  http.get(`${BASE}/posts/:postId`, ({ params }) => {
+    const postId = Number(params.postId);
+    const detail = postDetailsById[postId] ?? fallbackPostDetail(postId);
+    if (!detail) return notFound('POST_NOT_FOUND', '게시글을 찾을 수 없습니다.');
+    return ok(detail);
+  }),
   http.post(`${BASE}/posts`, () => ok({ id: 100 })),
-  http.put(`${BASE}/posts/:postId`, () => ok({ id: 1 })),
+  http.put(`${BASE}/posts/:postId`, ({ params }) => ok({ id: Number(params.postId) })),
   http.delete(`${BASE}/posts/:postId`, () => ok(null)),
-  http.post(`${BASE}/posts/:postId/like`, () => ok({ postId: 1, isLiked: true, likeCount: 29 })),
+  http.post(`${BASE}/posts/:postId/like`, ({ params }) => {
+    const postId = Number(params.postId);
+    const item = postListItems.find((p) => p.id === postId);
+    return ok({
+      postId,
+      isLiked: true,
+      likeCount: (item?.likeCount ?? 0) + 1,
+    });
+  }),
   http.post(`${BASE}/posts/:postId/report`, () => ok(null)),
 
   // ──────────────────────────────────────────────
   // Comments
   // ──────────────────────────────────────────────
-  http.get(`${BASE}/posts/:postId/comments`, ({ request }) => cursorPage(comments, request)),
-  http.post(`${BASE}/posts/:postId/comments`, () => ok({ id: 100 })),
-  http.post(`${BASE}/comments/:commentId/replies`, () => ok({ id: 101 })),
-  http.put(`${BASE}/comments/:commentId`, () => ok({ id: 1 })),
+  http.get(`${BASE}/posts/:postId/comments`, ({ params, request }) => {
+    const postId = Number(params.postId);
+    const list = commentsByPost[postId] ?? [];
+    return cursorPage(list, request);
+  }),
+  http.post(`${BASE}/posts/:postId/comments`, () => ok({ id: 1000 })),
+  http.post(`${BASE}/comments/:commentId/replies`, () => ok({ id: 1001 })),
+  http.put(`${BASE}/comments/:commentId`, ({ params }) => ok({ id: Number(params.commentId) })),
   http.delete(`${BASE}/comments/:commentId`, () => ok(null)),
 
   // ──────────────────────────────────────────────
   // Notices
   // ──────────────────────────────────────────────
   http.get(`${BASE}/notices`, ({ request }) => cursorPage(noticeListItems, request)),
-  http.get(`${BASE}/notices/:noticeId`, () => ok(noticeDetail)),
+  http.get(`${BASE}/notices/:noticeId`, ({ params }) => {
+    const noticeId = Number(params.noticeId);
+    const detail = noticeDetailsById[noticeId];
+    if (!detail) return notFound('NOTICE_NOT_FOUND', '공지를 찾을 수 없습니다.');
+    return ok(detail);
+  }),
 
   // ──────────────────────────────────────────────
   // Users / MyPage
@@ -136,20 +208,32 @@ export const handlers = [
     ok({ unreadCount: notifications.filter((n) => !n.isRead).length }),
   ),
   http.put(`${BASE}/notifications/:id/read`, () => ok(null)),
-  http.put(`${BASE}/notifications/read-all`, () => ok({ updatedCount: 2 })),
+  http.put(`${BASE}/notifications/read-all`, () =>
+    ok({ updatedCount: notifications.filter((n) => !n.isRead).length }),
+  ),
 
   // ──────────────────────────────────────────────
   // Inquiries
   // ──────────────────────────────────────────────
   http.get(`${BASE}/inquiries`, ({ request }) => cursorPage(inquiryListItems, request)),
-  http.get(`${BASE}/inquiries/:inquiryId`, () => ok(inquiryDetail)),
+  http.get(`${BASE}/inquiries/:inquiryId`, ({ params }) => {
+    const inquiryId = Number(params.inquiryId);
+    const detail = inquiryDetailsById[inquiryId];
+    if (!detail) return notFound('INQUIRY_NOT_FOUND', '문의를 찾을 수 없습니다.');
+    return ok(detail);
+  }),
   http.post(`${BASE}/inquiries`, () => ok({ id: 100 })),
 
   // ──────────────────────────────────────────────
   // Requests
   // ──────────────────────────────────────────────
   http.get(`${BASE}/requests`, ({ request }) => cursorPage(requestListItems, request)),
-  http.get(`${BASE}/requests/:requestId`, () => ok(requestDetail)),
+  http.get(`${BASE}/requests/:requestId`, ({ params }) => {
+    const requestId = Number(params.requestId);
+    const detail = requestDetailsById[requestId];
+    if (!detail) return notFound('REQUEST_NOT_FOUND', '요청을 찾을 수 없습니다.');
+    return ok(detail);
+  }),
   http.post(`${BASE}/requests`, () => ok({ id: 100 })),
 
   // ──────────────────────────────────────────────
@@ -157,7 +241,7 @@ export const handlers = [
   // ──────────────────────────────────────────────
   http.post(`${BASE}/files`, () =>
     ok({
-      id: 1,
+      id: Math.floor(Math.random() * 100000),
       originalName: 'image.png',
       url: 'https://placehold.co/600x400',
       size: 102400,
@@ -169,17 +253,53 @@ export const handlers = [
   // Admin
   // ──────────────────────────────────────────────
   http.get(`${BASE}/admin/dashboard`, () => ok(adminDashboard)),
-  http.get(`${BASE}/admin/users`, ({ request }) => cursorPage(adminUsers, request)),
+  http.get(`${BASE}/admin/users`, ({ request }) => {
+    const url = new URL(request.url);
+    const keyword = url.searchParams.get('keyword');
+    const role = url.searchParams.get('role');
+    let list = adminUsers;
+    if (keyword) {
+      const kw = keyword.toLowerCase();
+      list = list.filter(
+        (u) => u.nickname.toLowerCase().includes(kw) || u.email.toLowerCase().includes(kw),
+      );
+    }
+    if (role) {
+      list = list.filter((u) => u.role === role);
+    }
+    return cursorPage(list, request);
+  }),
   http.put(`${BASE}/admin/users/:userId/suspend`, () => ok(null)),
   http.put(`${BASE}/admin/users/:userId/unsuspend`, () => ok(null)),
-  http.get(`${BASE}/admin/reports`, ({ request }) => cursorPage(adminReports, request)),
+  http.get(`${BASE}/admin/reports`, ({ request }) => {
+    const url = new URL(request.url);
+    const status = url.searchParams.get('status');
+    const list = status ? adminReports.filter((r) => r.status === status) : adminReports;
+    return cursorPage(list, request);
+  }),
   http.put(`${BASE}/admin/reports/:reportId`, () => ok(null)),
   http.get(`${BASE}/admin/notices`, ({ request }) => cursorPage(adminNotices, request)),
   http.post(`${BASE}/admin/notices`, () => ok({ id: 100 })),
   http.put(`${BASE}/admin/notices/:noticeId`, () => ok(null)),
   http.delete(`${BASE}/admin/notices/:noticeId`, () => ok(null)),
-  http.get(`${BASE}/admin/inquiries`, ({ request }) => cursorPage(adminInquiries, request)),
+  http.get(`${BASE}/admin/inquiries`, ({ request }) => {
+    const url = new URL(request.url);
+    const status = url.searchParams.get('status');
+    const type = url.searchParams.get('type');
+    let list = adminInquiries;
+    if (status) list = list.filter((i) => i.status === status);
+    if (type) list = list.filter((i) => i.type === type);
+    return cursorPage(list, request);
+  }),
   http.post(`${BASE}/admin/inquiries/:inquiryId/reply`, () => ok(null)),
-  http.get(`${BASE}/admin/requests`, ({ request }) => cursorPage(adminRequests, request)),
+  http.get(`${BASE}/admin/requests`, ({ request }) => {
+    const url = new URL(request.url);
+    const status = url.searchParams.get('status');
+    const type = url.searchParams.get('type');
+    let list = adminRequests;
+    if (status) list = list.filter((r) => r.status === status);
+    if (type) list = list.filter((r) => r.type === type);
+    return cursorPage(list, request);
+  }),
   http.put(`${BASE}/admin/requests/:requestId`, () => ok(null)),
 ];
