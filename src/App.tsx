@@ -64,7 +64,7 @@ function App() {
     <ErrorBoundary>
       <QueryProvider>
         <RouterProvider router={router} />
-        <DevSimulator />
+        {import.meta.env.DEV && <DevSimulator />}
         <Toaster position="top-right" richColors closeButton />
       </QueryProvider>
     </ErrorBoundary>

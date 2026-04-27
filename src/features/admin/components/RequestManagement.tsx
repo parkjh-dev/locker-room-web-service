@@ -63,8 +63,8 @@ export function RequestManagement() {
   });
 
   const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useAdminRequests({
-    status: status || undefined,
-    type: type || undefined,
+    status: status && status !== 'all' ? status : undefined,
+    type: type && type !== 'all' ? type : undefined,
   });
 
   const form = useForm<RejectRequestFormData>({

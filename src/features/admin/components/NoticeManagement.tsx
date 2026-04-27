@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { useNoticeDetail } from '@/features/notices/hooks/useNoticeDetail';
 import { Plus, Pin, Pencil, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -45,6 +46,22 @@ export function NoticeManagement() {
     resolver: zodResolver(adminNoticeSchema),
     defaultValues: { title: '', content: '', isPinned: false, scope: 'ALL' as const, teamId: null },
   });
+
+  // 수정 모드일 때만 상세를 fetch해서 본문/플래그를 폼에 채운다.
+  // (NoticeListResponse에는 content가 없어 직접 reset 시 본문이 빈 채로 저장되는 문제가 있었음)
+  const { data: editingDetail } = useNoticeDetail(editId ?? 0);
+
+  useEffect(() => {
+    if (editId && editingDetail) {
+      form.reset({
+        title: editingDetail.title,
+        content: editingDetail.content,
+        isPinned: editingDetail.isPinned,
+        scope: editingDetail.scope,
+        teamId: editingDetail.teamId,
+      });
+    }
+  }, [editId, editingDetail, form]);
 
   const { mutateAsync: createNotice, isPending: isCreating } = useMutation({
     mutationFn: (data: AdminNoticeFormData) => adminApi.createNotice(data),
@@ -151,14 +168,8 @@ export function NoticeManagement() {
                     className="h-7 w-7"
                     aria-label="수정"
                     onClick={() => {
+                      // 본문은 useNoticeDetail이 받아오는 시점에 useEffect에서 form.reset
                       setEditId(notice.id);
-                      form.reset({
-                        title: notice.title,
-                        content: '',
-                        isPinned: notice.isPinned,
-                        scope: notice.scope,
-                        teamId: null,
-                      });
                       setFormOpen(true);
                     }}
                   >

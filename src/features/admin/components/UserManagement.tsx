@@ -34,7 +34,7 @@ export function UserManagement() {
   const queryClient = useQueryClient();
   const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useAdminUsers({
     keyword: searchKeyword || undefined,
-    role: role || undefined,
+    role: role && role !== 'all' ? role : undefined,
   });
 
   const { mutate: unsuspend } = useMutation({

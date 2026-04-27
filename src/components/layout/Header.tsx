@@ -13,10 +13,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAuthStore } from '@/features/auth/stores/authStore';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useUiStore } from '@/stores/uiStore';
 
 export function Header() {
   const { isAuthenticated, user } = useAuthStore();
+  const { logout } = useAuth();
   const { toggleSidebar } = useUiStore();
   const navigate = useNavigate();
   const location = useLocation();
@@ -51,20 +53,32 @@ export function Header() {
 
         {/* 검색바 (로그인 시) */}
         {isAuthenticated && (
-          <div className="hidden flex-1 justify-center sm:flex">
+          <form
+            role="search"
+            className="hidden flex-1 justify-center sm:flex"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSearchSubmit();
+            }}
+          >
             <div className="relative w-full max-w-md">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <label htmlFor="header-search" className="sr-only">
+                게시글 검색
+              </label>
+              <Search
+                aria-hidden="true"
+                className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+              />
               <Input
+                id="header-search"
+                type="search"
                 placeholder="검색어를 입력하세요"
                 className="pl-9"
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleSearchSubmit();
-                }}
               />
             </div>
-          </div>
+          </form>
         )}
 
         {/* 비로그인 시 spacer */}
@@ -124,7 +138,10 @@ export function Header() {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem className="text-destructive focus:text-destructive">
+                  <DropdownMenuItem
+                    className="text-destructive focus:text-destructive"
+                    onClick={logout}
+                  >
                     <LogOut className="mr-2 h-4 w-4" />
                     로그아웃
                   </DropdownMenuItem>

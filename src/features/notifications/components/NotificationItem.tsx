@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { MessageSquare, Reply, Megaphone, HelpCircle, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { formatRelativeDate } from '@/lib/date';
 import { notificationApi } from '../api/notificationApi';
 import type { NotificationItem as NotificationItemType } from '../types/notification';
 
@@ -20,19 +21,6 @@ const typeConfig = {
     getPath: (id: number) => `/posts/${id}`,
   },
 } as const;
-
-function formatDate(dateStr: string) {
-  const date = new Date(dateStr);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMin = Math.floor(diffMs / 60000);
-  const diffHour = Math.floor(diffMs / 3600000);
-
-  if (diffMin < 1) return '방금';
-  if (diffMin < 60) return `${diffMin}분 전`;
-  if (diffHour < 24) return `${diffHour}시간 전`;
-  return date.toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit' });
-}
 
 interface NotificationItemProps {
   notification: NotificationItemType;
@@ -82,7 +70,7 @@ export function NotificationItem({ notification }: NotificationItemProps) {
         </p>
         <div className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
           <span>{config.label}</span>
-          <span>{formatDate(notification.createdAt)}</span>
+          <span>{formatRelativeDate(notification.createdAt)}</span>
         </div>
       </div>
       {!notification.isRead && <div className="mt-2 h-2 w-2 shrink-0 rounded-full bg-primary" />}

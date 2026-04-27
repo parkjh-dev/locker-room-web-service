@@ -1,23 +1,11 @@
 import { Link } from 'react-router-dom';
 import { Eye, Heart, Bot } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { formatRelativeDate } from '@/lib/date';
 import type { PostListItem as PostListItemType } from '../types/post';
 
 interface PostListItemProps {
   post: PostListItemType;
-}
-
-function formatDate(dateStr: string) {
-  const date = new Date(dateStr);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMin = Math.floor(diffMs / 60000);
-  const diffHour = Math.floor(diffMs / 3600000);
-
-  if (diffMin < 1) return '방금';
-  if (diffMin < 60) return `${diffMin}분 전`;
-  if (diffHour < 24) return `${diffHour}시간 전`;
-  return date.toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit' });
 }
 
 export function PostListItem({ post }: PostListItemProps) {
@@ -43,7 +31,7 @@ export function PostListItem({ post }: PostListItemProps) {
       {/* 메타 정보 행 */}
       <div className="flex items-center gap-3 text-xs text-muted-foreground">
         <span>{post.authorNickname}</span>
-        <span>{formatDate(post.createdAt)}</span>
+        <span>{formatRelativeDate(post.createdAt)}</span>
         <span className="flex items-center gap-0.5">
           <Eye className="h-3 w-3" />
           {post.viewCount}

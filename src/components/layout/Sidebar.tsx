@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, HelpCircle, GitPullRequestArrow, ChevronRight } from 'lucide-react';
-import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUiStore } from '@/stores/uiStore';
@@ -89,6 +89,7 @@ export function Sidebar() {
           <img src="/logo.png" alt="Locker Room" className="h-8 w-8" loading="lazy" />
           Locker Room
         </SheetTitle>
+        <SheetDescription className="sr-only">게시판과 메뉴를 탐색하는 사이드바</SheetDescription>
         <SidebarContent />
       </SheetContent>
     </Sheet>

@@ -4,20 +4,8 @@ import { Eye, Heart } from 'lucide-react';
 import { SkeletonLoader } from '@/components/common/SkeletonLoader';
 import { EmptyState } from '@/components/common/EmptyState';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
+import { formatRelativeDate } from '@/lib/date';
 import { userApi } from '../api/userApi';
-
-function formatDate(dateStr: string) {
-  const date = new Date(dateStr);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMin = Math.floor(diffMs / 60000);
-  const diffHour = Math.floor(diffMs / 3600000);
-
-  if (diffMin < 1) return '방금';
-  if (diffMin < 60) return `${diffMin}분 전`;
-  if (diffHour < 24) return `${diffHour}시간 전`;
-  return date.toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit' });
-}
 
 export function MyLikeList() {
   const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useInfiniteQuery({
@@ -66,7 +54,7 @@ export function MyLikeList() {
           </div>
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
             <span>{post.authorNickname}</span>
-            <span>{formatDate(post.createdAt)}</span>
+            <span>{formatRelativeDate(post.createdAt)}</span>
             <span className="flex items-center gap-0.5">
               <Eye className="h-3 w-3" />
               {post.viewCount}

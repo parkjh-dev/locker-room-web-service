@@ -5,20 +5,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { SkeletonLoader } from '@/components/common/SkeletonLoader';
+import { formatRelativeDate } from '@/lib/date';
 import { useBoards } from '@/features/boards/hooks/useBoards';
 import { noticeApi } from '@/features/notices/api/noticeApi';
 import { postApi } from '@/features/posts/api/postApi';
-
-function formatDate(dateStr: string) {
-  const date = new Date(dateStr);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffHour = Math.floor(diffMs / 3600000);
-
-  if (diffHour < 1) return '방금';
-  if (diffHour < 24) return `${diffHour}시간 전`;
-  return date.toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit' });
-}
 
 function NoticePreview() {
   const { data, isLoading } = useQuery({
@@ -60,7 +50,7 @@ function NoticePreview() {
               )}
               <span className="min-w-0 flex-1 truncate">{notice.title}</span>
               <span className="shrink-0 text-xs text-muted-foreground">
-                {formatDate(notice.createdAt)}
+                {formatRelativeDate(notice.createdAt)}
               </span>
             </Link>
           ))}
@@ -88,7 +78,7 @@ function BoardGrid() {
           {boards.map((board) => (
             <Link
               key={board.id}
-              to={`/boards/${board.id}/posts`}
+              to={`/boards/${board.id}`}
               className="flex flex-col gap-1 rounded-lg border p-3 transition-colors hover:bg-accent/50"
             >
               <span className="font-medium text-sm">{board.name}</span>

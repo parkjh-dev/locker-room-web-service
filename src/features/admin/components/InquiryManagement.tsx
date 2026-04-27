@@ -51,8 +51,8 @@ export function InquiryManagement() {
   const queryClient = useQueryClient();
 
   const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useAdminInquiries({
-    status: status || undefined,
-    type: type || undefined,
+    status: status && status !== 'all' ? status : undefined,
+    type: type && type !== 'all' ? type : undefined,
   });
 
   const form = useForm<AnswerInquiryFormData>({

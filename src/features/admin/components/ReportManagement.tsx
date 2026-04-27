@@ -45,7 +45,7 @@ export function ReportManagement() {
   const [suspensionDays, setSuspensionDays] = useState(7);
   const queryClient = useQueryClient();
   const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useAdminReports({
-    status: status || undefined,
+    status: status && status !== 'all' ? status : undefined,
   });
 
   const { mutate: processReport, isPending: processing } = useMutation({
