@@ -6,6 +6,10 @@ import { http, HttpResponse } from 'msw';
 import {
   sports,
   teamsBySport,
+  continents,
+  countries,
+  leagues,
+  teamsByLeague,
   boards,
   postListItems,
   postDetailsById,
@@ -96,26 +100,71 @@ export const handlers = [
   http.post(`${BASE}/auth/profile/complete`, () => ok({ id: 100 })),
 
   // ──────────────────────────────────────────────
-  // Sports & Teams
+  // Sports & Cascading 4-step (Sport → Country → League → Team)
   // ──────────────────────────────────────────────
   http.get(`${BASE}/sports`, () => ok(sports)),
+
+  // 종목별 국가 (해당 종목의 리그가 등록된 국가만 반환)
+  http.get(`${BASE}/sports/:sportId/countries`, ({ params }) => {
+    const sportId = Number(params.sportId);
+    const countryIds = new Set(
+      leagues.filter((l) => l.sportId === sportId).map((l) => l.countryId),
+    );
+    const result = countries
+      .filter((c) => countryIds.has(c.id))
+      // 한국을 최상단으로
+      .sort((a, b) => (a.code === 'KR' ? -1 : b.code === 'KR' ? 1 : 0));
+    return ok(result);
+  }),
+
+  // 종목·국가별 리그
+  http.get(`${BASE}/sports/:sportId/countries/:countryId/leagues`, ({ params }) => {
+    const sportId = Number(params.sportId);
+    const countryId = Number(params.countryId);
+    return ok(leagues.filter((l) => l.sportId === sportId && l.countryId === countryId));
+  }),
+
+  // 리그별 팀
+  http.get(`${BASE}/leagues/:leagueId/teams`, ({ params }) => {
+    const leagueId = Number(params.leagueId);
+    return ok(teamsByLeague[leagueId] ?? []);
+  }),
+
+  // (deprecated) 종목별 전체 팀 — 호환 유지
   http.get(`${BASE}/sports/:sportId/teams`, ({ params }) => {
     const sportId = Number(params.sportId);
     return ok(teamsBySport[sportId] ?? []);
   }),
 
+  // 단일 continent 조회 등 부수 endpoint는 필요 시 추가
+  http.get(`${BASE}/continents`, () => ok(continents)),
+
   // ──────────────────────────────────────────────
-  // Boards
+  // Boards — 인증된 사용자 기준 필터링
+  // 비인증/관리자: 전체 노출
+  // 일반 사용자: 공통 게시판(teamId=null) + 본인 응원팀 게시판만
   // ──────────────────────────────────────────────
-  http.get(`${BASE}/boards`, () => ok(boards)),
+  http.get(`${BASE}/boards`, ({ request }) => {
+    const auth = request.headers.get('Authorization');
+    if (!auth || auth.includes('admin')) return ok(boards);
+
+    const profile = userProfile;
+    const userTeamIds = new Set(profile.teams.map((t) => t.teamId));
+    const accessible = boards.filter((b) => b.teamId === null || userTeamIds.has(b.teamId));
+    return ok(accessible);
+  }),
 
   // ──────────────────────────────────────────────
   // Posts
   // ──────────────────────────────────────────────
   // boardId가 팀 게시판이면 'AI 어시스턴트' 글은 제외 (팀 게시판은 사용자 글 위주)
+  // sort=likeCount 시 좋아요 순 정렬
   http.get(`${BASE}/boards/:boardId/posts`, ({ params, request }) => {
     const boardId = Number(params.boardId);
     const board = boards.find((b) => b.id === boardId);
+    const url = new URL(request.url);
+    const sort = url.searchParams.get('sort');
+
     let list = postListItems;
     if (board?.type === 'TEAM') {
       list = postListItems.filter((p) => !p.isAiGenerated);
@@ -124,6 +173,10 @@ export const handlers = [
     } else if (board?.type === 'QNA') {
       // 질문 형태('?'가 들어간 제목) 위주
       list = postListItems.filter((p) => p.title.includes('?') || p.title.includes('어떻게'));
+    }
+
+    if (sort === 'likeCount') {
+      list = [...list].sort((a, b) => b.likeCount - a.likeCount);
     }
     return cursorPage(list, request);
   }),

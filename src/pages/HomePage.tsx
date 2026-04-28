@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -9,9 +10,12 @@ import {
   Heart,
   ArrowRight,
   MessageSquare,
+  Sparkles,
+  Hash,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SkeletonLoader } from '@/components/common/SkeletonLoader';
 import { formatRelativeDate } from '@/lib/date';
 import { useBoards } from '@/features/boards/hooks/useBoards';
@@ -19,6 +23,9 @@ import { noticeApi } from '@/features/notices/api/noticeApi';
 import { postApi } from '@/features/posts/api/postApi';
 import { useAuthStore } from '@/features/auth/stores/authStore';
 import { LandingPage } from './LandingPage';
+import type { PostListItem } from '@/features/posts/types/post';
+
+const POPULAR_SIZE = 10;
 
 function SectionCard({
   title,
@@ -124,53 +131,105 @@ function BoardGrid() {
   );
 }
 
-function PopularPosts() {
-  const { data: posts, isLoading } = useQuery({
-    queryKey: ['posts', 'popular'],
-    queryFn: () => postApi.getPopular(10),
-  });
+function PopularPostList({ posts, isLoading }: { posts?: PostListItem[]; isLoading: boolean }) {
+  if (isLoading) return <SkeletonLoader type="post-list" count={5} />;
+  if (!posts || posts.length === 0) {
+    return (
+      <p className="py-8 text-center text-sm text-muted-foreground">아직 인기 게시글이 없어요.</p>
+    );
+  }
 
-  if (!isLoading && (!posts || posts.length === 0)) return null;
+  return (
+    <ol className="divide-y divide-brand-100/70">
+      {posts.map((post, idx) => (
+        <li key={post.id}>
+          <Link
+            to={`/posts/${post.id}`}
+            className="flex items-center gap-3 py-2.5 text-sm transition-colors hover:text-brand-700"
+          >
+            <span
+              className={`grid h-6 w-6 shrink-0 place-items-center rounded-md text-xs font-bold ${
+                idx < 3 ? 'bg-brand-500 text-white' : 'bg-brand-50 text-brand-700'
+              }`}
+            >
+              {idx + 1}
+            </span>
+            <span className="min-w-0 flex-1 truncate font-medium">{post.title}</span>
+            {post.commentCount > 0 && (
+              <span className="hidden shrink-0 items-center gap-0.5 text-xs text-brand-700 sm:flex">
+                <MessageSquare className="h-3 w-3" />
+                {post.commentCount}
+              </span>
+            )}
+            <span className="hidden shrink-0 items-center gap-0.5 text-xs text-muted-foreground sm:flex">
+              <Eye className="h-3 w-3" />
+              {post.viewCount}
+            </span>
+            <span className="flex shrink-0 items-center gap-0.5 text-xs text-muted-foreground">
+              <Heart className="h-3 w-3" />
+              {post.likeCount}
+            </span>
+          </Link>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+function PopularAllTab() {
+  const { data, isLoading } = useQuery({
+    queryKey: ['posts', 'popular', 'all'],
+    queryFn: () => postApi.getPopular(POPULAR_SIZE),
+  });
+  return <PopularPostList posts={data} isLoading={isLoading} />;
+}
+
+function PopularBoardTab({ boardId }: { boardId: number }) {
+  const { data, isLoading } = useQuery({
+    queryKey: ['posts', 'popular', 'board', boardId],
+    queryFn: () => postApi.getList(boardId, { sort: 'likeCount', size: POPULAR_SIZE }),
+  });
+  return <PopularPostList posts={data?.items} isLoading={isLoading} />;
+}
+
+function PopularPosts() {
+  const { data: boards } = useBoards();
+  const [tab, setTab] = useState<string>('all');
 
   return (
     <SectionCard title="인기 게시글" icon={TrendingUp}>
-      {isLoading ? (
-        <SkeletonLoader type="post-list" count={5} />
-      ) : (
-        <ol className="divide-y divide-brand-100/70">
-          {posts!.map((post, idx) => (
-            <li key={post.id}>
-              <Link
-                to={`/posts/${post.id}`}
-                className="flex items-center gap-3 py-2.5 text-sm transition-colors hover:text-brand-700"
+      <Tabs value={tab} onValueChange={setTab}>
+        <div className="-mx-1 mb-4 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <TabsList className="inline-flex h-auto w-auto gap-1 bg-transparent p-0">
+            <TabsTrigger
+              value="all"
+              className="h-9 gap-1.5 rounded-full border border-brand-100/70 bg-card px-3 data-[state=active]:border-transparent data-[state=active]:bg-brand-gradient data-[state=active]:text-white data-[state=active]:shadow-glow"
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              전체
+            </TabsTrigger>
+            {boards?.map((board) => (
+              <TabsTrigger
+                key={board.id}
+                value={String(board.id)}
+                className="h-9 gap-1.5 rounded-full border border-brand-100/70 bg-card px-3 data-[state=active]:border-transparent data-[state=active]:bg-brand-gradient data-[state=active]:text-white data-[state=active]:shadow-glow"
               >
-                <span
-                  className={`grid h-6 w-6 shrink-0 place-items-center rounded-md text-xs font-bold ${
-                    idx < 3 ? 'bg-brand-500 text-white' : 'bg-brand-50 text-brand-700'
-                  }`}
-                >
-                  {idx + 1}
-                </span>
-                <span className="min-w-0 flex-1 truncate font-medium">{post.title}</span>
-                {post.commentCount > 0 && (
-                  <span className="hidden shrink-0 items-center gap-0.5 text-xs text-brand-700 sm:flex">
-                    <MessageSquare className="h-3 w-3" />
-                    {post.commentCount}
-                  </span>
-                )}
-                <span className="hidden shrink-0 items-center gap-0.5 text-xs text-muted-foreground sm:flex">
-                  <Eye className="h-3 w-3" />
-                  {post.viewCount}
-                </span>
-                <span className="flex shrink-0 items-center gap-0.5 text-xs text-muted-foreground">
-                  <Heart className="h-3 w-3" />
-                  {post.likeCount}
-                </span>
-              </Link>
-            </li>
-          ))}
-        </ol>
-      )}
+                <Hash className="h-3.5 w-3.5" />
+                {board.name}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
+
+        <TabsContent value="all" className="mt-0">
+          <PopularAllTab />
+        </TabsContent>
+        {boards?.map((board) => (
+          <TabsContent key={board.id} value={String(board.id)} className="mt-0">
+            <PopularBoardTab boardId={board.id} />
+          </TabsContent>
+        ))}
+      </Tabs>
     </SectionCard>
   );
 }

@@ -14,7 +14,10 @@ export const profileCompleteSchema = z.object({
         teamId: z.number(),
       }),
     )
-    .min(1, '최소 1개 종목의 응원팀을 선택해주세요.'),
+    .min(1, '최소 1개 종목의 응원팀을 선택해주세요.')
+    .refine((teams) => new Set(teams.map((t) => t.sportId)).size === teams.length, {
+      message: '한 종목당 한 팀만 선택할 수 있습니다.',
+    }),
 });
 
 export type ProfileCompleteFormData = z.infer<typeof profileCompleteSchema>;
