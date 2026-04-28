@@ -1,12 +1,11 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-import { Loader2 } from 'lucide-react';
+import { Loader2, User, KeyRound, Lock, Check } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
 import {
   Form,
   FormField,
@@ -15,6 +14,8 @@ import {
   FormControl,
   FormMessage,
 } from '@/components/ui/form';
+import { PasswordInput } from '@/features/auth/components/PasswordInput';
+import { PasswordStrength } from '@/features/auth/components/PasswordStrength';
 import { applyFieldErrors } from '@/lib/formError';
 import { useUpdateProfile } from '../hooks/useUpdateProfile';
 import { userApi } from '../api/userApi';
@@ -30,19 +31,47 @@ interface EditProfileFormProps {
   profile: UserProfile;
 }
 
+function SectionCard({
+  icon: Icon,
+  title,
+  description,
+  children,
+}: {
+  icon: typeof User;
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="rounded-2xl border border-brand-100/70 bg-card p-5 shadow-soft sm:p-7">
+      <header className="mb-5 flex items-start gap-3">
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-700">
+          <Icon className="h-5 w-5" />
+        </span>
+        <div>
+          <h2 className="text-base font-bold tracking-tight">{title}</h2>
+          {description && <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>}
+        </div>
+      </header>
+      {children}
+    </section>
+  );
+}
+
 function ProfileSection({ profile }: EditProfileFormProps) {
   const { mutateAsync } = useUpdateProfile();
   const form = useForm<EditProfileFormData>({
     resolver: zodResolver(editProfileSchema),
-    defaultValues: {
-      nickname: profile.nickname,
-    },
+    defaultValues: { nickname: profile.nickname },
+    mode: 'onTouched',
   });
+  const isDirty = form.formState.isDirty;
 
   const onSubmit = async (data: EditProfileFormData) => {
     try {
       await mutateAsync(data);
       toast.success('프로필이 수정되었습니다.');
+      form.reset(data);
     } catch (error: unknown) {
       const err = error as { response?: { data?: { code?: string } } };
       if (err.response?.data?.code === 'USER_NICKNAME_DUPLICATED') {
@@ -54,50 +83,122 @@ function ProfileSection({ profile }: EditProfileFormProps) {
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <h2 className="text-lg font-bold">프로필 수정</h2>
-
-        <FormField
-          control={form.control}
-          name="nickname"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>닉네임</FormLabel>
-              <FormControl>
-                <Input placeholder="2~20자, 특수문자 제외" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="space-y-2">
-          <Label>응원팀</Label>
-          <div className="flex flex-wrap gap-2">
-            {profile.teams.map((team) => (
-              <Badge key={`${team.sportId}-${team.teamId}`} variant="secondary">
-                {team.sportName} - {team.teamName}
-              </Badge>
-            ))}
+    <SectionCard
+      icon={User}
+      title="프로필 정보"
+      description="라커룸 안에서 다른 팬들에게 보이는 정보예요."
+    >
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+          {/* 아바타 + 이메일 (읽기 전용) */}
+          <div className="flex items-center gap-4 rounded-xl border border-brand-100/60 bg-brand-50/30 p-4">
+            <Avatar className="h-14 w-14 ring-2 ring-card">
+              {profile.profileImageUrl && (
+                <AvatarImage src={profile.profileImageUrl} alt={profile.nickname} />
+              )}
+              <AvatarFallback className="text-lg font-bold">
+                {profile.nickname.charAt(0)}
+              </AvatarFallback>
+            </Avatar>
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-brand-700">
+                {profile.provider ? `${profile.provider.toUpperCase()} 계정` : '이메일 계정'}
+              </p>
+              <p className="truncate text-sm font-medium">{profile.email}</p>
+              <p className="text-xs text-muted-foreground">이메일은 변경할 수 없습니다.</p>
+            </div>
           </div>
-          <p className="text-xs text-muted-foreground">응원팀은 변경할 수 없습니다.</p>
-        </div>
 
-        <Button type="submit" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          저장
-        </Button>
-      </form>
-    </Form>
+          <FormField
+            control={form.control}
+            name="nickname"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>닉네임</FormLabel>
+                <FormControl>
+                  <Input placeholder="2~20자, 특수문자 제외" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="space-y-2">
+            <FormLabel>응원팀</FormLabel>
+            {profile.teams.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {profile.teams.map((team) => (
+                  <Badge key={`${team.sportId}-${team.teamId}`} variant="brand">
+                    {team.sportName} · {team.teamName}
+                  </Badge>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">등록된 응원팀이 없습니다.</p>
+            )}
+            <p className="text-xs text-muted-foreground">
+              응원팀 변경은{' '}
+              <a className="text-brand-700 underline underline-offset-2" href="/requests/new">
+                종목/구단 요청
+              </a>
+              을 통해 안내됩니다.
+            </p>
+          </div>
+
+          <div className="flex items-center justify-end gap-2 pt-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => form.reset({ nickname: profile.nickname })}
+              disabled={!isDirty || form.formState.isSubmitting}
+            >
+              초기화
+            </Button>
+            <Button
+              type="submit"
+              variant="brand"
+              size="sm"
+              disabled={!isDirty || form.formState.isSubmitting}
+            >
+              {form.formState.isSubmitting ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Check className="mr-1 h-4 w-4" />
+              )}
+              변경사항 저장
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </SectionCard>
   );
 }
 
-function PasswordSection() {
+function PasswordSection({ provider }: { provider: string | null }) {
   const form = useForm<ChangePasswordFormData>({
     resolver: zodResolver(changePasswordSchema),
     defaultValues: { currentPassword: '', newPassword: '', newPasswordConfirm: '' },
+    mode: 'onTouched',
   });
+
+  const newPw = form.watch('newPassword');
+  const newPwConfirm = form.watch('newPasswordConfirm');
+  const matched = newPw.length > 0 && newPw === newPwConfirm;
+
+  // SSO 가입자는 비밀번호 변경 불가
+  if (provider) {
+    return (
+      <SectionCard icon={Lock} title="비밀번호 변경">
+        <div className="rounded-xl border border-amber-200 bg-amber-50/60 p-4 text-sm text-amber-800">
+          <p className="font-semibold">SSO 계정으로 가입한 회원입니다.</p>
+          <p className="mt-1 text-xs leading-relaxed">
+            {provider.toUpperCase()} 계정의 비밀번호는 해당 서비스에서 직접 관리해주세요.
+          </p>
+        </div>
+      </SectionCard>
+    );
+  }
 
   const onSubmit = async (data: ChangePasswordFormData) => {
     try {
@@ -118,67 +219,82 @@ function PasswordSection() {
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <h2 className="text-lg font-bold">비밀번호 변경</h2>
+    <SectionCard
+      icon={KeyRound}
+      title="비밀번호 변경"
+      description="안전을 위해 주기적으로 변경하는 것을 권장해요."
+    >
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+          <FormField
+            control={form.control}
+            name="currentPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>현재 비밀번호</FormLabel>
+                <FormControl>
+                  <PasswordInput autoComplete="current-password" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="currentPassword"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>현재 비밀번호</FormLabel>
-              <FormControl>
-                <Input type="password" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="newPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>새 비밀번호</FormLabel>
+                <FormControl>
+                  <PasswordInput
+                    placeholder="영문·숫자·특수문자 포함 8~20자"
+                    autoComplete="new-password"
+                    {...field}
+                  />
+                </FormControl>
+                <PasswordStrength value={field.value} />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="newPassword"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>새 비밀번호</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="영문, 숫자, 특수문자 포함 8~20자" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="newPasswordConfirm"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>새 비밀번호 확인</FormLabel>
+                <FormControl>
+                  <PasswordInput autoComplete="new-password" {...field} />
+                </FormControl>
+                {matched && (
+                  <p className="mt-1.5 inline-flex items-center gap-1 text-xs font-medium text-brand-700">
+                    <Check className="h-3 w-3" /> 비밀번호가 일치합니다
+                  </p>
+                )}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="newPasswordConfirm"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>새 비밀번호 확인</FormLabel>
-              <FormControl>
-                <Input type="password" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <Button type="submit" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          변경
-        </Button>
-      </form>
-    </Form>
+          <div className="flex items-center justify-end pt-1">
+            <Button type="submit" variant="brand" size="sm" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              비밀번호 변경
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </SectionCard>
   );
 }
 
 export function EditProfileForm({ profile }: EditProfileFormProps) {
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <ProfileSection profile={profile} />
-      <Separator />
-      <PasswordSection />
+      <PasswordSection provider={profile.provider} />
     </div>
   );
 }

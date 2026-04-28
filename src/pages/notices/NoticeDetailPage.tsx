@@ -1,6 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { NoticeDetail } from '@/features/notices/components/NoticeDetail';
 import { useNoticeDetail } from '@/features/notices/hooks/useNoticeDetail';
 import { SkeletonLoader } from '@/components/common/SkeletonLoader';
@@ -17,13 +16,14 @@ export default function NoticeDetailPage() {
   if (!notice) return null;
 
   return (
-    <div className="space-y-4">
-      <Button variant="ghost" size="sm" asChild>
-        <Link to="/notices">
-          <ChevronLeft className="mr-1 h-4 w-4" />
-          목록으로
-        </Link>
-      </Button>
+    <div className="mx-auto max-w-3xl space-y-4">
+      <Link
+        to="/notices"
+        className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-brand-700"
+      >
+        <ChevronLeft className="h-4 w-4" />
+        목록으로
+      </Link>
       <NoticeDetail notice={notice} />
     </div>
   );

@@ -8,6 +8,7 @@ import {
   type ProfileCompleteFormData,
 } from '@/features/auth/schemas/profileCompleteSchema';
 import { authApi } from '@/features/auth/api/authApi';
+import { AuthLayout } from '@/features/auth/components/AuthLayout';
 import { TeamSelector } from '@/components/common/TeamSelector';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,10 +26,7 @@ export default function ProfileCompletePage() {
 
   const form = useForm<ProfileCompleteFormData>({
     resolver: zodResolver(profileCompleteSchema),
-    defaultValues: {
-      nickname: '',
-      teams: [],
-    },
+    defaultValues: { nickname: '', teams: [] },
   });
 
   const onSubmit = async (data: ProfileCompleteFormData) => {
@@ -46,17 +44,19 @@ export default function ProfileCompletePage() {
   };
 
   return (
-    <div className="mx-auto max-w-sm px-4 py-8">
-      {/* 헤더 */}
-      <div className="mb-8 flex flex-col items-center gap-2">
-        <img src="/logo.png" alt="Locker Room" className="h-16 w-16" loading="lazy" />
-        <h1 className="text-2xl font-bold">프로필 설정</h1>
-        <p className="text-sm text-muted-foreground">닉네임과 응원팀을 설정해주세요</p>
-      </div>
-
-      {/* 폼 */}
+    <AuthLayout
+      eyebrow="One last step"
+      title="프로필을 완성해주세요"
+      subtitle="닉네임과 응원팀을 설정하면 라커룸 이용을 시작할 수 있어요."
+      brandHeadline="당신의 라커룸을 정의하는 첫 걸음"
+      brandLines={[
+        '닉네임은 라커룸 안에서 당신을 대표해요',
+        '응원팀에 따라 전용 게시판이 열려요',
+        '나중에 마이페이지에서 언제든 변경할 수 있어요',
+      ]}
+    >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
           <FormField
             control={form.control}
             name="nickname"
@@ -76,7 +76,7 @@ export default function ProfileCompletePage() {
             name="teams"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>응원팀 선택</FormLabel>
+                <FormLabel>응원팀</FormLabel>
                 <FormControl>
                   <TeamSelector
                     value={field.value}
@@ -89,12 +89,17 @@ export default function ProfileCompletePage() {
             )}
           />
 
-          <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+          <Button
+            type="submit"
+            size="lg"
+            className="h-11 w-full text-sm font-semibold shadow-glow"
+            disabled={form.formState.isSubmitting}
+          >
             {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            시작하기
+            라커룸 시작하기
           </Button>
         </form>
       </Form>
-    </div>
+    </AuthLayout>
   );
 }

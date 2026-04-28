@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Menu, Search, User, LogOut, Settings, FileText, MessageSquare } from 'lucide-react';
 import { NotificationDropdown } from '@/features/notifications/components/NotificationDropdown';
+import { ThemeToggle } from '@/components/common/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -15,6 +16,7 @@ import {
 import { useAuthStore } from '@/features/auth/stores/authStore';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useUiStore } from '@/stores/uiStore';
+import { cn } from '@/lib/utils';
 
 export function Header() {
   const { isAuthenticated, user } = useAuthStore();
@@ -23,6 +25,18 @@ export function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [scrolled, setScrolled] = useState(false);
+
+  // 랜딩 페이지(비로그인 + '/'): transparent → 스크롤 시 glass
+  const isLanding = !isAuthenticated && location.pathname === '/';
+
+  useEffect(() => {
+    if (!isLanding) return;
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [isLanding]);
 
   const handleSearchSubmit = () => {
     if (!searchKeyword.trim()) return;
@@ -35,7 +49,14 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b bg-background">
+    <header
+      className={cn(
+        'sticky top-0 z-40 transition-colors duration-200',
+        isLanding && !scrolled
+          ? 'border-b border-transparent bg-transparent'
+          : 'border-b border-brand-100/70 bg-background/85 backdrop-blur-md',
+      )}
+    >
       <div className="mx-auto flex h-16 max-w-[1140px] items-center gap-4 px-4">
         {/* 모바일 햄버거 (로그인 시만) */}
         {isAuthenticated && (
@@ -46,9 +67,13 @@ export function Header() {
         )}
 
         {/* 로고 */}
-        <Link to="/" className="flex items-center gap-2 whitespace-nowrap">
-          <img src="/logo.png" alt="Locker Room" className="h-9 w-9" loading="lazy" />
-          <span className="hidden font-bold text-lg text-primary sm:inline">Locker Room</span>
+        <Link to="/" className="group flex items-center gap-2 whitespace-nowrap">
+          <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand-gradient shadow-soft transition-transform group-hover:scale-105">
+            <img src="/logo.png" alt="" className="h-6 w-6" loading="lazy" />
+          </span>
+          <span className="hidden text-base font-extrabold tracking-tight sm:inline">
+            Locker Room
+          </span>
         </Link>
 
         {/* 검색바 (로그인 시) */}
@@ -72,8 +97,8 @@ export function Header() {
               <Input
                 id="header-search"
                 type="search"
-                placeholder="검색어를 입력하세요"
-                className="pl-9"
+                placeholder="게시글, 라커룸 검색"
+                className="h-10 rounded-full bg-brand-50/40 pl-9 focus-visible:bg-card"
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
               />
@@ -88,7 +113,6 @@ export function Header() {
         <div className="flex items-center gap-1">
           {isAuthenticated ? (
             <>
-              {/* 모바일 검색 버튼 */}
               <Button
                 variant="ghost"
                 size="icon"
@@ -99,39 +123,57 @@ export function Header() {
                 <span className="sr-only">검색</span>
               </Button>
 
-              {/* 알림 드롭다운 */}
+              <ThemeToggle />
+
               <NotificationDropdown />
 
-              {/* 프로필 드롭다운 */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <User className="h-5 w-5" />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="rounded-full bg-brand-50 hover:bg-brand-100"
+                  >
+                    <User className="h-4 w-4 text-brand-700" />
                     <span className="sr-only">내 메뉴</span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuLabel>{user?.nickname || '사용자'}</DropdownMenuLabel>
+                <DropdownMenuContent align="end" className="w-56 rounded-xl p-1.5 shadow-float">
+                  <DropdownMenuLabel className="px-2.5 pb-2 pt-1.5">
+                    <div className="flex items-center gap-2.5">
+                      <span className="grid h-9 w-9 place-items-center rounded-full bg-brand-gradient text-sm font-bold text-white">
+                        {user?.nickname?.charAt(0) ?? 'U'}
+                      </span>
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold">
+                          {user?.nickname || '사용자'}
+                        </p>
+                        <p className="truncate text-[11px] text-muted-foreground">
+                          {user?.email ?? '라커룸 멤버'}
+                        </p>
+                      </div>
+                    </div>
+                  </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
+                  <DropdownMenuItem asChild className="rounded-lg">
                     <Link to="/mypage">
                       <User className="mr-2 h-4 w-4" />
                       마이페이지
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
+                  <DropdownMenuItem asChild className="rounded-lg">
                     <Link to="/mypage/posts">
                       <FileText className="mr-2 h-4 w-4" />
                       내가 쓴 글
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
+                  <DropdownMenuItem asChild className="rounded-lg">
                     <Link to="/mypage/comments">
                       <MessageSquare className="mr-2 h-4 w-4" />
                       내가 쓴 댓글
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
+                  <DropdownMenuItem asChild className="rounded-lg">
                     <Link to="/mypage/edit">
                       <Settings className="mr-2 h-4 w-4" />
                       설정
@@ -139,7 +181,7 @@ export function Header() {
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
-                    className="text-destructive focus:text-destructive"
+                    className="rounded-lg text-destructive focus:text-destructive"
                     onClick={logout}
                   >
                     <LogOut className="mr-2 h-4 w-4" />
@@ -150,10 +192,11 @@ export function Header() {
             </>
           ) : (
             <div className="flex items-center gap-2">
+              <ThemeToggle />
               <Button variant="ghost" size="sm" asChild>
                 <Link to="/auth/login">로그인</Link>
               </Button>
-              <Button size="sm" asChild>
+              <Button size="sm" asChild className="shadow-soft">
                 <Link to="/auth/signup">회원가입</Link>
               </Button>
             </div>

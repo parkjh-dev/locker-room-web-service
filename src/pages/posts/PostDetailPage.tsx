@@ -3,7 +3,6 @@ import { PostDetail } from '@/features/posts/components/PostDetail';
 import { usePostDetail } from '@/features/posts/hooks/usePostDetail';
 import { CommentList } from '@/features/comments/components/CommentList';
 import { SkeletonLoader } from '@/components/common/SkeletonLoader';
-import { Separator } from '@/components/ui/separator';
 
 export default function PostDetailPage() {
   const { postId } = useParams<{ postId: string }>();
@@ -17,10 +16,11 @@ export default function PostDetailPage() {
   if (!post) return null;
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto max-w-3xl space-y-6">
       <PostDetail post={post} />
-      <Separator />
-      <CommentList postId={pid} commentCount={post.commentCount} />
+      <section className="rounded-2xl border border-brand-100/70 bg-card p-5 shadow-soft sm:p-6">
+        <CommentList postId={pid} commentCount={post.commentCount} />
+      </section>
     </div>
   );
 }

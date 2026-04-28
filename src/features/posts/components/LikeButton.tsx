@@ -1,5 +1,4 @@
 import { Heart } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useToggleLike } from '../hooks/useToggleLike';
 
@@ -13,15 +12,25 @@ export function LikeButton({ postId, isLiked, likeCount }: LikeButtonProps) {
   const { mutate, isPending } = useToggleLike(postId);
 
   return (
-    <Button
-      variant="ghost"
-      size="sm"
-      className={cn('gap-1.5', isLiked && 'text-red-500 hover:text-red-600')}
+    <button
+      type="button"
       onClick={() => mutate()}
       disabled={isPending}
+      aria-pressed={isLiked}
+      className={cn(
+        'group inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-all duration-150 active:scale-[0.97] disabled:opacity-60',
+        isLiked
+          ? 'border-rose-200 bg-rose-50 text-rose-600 shadow-soft'
+          : 'border-brand-200 bg-card text-foreground hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600',
+      )}
     >
-      <Heart className={cn('h-4 w-4', isLiked && 'fill-current')} />
-      <span className="text-sm">{likeCount}</span>
-    </Button>
+      <Heart
+        className={cn(
+          'h-4 w-4 transition-transform group-hover:scale-110',
+          isLiked && 'fill-current',
+        )}
+      />
+      <span>{likeCount}</span>
+    </button>
   );
 }

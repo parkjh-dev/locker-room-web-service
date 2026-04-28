@@ -2,14 +2,16 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Check } from 'lucide-react';
 import { signupSchema, type SignupFormData } from '@/features/auth/schemas/signupSchema';
 import { authApi } from '@/features/auth/api/authApi';
+import { AuthLayout } from '@/features/auth/components/AuthLayout';
 import { SsoButtons } from '@/features/auth/components/SsoButtons';
+import { PasswordInput } from '@/features/auth/components/PasswordInput';
+import { PasswordStrength } from '@/features/auth/components/PasswordStrength';
 import { TeamSelector } from '@/components/common/TeamSelector';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
 import {
   Form,
   FormField,
@@ -33,7 +35,13 @@ export default function SignupPage() {
       nickname: '',
       teams: [],
     },
+    mode: 'onTouched',
   });
+
+  const password = form.watch('password');
+  const passwordConfirm = form.watch('passwordConfirm');
+  const passwordsMatch =
+    password.length > 0 && passwordConfirm.length > 0 && password === passwordConfirm;
 
   const onSubmit = async (data: SignupFormData) => {
     try {
@@ -57,120 +65,159 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="mx-auto max-w-sm px-4 py-8">
-      {/* 헤더 */}
-      <div className="mb-8 flex flex-col items-center gap-2">
-        <img src="/logo.png" alt="Locker Room" className="h-16 w-16" loading="lazy" />
-        <h1 className="text-2xl font-bold">회원가입</h1>
-        <p className="text-sm text-muted-foreground">Locker Room에 오신 것을 환영합니다</p>
-      </div>
-
-      {/* SSO */}
+    <AuthLayout
+      eyebrow="Create your account"
+      title="라커룸에 합류하세요"
+      subtitle="30초면 충분해요. 응원팀의 진짜 팬들이 기다리고 있습니다."
+      footer={
+        <p className="text-center text-sm text-muted-foreground">
+          이미 계정이 있으신가요?{' '}
+          <Link to="/auth/login" className="font-semibold text-brand-700 hover:underline">
+            로그인
+          </Link>
+        </p>
+      }
+    >
       <SsoButtons returnUrl={returnUrl || undefined} />
 
-      {/* 구분선 */}
-      <div className="relative my-6">
-        <Separator />
-        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-3 text-xs text-muted-foreground">
+      <div className="relative my-6 flex items-center">
+        <span className="h-px flex-1 bg-border" />
+        <span className="px-3 text-[11px] font-medium uppercase tracking-widest text-muted-foreground">
           또는 이메일로 가입
         </span>
+        <span className="h-px flex-1 bg-border" />
       </div>
 
-      {/* 폼 */}
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>이메일</FormLabel>
-                <FormControl>
-                  <Input placeholder="email@example.com" type="email" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+          <FieldGroup label="계정 정보">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>이메일</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="email@example.com"
+                      type="email"
+                      autoComplete="email"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>비밀번호</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="영문, 숫자, 특수문자 포함 8~20자"
-                    type="password"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>비밀번호</FormLabel>
+                  <FormControl>
+                    <PasswordInput
+                      placeholder="영문·숫자·특수문자 포함 8~20자"
+                      autoComplete="new-password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <PasswordStrength value={field.value} />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="passwordConfirm"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>비밀번호 확인</FormLabel>
-                <FormControl>
-                  <Input placeholder="비밀번호를 다시 입력하세요" type="password" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="passwordConfirm"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>비밀번호 확인</FormLabel>
+                  <FormControl>
+                    <PasswordInput
+                      placeholder="비밀번호를 다시 입력하세요"
+                      autoComplete="new-password"
+                      {...field}
+                    />
+                  </FormControl>
+                  {passwordsMatch && (
+                    <p className="mt-1.5 inline-flex items-center gap-1 text-xs font-medium text-brand-700">
+                      <Check className="h-3 w-3" /> 비밀번호가 일치합니다
+                    </p>
+                  )}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </FieldGroup>
 
-          <FormField
-            control={form.control}
-            name="nickname"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>닉네임</FormLabel>
-                <FormControl>
-                  <Input placeholder="2~20자, 특수문자 제외" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <FieldGroup label="프로필">
+            <FormField
+              control={form.control}
+              name="nickname"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>닉네임</FormLabel>
+                  <FormControl>
+                    <Input placeholder="2~20자, 특수문자 제외" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </FieldGroup>
 
-          <FormField
-            control={form.control}
-            name="teams"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>응원팀 선택</FormLabel>
-                <FormControl>
-                  <TeamSelector
-                    value={field.value}
-                    onChange={field.onChange}
-                    error={form.formState.errors.teams?.message}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <FieldGroup label="응원팀">
+            <FormField
+              control={form.control}
+              name="teams"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="sr-only">응원팀 선택</FormLabel>
+                  <FormControl>
+                    <TeamSelector
+                      value={field.value}
+                      onChange={field.onChange}
+                      error={form.formState.errors.teams?.message}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </FieldGroup>
 
-          <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+          <Button
+            type="submit"
+            size="lg"
+            className="h-11 w-full text-sm font-semibold shadow-glow"
+            disabled={form.formState.isSubmitting}
+          >
             {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            회원가입
+            라커룸 입장하기
           </Button>
+
+          <p className="text-center text-[11px] leading-relaxed text-muted-foreground">
+            가입을 진행하면 Locker Room의{' '}
+            <span className="underline underline-offset-2">이용약관</span>과{' '}
+            <span className="underline underline-offset-2">개인정보처리방침</span>에 동의하는 것으로
+            간주됩니다.
+          </p>
         </form>
       </Form>
+    </AuthLayout>
+  );
+}
 
-      {/* 하단 링크 */}
-      <p className="mt-6 text-center text-sm text-muted-foreground">
-        이미 계정이 있으신가요?{' '}
-        <Link to="/auth/login" className="font-medium text-primary hover:underline">
-          로그인
-        </Link>
-      </p>
-    </div>
+function FieldGroup({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <fieldset className="space-y-3.5">
+      <legend className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
+        {label}
+      </legend>
+      {children}
+    </fieldset>
   );
 }

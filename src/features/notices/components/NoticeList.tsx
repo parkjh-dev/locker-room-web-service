@@ -46,26 +46,32 @@ export function NoticeList({
   }
 
   return (
-    <div>
+    <div className="rounded-2xl border border-brand-100/70 bg-card px-2 shadow-soft sm:px-4">
       {notices.map((notice) => (
         <Link
           key={notice.id}
           to={`/notices/${notice.id}`}
-          className="flex items-center gap-3 border-b px-1 py-3 transition-colors hover:bg-accent/50"
+          className="group flex items-center gap-3 border-b border-brand-100/60 px-2 py-3.5 transition-colors hover:bg-brand-50/40"
         >
           {notice.isPinned && (
-            <Badge variant="destructive" className="shrink-0 gap-1 text-xs">
+            <Badge variant="brand" className="shrink-0">
               <Pin className="h-3 w-3" />
               고정
             </Badge>
           )}
-          <h3 className="min-w-0 flex-1 truncate text-sm font-medium">{notice.title}</h3>
+          <h3 className="min-w-0 flex-1 truncate text-[15px] font-semibold tracking-tight transition-colors group-hover:text-brand-700">
+            {notice.title}
+          </h3>
           <span className="shrink-0 text-xs text-muted-foreground">
             {formatDate(notice.createdAt)}
           </span>
         </Link>
       ))}
-      {isFetchingNextPage && <SkeletonLoader type="post-list" count={2} />}
+      {isFetchingNextPage && (
+        <div className="px-2 py-3">
+          <SkeletonLoader type="post-list" count={2} />
+        </div>
+      )}
       <div ref={scrollRef} className="h-1" />
     </div>
   );

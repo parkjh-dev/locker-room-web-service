@@ -1,19 +1,25 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Header } from './Header';
 import { Sidebar } from './Sidebar';
 import { Footer } from './Footer';
+import { BottomNav } from './BottomNav';
 
 export function SidebarLayout() {
+  const location = useLocation();
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-surface">
       <Header />
-      <div className="mx-auto flex w-full max-w-[1140px] flex-1">
+      <div className="mx-auto flex w-full max-w-[1240px] flex-1 px-0 sm:px-4">
         <Sidebar />
-        <main className="min-w-0 flex-1 px-4 py-6 lg:px-6">
+        <main
+          key={location.pathname}
+          className="min-w-0 flex-1 animate-fade-up px-4 pb-24 pt-6 lg:px-8 lg:pb-6"
+        >
           <Outlet />
         </main>
       </div>
       <Footer />
+      <BottomNav />
     </div>
   );
 }

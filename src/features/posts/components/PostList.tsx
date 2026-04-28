@@ -36,18 +36,22 @@ export function PostList({
     return (
       <EmptyState
         icon={FileText}
-        title="게시글이 없습니다"
-        description="첫 번째 글을 작성해보세요!"
+        title="아직 게시글이 없어요"
+        description="첫 번째 라커룸 토픽을 시작해보세요."
       />
     );
   }
 
   return (
-    <div>
+    <div className="rounded-2xl border border-brand-100/70 bg-card px-2 shadow-soft sm:px-4">
       {posts.map((post) => (
         <PostListItem key={post.id} post={post} />
       ))}
-      {isFetchingNextPage && <SkeletonLoader type="post-list" count={2} />}
+      {isFetchingNextPage && (
+        <div className="px-2 py-3">
+          <SkeletonLoader type="post-list" count={2} />
+        </div>
+      )}
       <div ref={scrollRef} className="h-1" />
     </div>
   );

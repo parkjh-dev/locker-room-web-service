@@ -1,9 +1,8 @@
 import { Link } from 'react-router-dom';
-import { Mail, Calendar, Settings } from 'lucide-react';
+import { Mail, Calendar, Settings, FileText, MessageSquare, Heart, UserMinus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/separator';
 import type { UserProfile } from '../types/user';
 
 interface MyProfileProps {
@@ -18,85 +17,104 @@ function formatDate(dateStr: string) {
   });
 }
 
+const SHORTCUTS = [
+  { to: '/mypage/posts', label: '내가 쓴 글', icon: FileText },
+  { to: '/mypage/comments', label: '내가 쓴 댓글', icon: MessageSquare },
+  { to: '/mypage/likes', label: '좋아요한 글', icon: Heart },
+  { to: '/mypage/withdraw', label: '회원 탈퇴', icon: UserMinus, danger: true },
+];
+
 export function MyProfile({ profile }: MyProfileProps) {
   return (
     <div className="space-y-6">
-      {/* 프로필 헤더 */}
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-4">
-          <Avatar className="h-16 w-16">
-            {profile.profileImageUrl && (
-              <AvatarImage src={profile.profileImageUrl} alt={profile.nickname} />
-            )}
-            <AvatarFallback className="text-xl">{profile.nickname.charAt(0)}</AvatarFallback>
-          </Avatar>
-          <div className="space-y-1">
-            <h2 className="text-xl font-bold">{profile.nickname}</h2>
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
-              <Mail className="h-4 w-4" />
-              {profile.email}
+      {/* 프로필 헤더 카드 */}
+      <section className="relative overflow-hidden rounded-2xl border border-brand-100/70 bg-card shadow-soft">
+        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-32 bg-brand-gradient" />
+        <div className="absolute inset-x-0 top-0 h-32 bg-grid opacity-[0.08]" aria-hidden="true" />
+        <div className="relative px-6 pb-6 pt-20 sm:px-8 sm:pt-24">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div className="flex items-end gap-4">
+              <Avatar className="h-20 w-20 shrink-0 ring-4 ring-white shadow-elev">
+                {profile.profileImageUrl && (
+                  <AvatarImage src={profile.profileImageUrl} alt={profile.nickname} />
+                )}
+                <AvatarFallback className="text-2xl font-bold">
+                  {profile.nickname.charAt(0)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="space-y-0.5 pb-1">
+                <h2 className="text-2xl font-extrabold tracking-tight">{profile.nickname}</h2>
+                <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                  <Mail className="h-4 w-4" />
+                  {profile.email}
+                </div>
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <Calendar className="h-3.5 w-3.5" />
+                  {formatDate(profile.createdAt)} 가입
+                </div>
+              </div>
             </div>
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
-              <Calendar className="h-4 w-4" />
-              {formatDate(profile.createdAt)} 가입
-            </div>
+            <Button variant="outline" size="sm" asChild>
+              <Link to="/mypage/edit">
+                <Settings className="mr-1.5 h-4 w-4" />
+                프로필 편집
+              </Link>
+            </Button>
           </div>
         </div>
-        <Button variant="outline" size="sm" asChild>
-          <Link to="/mypage/edit">
-            <Settings className="mr-2 h-4 w-4" />
-            설정
-          </Link>
-        </Button>
-      </div>
+      </section>
 
-      <Separator />
-
-      {/* 응원팀 */}
-      <div className="space-y-2">
-        <h3 className="text-sm font-medium text-muted-foreground">응원팀</h3>
+      {/* 응원팀 카드 */}
+      <section className="rounded-2xl border border-brand-100/70 bg-card p-5 shadow-soft sm:p-6">
+        <h3 className="text-[11px] font-semibold uppercase tracking-widest text-brand-700">
+          응원팀
+        </h3>
         {profile.teams.length > 0 ? (
-          <div className="flex flex-wrap gap-2">
+          <div className="mt-3 flex flex-wrap gap-2">
             {profile.teams.map((team) => (
-              <Badge key={`${team.sportId}-${team.teamId}`} variant="secondary" className="gap-1.5">
-                {team.sportName} - {team.teamName}
+              <Badge
+                key={`${team.sportId}-${team.teamId}`}
+                variant="brand"
+                className="px-3 py-1 text-sm"
+              >
+                {team.sportName} · {team.teamName}
               </Badge>
             ))}
           </div>
         ) : (
-          <p className="text-sm text-muted-foreground">등록된 응원팀이 없습니다.</p>
+          <p className="mt-3 text-sm text-muted-foreground">등록된 응원팀이 없습니다.</p>
         )}
-      </div>
+      </section>
 
-      <Separator />
-
-      {/* 바로가기 */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Link
-          to="/mypage/posts"
-          className="rounded-lg border p-3 text-center text-sm transition-colors hover:bg-accent"
-        >
-          내가 쓴 글
-        </Link>
-        <Link
-          to="/mypage/comments"
-          className="rounded-lg border p-3 text-center text-sm transition-colors hover:bg-accent"
-        >
-          내가 쓴 댓글
-        </Link>
-        <Link
-          to="/mypage/likes"
-          className="rounded-lg border p-3 text-center text-sm transition-colors hover:bg-accent"
-        >
-          좋아요한 글
-        </Link>
-        <Link
-          to="/mypage/withdraw"
-          className="rounded-lg border p-3 text-center text-sm text-destructive transition-colors hover:bg-accent"
-        >
-          회원 탈퇴
-        </Link>
-      </div>
+      {/* 바로가기 그리드 */}
+      <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {SHORTCUTS.map(({ to, label, icon: Icon, danger }) => (
+          <Link
+            key={to}
+            to={to}
+            className={`card-interactive group rounded-2xl border bg-card p-4 text-center shadow-xs ${
+              danger
+                ? 'border-rose-100 hover:border-rose-200'
+                : 'border-brand-100/70 hover:border-brand-200'
+            }`}
+          >
+            <span
+              className={`mx-auto grid h-10 w-10 place-items-center rounded-xl transition-transform group-hover:-translate-y-0.5 ${
+                danger ? 'bg-rose-50 text-rose-600' : 'bg-brand-50 text-brand-700'
+              }`}
+            >
+              <Icon className="h-4.5 w-4.5" />
+            </span>
+            <p
+              className={`mt-2.5 text-sm font-semibold ${
+                danger ? 'text-rose-600' : 'text-foreground'
+              }`}
+            >
+              {label}
+            </p>
+          </Link>
+        ))}
+      </section>
     </div>
   );
 }
