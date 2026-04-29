@@ -58,7 +58,7 @@ export function InquiryForm() {
         fileIds: files.map((f) => f.id),
       });
       toast.success('문의가 등록되었습니다.');
-      navigate('/inquiries');
+      navigate('/support?tab=inquiries');
     } catch (error) {
       applyFieldErrors(error, form.setError);
     }
@@ -134,7 +134,11 @@ export function InquiryForm() {
             {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             등록
           </Button>
-          <Button type="button" variant="outline" onClick={() => navigate('/inquiries')}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => navigate('/support?tab=inquiries')}
+          >
             취소
           </Button>
         </div>

@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import { PublicLayout } from '@/components/layout/PublicLayout';
 import { SidebarLayout } from '@/components/layout/SidebarLayout';
@@ -39,13 +39,13 @@ const WithdrawPage = lazy(() => import('@/pages/mypage/WithdrawPage'));
 
 const NotificationListPage = lazy(() => import('@/pages/notifications/NotificationListPage'));
 
-const InquiryListPage = lazy(() => import('@/pages/inquiries/InquiryListPage'));
 const InquiryCreatePage = lazy(() => import('@/pages/inquiries/InquiryCreatePage'));
 const InquiryDetailPage = lazy(() => import('@/pages/inquiries/InquiryDetailPage'));
 
-const RequestListPage = lazy(() => import('@/pages/requests/RequestListPage'));
 const RequestCreatePage = lazy(() => import('@/pages/requests/RequestCreatePage'));
 const RequestDetailPage = lazy(() => import('@/pages/requests/RequestDetailPage'));
+
+const SupportPage = lazy(() => import('@/pages/support/SupportPage'));
 
 const AdminDashboardPage = lazy(() => import('@/pages/admin/AdminDashboardPage'));
 const AdminUsersPage = lazy(() => import('@/pages/admin/AdminUsersPage'));
@@ -115,10 +115,12 @@ export const router = createBrowserRouter([
       { path: '/mypage/likes', element: page(MyLikesPage) },
       { path: '/mypage/withdraw', element: page(WithdrawPage) },
       { path: '/notifications', element: page(NotificationListPage) },
-      { path: '/inquiries', element: page(InquiryListPage) },
+      { path: '/support', element: page(SupportPage) },
+      // 호환: 기존 목록 URL 진입 시 통합 페이지로 redirect (탭 보존)
+      { path: '/inquiries', element: <Navigate to="/support?tab=inquiries" replace /> },
       { path: '/inquiries/new', element: page(InquiryCreatePage) },
       { path: '/inquiries/:inquiryId', element: page(InquiryDetailPage) },
-      { path: '/requests', element: page(RequestListPage) },
+      { path: '/requests', element: <Navigate to="/support?tab=requests" replace /> },
       { path: '/requests/new', element: page(RequestCreatePage) },
       { path: '/requests/:requestId', element: page(RequestDetailPage) },
     ],

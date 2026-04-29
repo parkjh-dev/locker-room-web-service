@@ -9,7 +9,7 @@ export default function InquiryDetailPage() {
   return (
     <div className="space-y-4">
       <Button variant="ghost" size="sm" asChild>
-        <Link to="/inquiries">
+        <Link to="/support?tab=inquiries">
           <ArrowLeft className="mr-1 h-4 w-4" />
           목록
         </Link>

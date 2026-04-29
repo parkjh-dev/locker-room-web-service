@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, HelpCircle, GitPullRequestArrow, Hash } from 'lucide-react';
+import { LayoutDashboard, HelpCircle, Hash } from 'lucide-react';
 import { Sheet, SheetContent, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUiStore } from '@/stores/uiStore';
@@ -9,8 +9,7 @@ import { cn } from '@/lib/utils';
 
 const NAV_LINKS = [
   { to: '/boards', label: '전체 게시판', icon: LayoutDashboard },
-  { to: '/inquiries', label: '고객센터', icon: HelpCircle },
-  { to: '/requests', label: '종목/구단 요청', icon: GitPullRequestArrow },
+  { to: '/support', label: '고객센터', icon: HelpCircle },
 ];
 
 function SidebarContent() {

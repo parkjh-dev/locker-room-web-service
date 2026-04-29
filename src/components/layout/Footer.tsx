@@ -4,8 +4,7 @@ const LINKS = [
   {
     title: '지원',
     items: [
-      { label: '고객센터', to: '/inquiries' },
-      { label: '종목/구단 요청', to: '/requests' },
+      { label: '고객센터', to: '/support' },
       { label: '비밀번호 찾기', to: '/auth/password/find' },
     ],
   },

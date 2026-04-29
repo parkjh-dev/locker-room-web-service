@@ -43,7 +43,7 @@ export function RequestForm() {
     try {
       await mutateAsync(data);
       toast.success('요청이 등록되었습니다.');
-      navigate('/requests');
+      navigate('/support?tab=requests');
     } catch (error) {
       applyFieldErrors(error, form.setError);
     }
@@ -114,7 +114,7 @@ export function RequestForm() {
             {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             등록
           </Button>
-          <Button type="button" variant="outline" onClick={() => navigate('/requests')}>
+          <Button type="button" variant="outline" onClick={() => navigate('/support?tab=requests')}>
             취소
           </Button>
         </div>
