@@ -1,11 +1,13 @@
+import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-import { Loader2, User, KeyRound, Lock, Check } from 'lucide-react';
+import { Loader2, User, KeyRound, Lock, Check, Camera, Trash2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+import api from '@/lib/axios';
+import type { ApiResponse } from '@/types/api';
 import {
   Form,
   FormField,
@@ -90,23 +92,15 @@ function ProfileSection({ profile }: EditProfileFormProps) {
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-          {/* 아바타 + 이메일 (읽기 전용) */}
-          <div className="flex items-center gap-4 rounded-xl border border-brand-100/60 bg-brand-50/30 p-4">
-            <Avatar className="h-14 w-14 ring-2 ring-card">
-              {profile.profileImageUrl && (
-                <AvatarImage src={profile.profileImageUrl} alt={profile.nickname} />
-              )}
-              <AvatarFallback className="text-lg font-bold">
-                {profile.nickname.charAt(0)}
-              </AvatarFallback>
-            </Avatar>
-            <div className="min-w-0">
-              <p className="text-[11px] font-semibold uppercase tracking-widest text-brand-700">
-                {profile.provider ? `${profile.provider.toUpperCase()} 계정` : '이메일 계정'}
-              </p>
-              <p className="truncate text-sm font-medium">{profile.email}</p>
-              <p className="text-xs text-muted-foreground">이메일은 변경할 수 없습니다.</p>
-            </div>
+          <ProfileImageField profile={profile} />
+
+          {/* 이메일 (읽기 전용) */}
+          <div className="rounded-xl border border-brand-100/60 bg-brand-50/30 p-4">
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-brand-700">
+              {profile.provider ? `${profile.provider.toUpperCase()} 계정` : '이메일 계정'}
+            </p>
+            <p className="mt-0.5 truncate text-sm font-medium">{profile.email}</p>
+            <p className="text-xs text-muted-foreground">이메일은 변경할 수 없습니다.</p>
           </div>
 
           <FormField
@@ -122,28 +116,6 @@ function ProfileSection({ profile }: EditProfileFormProps) {
               </FormItem>
             )}
           />
-
-          <div className="space-y-2">
-            <FormLabel>응원팀</FormLabel>
-            {profile.teams.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {profile.teams.map((team) => (
-                  <Badge key={`${team.sportId}-${team.teamId}`} variant="brand">
-                    {team.sportName} · {team.teamName}
-                  </Badge>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground">등록된 응원팀이 없습니다.</p>
-            )}
-            <p className="text-xs text-muted-foreground">
-              응원팀 변경은{' '}
-              <a className="text-brand-700 underline underline-offset-2" href="/requests/new">
-                종목/구단 요청
-              </a>
-              을 통해 안내됩니다.
-            </p>
-          </div>
 
           <div className="flex items-center justify-end gap-2 pt-2">
             <Button
@@ -287,6 +259,121 @@ function PasswordSection({ provider }: { provider: string | null }) {
         </form>
       </Form>
     </SectionCard>
+  );
+}
+
+const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+const MAX_AVATAR_SIZE = 5 * 1024 * 1024; // 5MB
+
+function ProfileImageField({ profile }: { profile: UserProfile }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [busy, setBusy] = useState<'upload' | 'remove' | null>(null);
+  const { mutateAsync } = useUpdateProfile();
+
+  const handlePick = () => inputRef.current?.click();
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = ''; // 같은 파일 재선택 가능하도록 reset
+    if (!file) return;
+
+    if (!IMAGE_TYPES.includes(file.type)) {
+      toast.error('이미지 파일만 업로드할 수 있어요. (jpg, png, gif, webp)');
+      return;
+    }
+    if (file.size > MAX_AVATAR_SIZE) {
+      toast.error('파일 크기는 5MB 이하여야 합니다.');
+      return;
+    }
+
+    setBusy('upload');
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await api.post<ApiResponse<{ url: string }>>('/files', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      const url = res.data.data.url;
+      await mutateAsync({ profileImageUrl: url });
+      toast.success('프로필 사진이 변경되었습니다.');
+    } catch {
+      toast.error('업로드에 실패했습니다. 잠시 후 다시 시도해주세요.');
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const handleRemove = async () => {
+    setBusy('remove');
+    try {
+      await mutateAsync({ profileImageUrl: null });
+      toast.success('프로필 사진이 제거되었습니다.');
+    } catch {
+      toast.error('제거에 실패했습니다.');
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const hasImage = !!profile.profileImageUrl;
+  const isBusy = busy !== null;
+
+  return (
+    <div className="flex items-center gap-4 rounded-xl border border-brand-100/60 bg-brand-50/30 p-4">
+      <Avatar className="h-16 w-16 shrink-0 ring-2 ring-card">
+        {hasImage && <AvatarImage src={profile.profileImageUrl!} alt={profile.nickname} />}
+        <AvatarFallback className="bg-brand-gradient text-lg font-bold text-white">
+          {profile.nickname.charAt(0)}
+        </AvatarFallback>
+      </Avatar>
+      <div className="min-w-0 flex-1 space-y-2">
+        <div>
+          <p className="text-sm font-semibold">프로필 사진</p>
+          <p className="text-[11px] text-muted-foreground">JPG · PNG · GIF · WebP / 5MB 이하</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handlePick}
+            disabled={isBusy}
+            className="h-8 text-xs"
+          >
+            {busy === 'upload' ? (
+              <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Camera className="mr-1 h-3.5 w-3.5" />
+            )}
+            {hasImage ? '사진 변경' : '사진 업로드'}
+          </Button>
+          {hasImage && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={handleRemove}
+              disabled={isBusy}
+              className="h-8 text-xs text-muted-foreground hover:text-destructive"
+            >
+              {busy === 'remove' ? (
+                <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Trash2 className="mr-1 h-3.5 w-3.5" />
+              )}
+              제거
+            </Button>
+          )}
+        </div>
+        <input
+          ref={inputRef}
+          type="file"
+          accept={IMAGE_TYPES.join(',')}
+          hidden
+          onChange={handleFileChange}
+        />
+      </div>
+    </div>
   );
 }
 

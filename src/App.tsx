@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { RouterProvider } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { QueryProvider } from '@/app/providers/QueryProvider';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import { useAuthStore } from '@/features/auth/stores/authStore';
@@ -29,6 +30,13 @@ interface Scenario {
 
 const SCENARIOS: Scenario[] = [
   {
+    key: 'fully-active',
+    label: '✅ 정상 사용자 (모두 완료, 데이터 풍부)',
+    emailVerified: true,
+    onboardingCompletedAt: NOW,
+    teams: DEFAULT_USER_TEAMS,
+  },
+  {
     key: 'fresh-signup',
     label: '🆕 신규 가입자 (이메일·온보딩 모두 미완료)',
     emailVerified: false,
@@ -57,13 +65,6 @@ const SCENARIOS: Scenario[] = [
     teams: DEFAULT_USER_TEAMS,
   },
   {
-    key: 'fully-active',
-    label: '✅ 정상 사용자 (모두 완료)',
-    emailVerified: true,
-    onboardingCompletedAt: NOW,
-    teams: DEFAULT_USER_TEAMS,
-  },
-  {
     key: 'admin',
     label: '🔴 관리자',
     isAdmin: true,
@@ -76,10 +77,14 @@ const SCENARIOS: Scenario[] = [
 function DevSimulator() {
   const { isAuthenticated, user, setTokens, setUser, clear } = useAuthStore();
   const [selected, setSelected] = useState<string>(SCENARIOS[0].key);
+  const queryClient = useQueryClient();
 
   const applyScenario = () => {
     const scenario = SCENARIOS.find((s) => s.key === selected);
     if (!scenario) return;
+
+    // 시나리오 전환 시 react-query 캐시 초기화 — 이전 사용자의 boards/me/posts가 stale로 남는 것 방지
+    queryClient.clear();
 
     if (scenario.isAdmin) {
       // mock data 동기화 (handlers가 동일 객체를 반환하므로 일관성 유지)
@@ -157,7 +162,14 @@ function DevSimulator() {
           <p className="line-clamp-2 text-[11px] leading-relaxed text-muted-foreground">
             {currentScenarioLabel}
           </p>
-          <Button size="sm" variant="outline" onClick={clear}>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              queryClient.clear();
+              clear();
+            }}
+          >
             로그아웃
           </Button>
         </>

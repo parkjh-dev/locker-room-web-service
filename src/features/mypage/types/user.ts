@@ -15,11 +15,13 @@ export interface UserProfile {
   createdAt: string;
 }
 
-/** 프로필 수정 요청 (백엔드 UserUpdateRequest 매칭 - 닉네임+비밀번호 통합) */
+/** 프로필 수정 요청 (백엔드 UserUpdateRequest 매칭 - 닉네임+비밀번호+프로필사진 통합) */
 export interface UpdateProfileRequest {
   nickname?: string;
   currentPassword?: string;
   newPassword?: string;
+  /** null로 보내면 프로필 사진 제거, undefined면 변경 없음 */
+  profileImageUrl?: string | null;
 }
 
 /** 회원 탈퇴 요청 (백엔드 WithdrawRequest 매칭) */

@@ -28,39 +28,39 @@ export function MyProfile({ profile }: MyProfileProps) {
   return (
     <div className="space-y-6">
       {/* 프로필 헤더 카드 */}
-      <section className="relative overflow-hidden rounded-2xl border border-brand-100/70 bg-card shadow-soft">
-        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-32 bg-brand-gradient" />
-        <div className="absolute inset-x-0 top-0 h-32 bg-grid opacity-[0.08]" aria-hidden="true" />
-        <div className="relative px-6 pb-6 pt-20 sm:px-8 sm:pt-24">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div className="flex items-end gap-4">
-              <Avatar className="h-20 w-20 shrink-0 ring-4 ring-white shadow-elev">
-                {profile.profileImageUrl && (
-                  <AvatarImage src={profile.profileImageUrl} alt={profile.nickname} />
-                )}
-                <AvatarFallback className="text-2xl font-bold">
-                  {profile.nickname.charAt(0)}
-                </AvatarFallback>
-              </Avatar>
-              <div className="space-y-0.5 pb-1">
-                <h2 className="text-2xl font-extrabold tracking-tight">{profile.nickname}</h2>
-                <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                  <Mail className="h-4 w-4" />
-                  {profile.email}
-                </div>
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+      <section className="rounded-2xl border border-brand-100/70 bg-card p-5 shadow-soft sm:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex min-w-0 items-center gap-4">
+            <Avatar className="h-14 w-14 shrink-0 ring-2 ring-brand-100 sm:h-16 sm:w-16">
+              {profile.profileImageUrl && (
+                <AvatarImage src={profile.profileImageUrl} alt={profile.nickname} />
+              )}
+              <AvatarFallback className="bg-brand-gradient text-lg font-bold text-white sm:text-xl">
+                {profile.nickname.charAt(0)}
+              </AvatarFallback>
+            </Avatar>
+            <div className="min-w-0 space-y-1">
+              <h2 className="truncate text-xl font-extrabold tracking-tight sm:text-2xl">
+                {profile.nickname}
+              </h2>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-muted-foreground sm:text-sm">
+                <span className="inline-flex items-center gap-1">
+                  <Mail className="h-3.5 w-3.5" />
+                  <span className="truncate">{profile.email}</span>
+                </span>
+                <span className="inline-flex items-center gap-1">
                   <Calendar className="h-3.5 w-3.5" />
                   {formatDate(profile.createdAt)} 가입
-                </div>
+                </span>
               </div>
             </div>
-            <Button variant="outline" size="sm" asChild>
-              <Link to="/mypage/edit">
-                <Settings className="mr-1.5 h-4 w-4" />
-                프로필 편집
-              </Link>
-            </Button>
           </div>
+          <Button variant="outline" size="sm" asChild className="shrink-0">
+            <Link to="/mypage/edit">
+              <Settings className="mr-1.5 h-4 w-4" />
+              프로필 편집
+            </Link>
+          </Button>
         </div>
       </section>
 

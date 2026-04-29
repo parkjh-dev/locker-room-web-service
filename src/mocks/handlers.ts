@@ -284,7 +284,15 @@ export const handlers = [
     }
     return ok(userProfile);
   }),
-  http.put(`${BASE}/users/me`, () => ok({ id: 10, nickname: '축구광팬' })),
+  http.put(`${BASE}/users/me`, async ({ request }) => {
+    const body = (await request.json().catch(() => ({}))) as {
+      nickname?: string;
+      profileImageUrl?: string | null;
+    };
+    if (typeof body.nickname === 'string') userProfile.nickname = body.nickname;
+    if ('profileImageUrl' in body) userProfile.profileImageUrl = body.profileImageUrl ?? null;
+    return ok({ id: userProfile.id, nickname: userProfile.nickname });
+  }),
   http.delete(`${BASE}/users/me`, () => ok(null)),
 
   // 응원팀 등록 — 등록한 종목은 변경 불가, 미등록 종목은 추가 가능
@@ -361,15 +369,27 @@ export const handlers = [
   // ──────────────────────────────────────────────
   // File Upload
   // ──────────────────────────────────────────────
-  http.post(`${BASE}/files`, () =>
-    ok({
+  http.post(`${BASE}/files`, async ({ request }) => {
+    // multipart/form-data 안에 'file' 키로 오는 실제 File을 ObjectURL로 변환해 즉시 미리보기 가능
+    const form = await request.formData().catch(() => null);
+    const file = form?.get('file');
+    if (file instanceof File) {
+      return ok({
+        id: Math.floor(Math.random() * 100000),
+        originalName: file.name,
+        url: URL.createObjectURL(file),
+        size: file.size,
+        mimeType: file.type || 'application/octet-stream',
+      });
+    }
+    return ok({
       id: Math.floor(Math.random() * 100000),
       originalName: 'image.png',
       url: 'https://placehold.co/600x400',
       size: 102400,
       mimeType: 'image/png',
-    }),
-  ),
+    });
+  }),
 
   // ──────────────────────────────────────────────
   // Admin
