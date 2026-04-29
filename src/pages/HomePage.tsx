@@ -22,6 +22,10 @@ import { noticeApi } from '@/features/notices/api/noticeApi';
 import { postApi } from '@/features/posts/api/postApi';
 import { useAuthStore } from '@/features/auth/stores/authStore';
 import { TeamRegistrationBanner } from '@/components/common/TeamRegistrationBanner';
+import {
+  TopFollowedTeamsCard,
+  MostActiveTeamsCard,
+} from '@/features/teams/components/TeamPodiumCard';
 import { LandingPage } from './LandingPage';
 import type { PostListItem } from '@/features/posts/types/post';
 
@@ -242,6 +246,10 @@ function AuthenticatedHome() {
       <TeamRegistrationBanner />
       <NoticePreview />
       <BoardGrid />
+      <div className="grid gap-6 lg:grid-cols-2">
+        <TopFollowedTeamsCard />
+        <MostActiveTeamsCard />
+      </div>
       <PopularPosts />
     </div>
   );

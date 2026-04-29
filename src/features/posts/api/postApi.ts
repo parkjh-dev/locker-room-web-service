@@ -1,6 +1,12 @@
 import api from '@/lib/axios';
 import type { ApiResponse, CursorPageResponse, SearchParams } from '@/types/api';
-import type { PostListItem, PostDetail, CreatePostRequest, UpdatePostRequest } from '../types/post';
+import type {
+  PostListItem,
+  PostDetail,
+  CreatePostRequest,
+  UpdatePostRequest,
+  Poll,
+} from '../types/post';
 
 export const postApi = {
   getList: (boardId: number, params: SearchParams) =>
@@ -32,4 +38,8 @@ export const postApi = {
     api
       .get<ApiResponse<PostListItem[]>>('/posts/popular', { params: { size } })
       .then((r) => r.data.data),
+
+  /** 투표 — 옵션 선택. 변경 불가 (한 번 투표하면 결과 즉시 공개) */
+  vote: (postId: number, optionId: number) =>
+    api.post<ApiResponse<Poll>>(`/posts/${postId}/vote`, { optionId }).then((r) => r.data.data),
 };

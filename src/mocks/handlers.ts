@@ -34,6 +34,9 @@ import {
   adminRequests,
 } from './data';
 
+import { TEAM_DASHBOARDS, fallbackTeamDashboard } from './teamDashboards';
+import { getRankedTeams, type RankingMetric } from './teamStats';
+
 const BASE = 'http://localhost:8080/api/v1';
 
 /** ApiResponse 래핑 헬퍼 */
@@ -61,6 +64,75 @@ function cursorPage<T extends { id: number }>(allItems: T[], request: Request) {
   const hasNext = startIndex + PAGE_SIZE < allItems.length;
   const nextCursor = hasNext ? String(items[items.length - 1].id) : null;
   return ok({ items, nextCursor, hasNext });
+}
+
+// ─── 게시글 카테고리/투표 더미 부여 (mock 데이터에 없는 신규 필드) ───
+const CATEGORY_CYCLE = ['REVIEW', 'PREDICTION', 'QUESTION', 'MEME', 'NEWS', 'GENERAL'] as const;
+
+function pickCategory(id: number): (typeof CATEGORY_CYCLE)[number] {
+  return CATEGORY_CYCLE[id % CATEGORY_CYCLE.length];
+}
+
+function makeMockPoll(postId: number) {
+  // id 모듈로 분기 — 일부 글에만 다양한 형태의 투표가 노출되도록
+  const variants = [
+    {
+      question: '오늘 경기 MVP는?',
+      options: ['손흥민', '황희찬', '이강인', '김민재'],
+    },
+    {
+      question: '이번 시즌 우승팀 예상',
+      options: ['전북 현대', '울산 HD', 'FC 서울'],
+    },
+    {
+      question: '경기 결과 어땠나요?',
+      options: ['최고였어요', '아쉬웠어요'],
+    },
+  ];
+  const v = variants[postId % variants.length];
+  const baseVotes = [42, 28, 15, 9, 4];
+  const options = v.options.map((text, i) => ({
+    id: i + 1,
+    text,
+    voteCount: baseVotes[i] ?? 1,
+  }));
+  return {
+    question: v.question,
+    options,
+    expiresAt: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+    totalVotes: options.reduce((acc, o) => acc + o.voteCount, 0),
+    myVoteOptionId: null as number | null,
+  };
+}
+
+function hasMockPoll(id: number): boolean {
+  return id % 7 === 0; // 7개당 1개 글에 투표 부여
+}
+
+function enrichListItem<T extends { id: number }>(item: T) {
+  return {
+    ...item,
+    category: pickCategory(item.id),
+    hasPoll: hasMockPoll(item.id),
+  };
+}
+
+// 서버처럼 동작하도록 postId별 poll 인스턴스를 보관 (투표하면 해당 인스턴스가 갱신됨)
+const pollStore = new Map<number, ReturnType<typeof makeMockPoll>>();
+
+function getOrCreatePoll(postId: number) {
+  if (!pollStore.has(postId)) {
+    pollStore.set(postId, makeMockPoll(postId));
+  }
+  return pollStore.get(postId)!;
+}
+
+function enrichDetail<T extends { id: number }>(detail: T) {
+  return {
+    ...detail,
+    category: pickCategory(detail.id),
+    poll: hasMockPoll(detail.id) ? getOrCreatePoll(detail.id) : null,
+  };
 }
 
 /**
@@ -167,6 +239,26 @@ export const handlers = [
     return ok(teamsByLeague[leagueId] ?? []);
   }),
 
+  // 팀 랭킹 통계 — metric(FOLLOWERS|AVG_POSTS) + sport 필터 지원
+  http.get(`${BASE}/stats/teams/ranking`, ({ request }) => {
+    const url = new URL(request.url);
+    const metric = (url.searchParams.get('metric') ?? 'FOLLOWERS') as RankingMetric;
+    const sport = url.searchParams.get('sport') ?? 'ALL';
+    const size = Number(url.searchParams.get('size') ?? '3');
+    return ok(getRankedTeams(metric, sport, size));
+  }),
+
+  // 팀 게시판 헤더용 대시보드 (다음 경기 + 최근 5경기 + 순위 + 팀 소개)
+  http.get(`${BASE}/teams/:teamId/dashboard`, ({ params }) => {
+    const teamId = Number(params.teamId);
+    const dashboard = TEAM_DASHBOARDS[teamId];
+    if (dashboard) return ok(dashboard);
+
+    // 매핑 없을 때 — boards에서 teamName을 찾아 fallback 생성
+    const board = boards.find((b) => b.teamId === teamId);
+    return ok(fallbackTeamDashboard(teamId, board?.teamName ?? '응원팀'));
+  }),
+
   // (deprecated) 종목별 전체 팀 — 호환 유지
   http.get(`${BASE}/sports/:sportId/teams`, ({ params }) => {
     const sportId = Number(params.sportId);
@@ -215,22 +307,44 @@ export const handlers = [
     if (sort === 'likeCount') {
       list = [...list].sort((a, b) => b.likeCount - a.likeCount);
     }
-    return cursorPage(list, request);
+    return cursorPage(list.map(enrichListItem), request);
   }),
   http.get(`${BASE}/posts/popular`, ({ request }) => {
     const url = new URL(request.url);
     const size = Number(url.searchParams.get('size') ?? '10');
-    const sorted = [...postListItems].sort((a, b) => b.likeCount - a.likeCount).slice(0, size);
+    const sorted = [...postListItems]
+      .sort((a, b) => b.likeCount - a.likeCount)
+      .slice(0, size)
+      .map(enrichListItem);
     return ok(sorted);
   }),
   http.get(`${BASE}/posts/:postId`, ({ params }) => {
     const postId = Number(params.postId);
     const detail = postDetailsById[postId] ?? fallbackPostDetail(postId);
     if (!detail) return notFound('POST_NOT_FOUND', '게시글을 찾을 수 없습니다.');
-    return ok(detail);
+    return ok(enrichDetail(detail));
   }),
   http.post(`${BASE}/posts`, () => ok({ id: 100 })),
   http.put(`${BASE}/posts/:postId`, ({ params }) => ok({ id: Number(params.postId) })),
+  http.post(`${BASE}/posts/:postId/vote`, async ({ params, request }) => {
+    const postId = Number(params.postId);
+    const body = (await request.json()) as { optionId: number };
+    const poll = getOrCreatePoll(postId);
+    if (poll.myVoteOptionId !== null) {
+      return ok(poll); // 이미 투표함 — idempotent
+    }
+    const target = poll.options.find((o) => o.id === body.optionId);
+    if (!target) {
+      return HttpResponse.json(
+        { code: 'POLL_OPTION_INVALID', message: '존재하지 않는 옵션입니다.', data: null },
+        { status: 400 },
+      );
+    }
+    target.voteCount += 1;
+    poll.totalVotes += 1;
+    poll.myVoteOptionId = body.optionId;
+    return ok(poll);
+  }),
   http.delete(`${BASE}/posts/:postId`, () => ok(null)),
   http.post(`${BASE}/posts/:postId/like`, ({ params }) => {
     const postId = Number(params.postId);

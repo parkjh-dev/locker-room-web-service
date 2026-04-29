@@ -1,10 +1,8 @@
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
@@ -20,54 +18,51 @@ import {
   FormControl,
   FormMessage,
 } from '@/components/ui/form';
-import { FileUpload } from '@/components/common/FileUpload';
+import { RichEditor } from '@/components/common/RichEditor';
+import { PollEditor } from './PollEditor';
 import { applyFieldErrors } from '@/lib/formError';
 import { useBoards } from '@/features/boards/hooks/useBoards';
-import { postSchema, type PostFormData } from '../schemas/postSchema';
-
-interface UploadedFile {
-  id: number;
-  originalName: string;
-  url: string;
-  size: number;
-  mimeType?: string;
-}
+import {
+  postSchema,
+  POST_CATEGORIES,
+  POST_CATEGORY_LABELS,
+  type PostFormData,
+} from '../schemas/postSchema';
 
 interface PostFormProps {
   defaultValues?: Partial<PostFormData>;
-  defaultFiles?: UploadedFile[];
   onSubmit: (data: PostFormData, fileIds: number[]) => Promise<void>;
   submitLabel: string;
-  /** 수정 모드에서 게시판 변경 불가 */
+  /** 수정 모드에서 게시판/말머리/투표 변경 불가 */
   disableBoardSelect?: boolean;
+  /** 수정 모드에서 투표 편집 영역 숨김 (참여자 표 보호) */
+  isEdit?: boolean;
 }
 
 export function PostForm({
   defaultValues,
-  defaultFiles = [],
   onSubmit,
   submitLabel,
   disableBoardSelect = false,
+  isEdit = false,
 }: PostFormProps) {
   const { data: boards } = useBoards();
   const form = useForm<PostFormData>({
     resolver: zodResolver(postSchema),
     defaultValues: {
       boardId: 0,
+      category: 'GENERAL',
       title: '',
       content: '',
+      poll: null,
       ...defaultValues,
     },
   });
 
-  const [files, setFiles] = useState<UploadedFile[]>(defaultFiles);
-
   const handleSubmit = async (data: PostFormData) => {
     try {
-      await onSubmit(
-        data,
-        files.map((f) => f.id),
-      );
+      // 인라인 이미지는 본문 HTML 안에 들어가므로 별도 fileIds는 빈 배열
+      await onSubmit(data, []);
     } catch (error) {
       applyFieldErrors(error, form.setError);
     }
@@ -76,35 +71,62 @@ export function PostForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-        {/* 게시판 선택 */}
-        <FormField
-          control={form.control}
-          name="boardId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>게시판</FormLabel>
-              <FormControl>
-                <Select
-                  value={field.value ? field.value.toString() : ''}
-                  onValueChange={(v) => field.onChange(Number(v))}
-                  disabled={disableBoardSelect}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="게시판을 선택하세요" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {boards?.map((board) => (
-                      <SelectItem key={board.id} value={board.id.toString()}>
-                        {board.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {/* 게시판 + 말머리 (한 줄) */}
+        <div className="grid gap-4 sm:grid-cols-[2fr_1fr]">
+          <FormField
+            control={form.control}
+            name="boardId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>게시판</FormLabel>
+                <FormControl>
+                  <Select
+                    value={field.value ? field.value.toString() : ''}
+                    onValueChange={(v) => field.onChange(Number(v))}
+                    disabled={disableBoardSelect}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="게시판을 선택하세요" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {boards?.map((board) => (
+                        <SelectItem key={board.id} value={board.id.toString()}>
+                          {board.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="category"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>말머리</FormLabel>
+                <FormControl>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="말머리" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {POST_CATEGORIES.map((c) => (
+                        <SelectItem key={c} value={c}>
+                          {POST_CATEGORY_LABELS[c]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         {/* 제목 */}
         <FormField
@@ -129,21 +151,35 @@ export function PostForm({
             <FormItem>
               <FormLabel>내용</FormLabel>
               <FormControl>
-                <Textarea placeholder="내용을 입력하세요" rows={12} maxLength={10000} {...field} />
+                <RichEditor
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="내용을 입력하세요. 이미지는 도구바·드래그·붙여넣기로 추가할 수 있어요."
+                />
               </FormControl>
-              <div className="flex justify-between">
-                <FormMessage />
-                <span className="text-xs text-muted-foreground">{field.value.length}/10,000</span>
-              </div>
+              <FormMessage />
             </FormItem>
           )}
         />
 
-        {/* 파일 첨부 */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium">파일 첨부</label>
-          <FileUpload value={files} onChange={setFiles} />
-        </div>
+        {/* 투표 (수정 모드에선 숨김) */}
+        {!isEdit && (
+          <FormField
+            control={form.control}
+            name="poll"
+            render={({ field, fieldState }) => (
+              <FormItem>
+                <FormControl>
+                  <PollEditor
+                    value={field.value ?? null}
+                    onChange={field.onChange}
+                    errorMessage={fieldState.error?.message}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        )}
 
         {/* 제출 */}
         <div className="flex justify-end gap-2">

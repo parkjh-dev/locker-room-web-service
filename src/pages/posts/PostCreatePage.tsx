@@ -14,7 +14,20 @@ export default function PostCreatePage() {
   const user = useAuthStore((s) => s.user);
 
   const handleSubmit = async (data: PostFormData, fileIds: number[]) => {
-    const result = await mutateAsync({ ...data, fileIds });
+    const result = await mutateAsync({
+      boardId: data.boardId,
+      title: data.title,
+      content: data.content,
+      category: data.category,
+      fileIds,
+      poll: data.poll
+        ? {
+            question: data.poll.question?.trim() || null,
+            options: data.poll.options.map((s) => s.trim()),
+            expiresAt: data.poll.expiresAt,
+          }
+        : null,
+    });
     toast.success('게시글이 작성되었습니다.');
     navigate(`/posts/${result.id}`, { replace: true });
   };

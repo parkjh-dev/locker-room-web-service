@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Eye, Calendar, Flag, Pencil, Trash2, Bot, FileIcon, ChevronLeft } from 'lucide-react';
@@ -9,8 +9,10 @@ import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { ImageLightbox } from '@/components/common/ImageLightbox';
 import { LikeButton } from './LikeButton';
 import { ReportModal } from './ReportModal';
+import { PollWidget } from './PollWidget';
 import { useAuthStore } from '@/features/auth/stores/authStore';
 import { useDeletePost } from '../hooks/useDeletePost';
+import { POST_CATEGORY_LABELS } from '../schemas/postSchema';
 import type { PostDetail as PostDetailType } from '../types/post';
 
 interface PostDetailProps {
@@ -48,6 +50,22 @@ export function PostDetail({ post }: PostDetailProps) {
   const [reportOpen, setReportOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const { mutateAsync: deletePost, isPending: deleting } = useDeletePost(post.id, post.boardId);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  // 스포일러 클릭 시 펼침 — content가 dangerouslySetInnerHTML로 들어가므로 이벤트 위임
+  useEffect(() => {
+    const root = contentRef.current;
+    if (!root) return;
+    const handler = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      const spoiler = target?.closest('.spoiler-mark');
+      if (spoiler && !spoiler.classList.contains('is-revealed')) {
+        spoiler.classList.add('is-revealed');
+      }
+    };
+    root.addEventListener('click', handler);
+    return () => root.removeEventListener('click', handler);
+  }, [post.content]);
 
   const isOwner = user?.id === post.author.id;
 
@@ -82,6 +100,11 @@ export function PostDetail({ post }: PostDetailProps) {
         </Link>
 
         <div className="relative flex flex-wrap items-start gap-2">
+          {post.category && post.category !== 'GENERAL' && (
+            <Badge variant="brand" className="font-semibold">
+              {POST_CATEGORY_LABELS[post.category]}
+            </Badge>
+          )}
           {post.isAiGenerated && (
             <Badge variant="ghost" className="gap-1">
               <Bot className="h-3 w-3" />
@@ -130,11 +153,16 @@ export function PostDetail({ post }: PostDetailProps) {
 
       <div className="h-px bg-brand-100/70" />
 
-      {/* 본문 */}
+      {/* 본문 — Tiptap HTML 또는 plain text 모두 호환 (whitespace-pre-wrap이 \n 보존) */}
       <div className="px-6 py-7 sm:px-8">
-        <div className="prose prose-sm max-w-none whitespace-pre-wrap text-[15px] leading-relaxed text-foreground/90">
-          {post.content}
-        </div>
+        <div
+          ref={contentRef}
+          className="post-viewer prose prose-sm max-w-none whitespace-pre-wrap text-[15px] leading-relaxed text-foreground/90 [&_a]:text-brand-700 [&_a]:underline-offset-2 [&_img]:my-3 [&_img]:rounded-lg"
+          dangerouslySetInnerHTML={{ __html: post.content }}
+        />
+
+        {/* 투표 */}
+        {post.poll && <PollWidget postId={post.id} poll={post.poll} />}
 
         {/* 이미지 갤러리 */}
         {images.length > 0 && (

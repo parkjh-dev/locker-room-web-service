@@ -8,6 +8,7 @@ import { PostList } from '@/features/posts/components/PostList';
 import { usePostList } from '@/features/posts/hooks/usePostList';
 import { useAuthStore } from '@/features/auth/stores/authStore';
 import { boardApi } from '@/features/boards/api/boardApi';
+import { TeamDashboard } from '@/features/teams/components/TeamDashboard';
 import { cn } from '@/lib/utils';
 import type { SearchParams } from '@/types/api';
 
@@ -75,6 +76,9 @@ export default function BoardPostListPage() {
           )}
         </div>
       </header>
+
+      {/* 팀 게시판 한정 — 다음 경기 / 최근 5경기 / 순위 / 팀 소개 */}
+      {board?.type === 'TEAM' && board.teamId !== null && <TeamDashboard teamId={board.teamId} />}
 
       {/* 검색 + 정렬 */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

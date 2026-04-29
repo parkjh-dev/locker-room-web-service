@@ -387,3 +387,32 @@
     }
   }
 }
+
+@layer components {
+  /* 스포일러 마크 — 에디터 내에선 점선으로 시각적 구분 */
+  [contenteditable] .spoiler-mark {
+    background: hsl(var(--brand-50));
+    border-bottom: 1px dashed hsl(var(--brand-400));
+    border-radius: 2px;
+    padding: 0 2px;
+  }
+  /* 뷰어(상세 페이지)에선 마스크 — 클릭 시 .is-revealed 클래스가 부여됨 */
+  .post-viewer .spoiler-mark {
+    background: hsl(var(--foreground));
+    color: transparent;
+    border-radius: 4px;
+    padding: 0 4px;
+    cursor: pointer;
+    transition: background-color 200ms ease;
+    user-select: none;
+  }
+  .post-viewer .spoiler-mark:hover {
+    background: hsl(var(--foreground) / 0.85);
+  }
+  .post-viewer .spoiler-mark.is-revealed {
+    background: hsl(var(--brand-50));
+    color: inherit;
+    cursor: default;
+    user-select: text;
+  }
+}
