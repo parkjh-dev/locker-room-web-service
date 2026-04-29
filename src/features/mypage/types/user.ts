@@ -4,11 +4,14 @@ import type { UserTeam } from '@/types/common';
 export interface UserProfile {
   id: number;
   email: string;
+  emailVerified: boolean;
   nickname: string;
   role: 'USER' | 'ADMIN';
   provider: string | null;
   profileImageUrl?: string | null;
   teams: UserTeam[];
+  /** 온보딩(응원팀 등록 또는 명시적 skip) 완료 시각. null이면 미완료 — 첫 로그인 판정에 사용 */
+  onboardingCompletedAt: string | null;
   createdAt: string;
 }
 

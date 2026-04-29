@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
@@ -7,11 +7,11 @@ import {
   Loader2,
   Check,
   Mail,
+  MailCheck,
   ArrowRight,
   ArrowLeft,
   Lock,
   UserCircle2,
-  Trophy,
 } from 'lucide-react';
 import { signupSchema, type SignupFormData } from '@/features/auth/schemas/signupSchema';
 import { authApi } from '@/features/auth/api/authApi';
@@ -19,7 +19,7 @@ import { AuthLayout } from '@/features/auth/components/AuthLayout';
 import { SsoButtons } from '@/features/auth/components/SsoButtons';
 import { PasswordInput } from '@/features/auth/components/PasswordInput';
 import { PasswordStrength } from '@/features/auth/components/PasswordStrength';
-import { TeamSelector } from '@/components/common/TeamSelector';
+import { PhoneVerificationField } from '@/features/auth/components/PhoneVerificationField';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -32,16 +32,16 @@ import {
 } from '@/components/ui/form';
 import { cn } from '@/lib/utils';
 
-type Phase = 'method' | 'account' | 'profile' | 'teams';
+type Phase = 'method' | 'account' | 'profile' | 'success';
 
-const STEP_META: { phase: Exclude<Phase, 'method'>; label: string; icon: typeof Lock }[] = [
+type StepPhase = 'account' | 'profile';
+
+const STEP_META: { phase: StepPhase; label: string; icon: typeof Lock }[] = [
   { phase: 'account', label: '계정 정보', icon: Lock },
   { phase: 'profile', label: '프로필', icon: UserCircle2 },
-  { phase: 'teams', label: '응원팀', icon: Trophy },
 ];
 
 export default function SignupPage() {
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const returnUrl = searchParams.get('returnUrl');
   const [phase, setPhase] = useState<Phase>('method');
@@ -52,8 +52,9 @@ export default function SignupPage() {
       email: '',
       password: '',
       passwordConfirm: '',
+      phone: '',
+      phoneVerified: false,
       nickname: '',
-      teams: [],
     },
     mode: 'onTouched',
   });
@@ -63,24 +64,38 @@ export default function SignupPage() {
   const passwordsMatch =
     password.length > 0 && passwordConfirm.length > 0 && password === passwordConfirm;
 
-  const stepIndex = phase === 'method' ? 0 : STEP_META.findIndex((s) => s.phase === phase) + 1;
+  // password 변경 시 passwordConfirm cross-field 검증을 재실행 (onTouched 모드 보완)
+  useEffect(() => {
+    if (form.getFieldState('passwordConfirm').isTouched) {
+      form.trigger('passwordConfirm');
+    }
+  }, [password, form]);
+
+  const stepIndex =
+    phase === 'method'
+      ? 0
+      : phase === 'success'
+        ? STEP_META.length
+        : STEP_META.findIndex((s) => s.phase === phase) + 1;
   const totalSteps = STEP_META.length;
   const progress = phase === 'method' ? 0 : (stepIndex / totalSteps) * 100;
 
   const goNext = async () => {
     if (phase === 'account') {
-      const valid = await form.trigger(['email', 'password', 'passwordConfirm']);
+      const valid = await form.trigger([
+        'email',
+        'password',
+        'passwordConfirm',
+        'phone',
+        'phoneVerified',
+      ]);
       if (valid) setPhase('profile');
-    } else if (phase === 'profile') {
-      const valid = await form.trigger(['nickname']);
-      if (valid) setPhase('teams');
     }
   };
 
   const goBack = () => {
     if (phase === 'account') setPhase('method');
     else if (phase === 'profile') setPhase('account');
-    else if (phase === 'teams') setPhase('profile');
   };
 
   const onSubmit = async (data: SignupFormData) => {
@@ -88,11 +103,10 @@ export default function SignupPage() {
       await authApi.signup({
         email: data.email,
         password: data.password,
+        phone: data.phone,
         nickname: data.nickname,
-        teams: data.teams,
       });
-      toast.success('회원가입이 완료되었습니다. 로그인해주세요.');
-      navigate(`/auth/login${returnUrl ? `?returnUrl=${encodeURIComponent(returnUrl)}` : ''}`);
+      setPhase('success');
     } catch (error: unknown) {
       const err = error as { response?: { data?: { code?: string } } };
       const code = err.response?.data?.code;
@@ -113,21 +127,20 @@ export default function SignupPage() {
           title: '라커룸에 합류하세요',
           subtitle: '30초면 충분해요. 응원팀의 진짜 팬들이 기다리고 있습니다.',
         }
-      : {
-          eyebrow: `Step ${stepIndex} of ${totalSteps}`,
-          title:
-            phase === 'account'
-              ? '계정 정보를 입력해주세요'
-              : phase === 'profile'
-                ? '라커룸에서 어떻게 불릴까요?'
-                : '어떤 팀을 응원하시나요?',
-          subtitle:
-            phase === 'account'
-              ? '안전한 라커룸 이용을 위한 첫 걸음이에요.'
-              : phase === 'profile'
-                ? '닉네임은 라커룸 안에서 다른 팬들에게 표시돼요.'
-                : '한 종목당 하나의 팀을 선택할 수 있어요.',
-        };
+      : phase === 'success'
+        ? {
+            eyebrow: 'Welcome to Locker Room',
+            title: '가입이 완료되었어요',
+            subtitle: '거의 다 왔어요. 이메일 한 통만 더 확인해 주세요.',
+          }
+        : {
+            eyebrow: `Step ${stepIndex} of ${totalSteps}`,
+            title: phase === 'account' ? '계정 정보를 입력해주세요' : '라커룸에서 어떻게 불릴까요?',
+            subtitle:
+              phase === 'account'
+                ? '안전한 라커룸 이용을 위한 첫 걸음이에요.'
+                : '닉네임은 라커룸 안에서 다른 팬들에게 표시돼요.',
+          };
 
   return (
     <AuthLayout
@@ -148,8 +161,8 @@ export default function SignupPage() {
         ) : null
       }
     >
-      {/* Progress + Stepper (이메일 가입 진행 중에만) */}
-      {phase !== 'method' && (
+      {/* Progress + Stepper (이메일 가입 진행 중에만, 완료 화면 제외) */}
+      {phase !== 'method' && phase !== 'success' && (
         <div className="mb-7 space-y-3">
           <div className="h-1 w-full overflow-hidden rounded-full bg-brand-100">
             <div
@@ -196,11 +209,13 @@ export default function SignupPage() {
       <div key={phase} className="animate-fade-up">
         {phase === 'method' ? (
           <MethodScreen returnUrl={returnUrl} onChooseEmail={() => setPhase('account')} />
+        ) : phase === 'success' ? (
+          <SuccessScreen email={form.getValues('email')} returnUrl={returnUrl} />
         ) : (
           <Form {...form}>
             <form
               onSubmit={(e) => {
-                if (phase !== 'teams') {
+                if (phase !== 'profile') {
                   e.preventDefault();
                   goNext();
                   return;
@@ -272,6 +287,16 @@ export default function SignupPage() {
                       </FormItem>
                     )}
                   />
+
+                  <PhoneVerificationField
+                    control={form.control}
+                    phoneName="phone"
+                    verifiedName="phoneVerified"
+                    getPhone={() => form.getValues('phone')}
+                    onVerifiedChange={(v) =>
+                      form.setValue('phoneVerified', v, { shouldValidate: true })
+                    }
+                  />
                 </>
               )}
 
@@ -294,33 +319,13 @@ export default function SignupPage() {
                 />
               )}
 
-              {phase === 'teams' && (
-                <FormField
-                  control={form.control}
-                  name="teams"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="sr-only">응원팀 선택</FormLabel>
-                      <FormControl>
-                        <TeamSelector
-                          value={field.value}
-                          onChange={field.onChange}
-                          error={form.formState.errors.teams?.message}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-
               <NavRow
                 onBack={goBack}
-                isFinal={phase === 'teams'}
+                isFinal={phase === 'profile'}
                 isSubmitting={form.formState.isSubmitting}
               />
 
-              {phase === 'teams' && (
+              {phase === 'profile' && (
                 <p className="text-center text-[11px] leading-relaxed text-muted-foreground">
                   가입을 진행하면 <span className="underline underline-offset-2">이용약관</span>과{' '}
                   <span className="underline underline-offset-2">개인정보처리방침</span>에 동의하는
@@ -413,6 +418,92 @@ function NavRow({
         )}
         {isFinal ? '라커룸 입장하기' : '다음'}
       </Button>
+    </div>
+  );
+}
+
+const RESEND_COOLDOWN_SECONDS = 60;
+
+function SuccessScreen({ email, returnUrl }: { email: string; returnUrl: string | null }) {
+  const [cooldown, setCooldown] = useState(RESEND_COOLDOWN_SECONDS);
+  const [resending, setResending] = useState(false);
+  const loginHref = `/auth/login${returnUrl ? `?returnUrl=${encodeURIComponent(returnUrl)}` : ''}`;
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const id = window.setInterval(() => {
+      setCooldown((v) => (v <= 1 ? 0 : v - 1));
+    }, 1000);
+    return () => window.clearInterval(id);
+  }, [cooldown]);
+
+  const handleResend = async () => {
+    if (cooldown > 0) return;
+    setResending(true);
+    try {
+      await authApi.resendVerificationEmail(email);
+      toast.success('인증 메일을 다시 보냈어요. 메일함을 확인해 주세요.');
+      setCooldown(RESEND_COOLDOWN_SECONDS);
+    } catch {
+      toast.error('인증 메일 발송에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+    } finally {
+      setResending(false);
+    }
+  };
+
+  return (
+    <div className="space-y-5">
+      <div className="flex flex-col items-center gap-3 rounded-2xl border border-brand-100/70 bg-gradient-to-br from-brand-50 via-card to-card p-6 text-center shadow-soft">
+        <span className="grid h-14 w-14 place-items-center rounded-full bg-brand-gradient text-white shadow-glow">
+          <MailCheck className="h-7 w-7" />
+        </span>
+        <p className="text-sm leading-relaxed text-foreground">
+          <span className="font-semibold text-brand-700 break-all">{email}</span>로 인증 메일을
+          보냈어요.
+        </p>
+        <p className="text-xs leading-relaxed text-muted-foreground">
+          메일함에서 <span className="font-semibold">"이메일 인증하기"</span> 버튼을 눌러 인증을
+          완료해 주세요.
+        </p>
+      </div>
+
+      <ul className="space-y-2 rounded-xl border border-brand-100/70 bg-brand-50/40 p-4 text-xs leading-relaxed text-muted-foreground">
+        <li className="flex gap-2">
+          <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-600" />
+          메일이 보이지 않으면 스팸함도 확인해 주세요. 보통 1~2분 안에 도착해요.
+        </li>
+        <li className="flex gap-2">
+          <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-600" />
+          이메일 인증 없이도 로그인은 가능해요. 단,{' '}
+          <span className="font-semibold text-foreground">글쓰기·댓글</span>은 인증 후에 활성화돼요.
+        </li>
+      </ul>
+
+      <div className="flex flex-col gap-2">
+        <Button
+          asChild
+          variant="brand"
+          size="lg"
+          className="h-11 w-full text-sm font-semibold shadow-glow"
+        >
+          <Link to={loginHref}>로그인 페이지로 이동</Link>
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="lg"
+          onClick={handleResend}
+          disabled={resending || cooldown > 0}
+          className="h-11 w-full text-sm font-semibold"
+        >
+          {resending ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Mail className="mr-2 h-4 w-4" />
+          )}
+          {cooldown > 0 ? `인증 메일 재발송 (${cooldown}s)` : '인증 메일 재발송'}
+        </Button>
+      </div>
     </div>
   );
 }

@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 import {
   profileCompleteSchema,
@@ -9,7 +8,6 @@ import {
 } from '@/features/auth/schemas/profileCompleteSchema';
 import { authApi } from '@/features/auth/api/authApi';
 import { AuthLayout } from '@/features/auth/components/AuthLayout';
-import { TeamSelector } from '@/components/common/TeamSelector';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -26,13 +24,13 @@ export default function ProfileCompletePage() {
 
   const form = useForm<ProfileCompleteFormData>({
     resolver: zodResolver(profileCompleteSchema),
-    defaultValues: { nickname: '', teams: [] },
+    defaultValues: { nickname: '' },
   });
 
   const onSubmit = async (data: ProfileCompleteFormData) => {
     try {
       await authApi.profileComplete(data);
-      toast.success('프로필 설정이 완료되었습니다.');
+      // 응원팀 등록은 OnboardingGuard가 /onboarding/teams로 안내한다
       navigate('/', { replace: true });
     } catch (error: unknown) {
       const err = error as { response?: { data?: { code?: string } } };
@@ -46,13 +44,13 @@ export default function ProfileCompletePage() {
   return (
     <AuthLayout
       eyebrow="One last step"
-      title="프로필을 완성해주세요"
-      subtitle="닉네임과 응원팀을 설정하면 라커룸 이용을 시작할 수 있어요."
+      title="라커룸에서 어떻게 불릴까요?"
+      subtitle="닉네임을 정하면 라커룸을 시작할 수 있어요. 응원팀은 다음 단계에서 등록할 수 있습니다."
       brandHeadline="당신의 라커룸을 정의하는 첫 걸음"
       brandLines={[
         '닉네임은 라커룸 안에서 당신을 대표해요',
         '응원팀에 따라 전용 게시판이 열려요',
-        '나중에 마이페이지에서 언제든 변경할 수 있어요',
+        '나중에 마이페이지에서 언제든 추가할 수 있어요',
       ]}
     >
       <Form {...form}>
@@ -64,25 +62,7 @@ export default function ProfileCompletePage() {
               <FormItem>
                 <FormLabel>닉네임</FormLabel>
                 <FormControl>
-                  <Input placeholder="2~20자, 특수문자 제외" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="teams"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>응원팀</FormLabel>
-                <FormControl>
-                  <TeamSelector
-                    value={field.value}
-                    onChange={field.onChange}
-                    error={form.formState.errors.teams?.message}
-                  />
+                  <Input placeholder="2~20자, 특수문자 제외" autoFocus {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -96,7 +76,7 @@ export default function ProfileCompletePage() {
             disabled={form.formState.isSubmitting}
           >
             {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            라커룸 시작하기
+            다음으로
           </Button>
         </form>
       </Form>

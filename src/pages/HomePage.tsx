@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -10,7 +10,6 @@ import {
   Heart,
   ArrowRight,
   MessageSquare,
-  Sparkles,
   Hash,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -22,6 +21,7 @@ import { useBoards } from '@/features/boards/hooks/useBoards';
 import { noticeApi } from '@/features/notices/api/noticeApi';
 import { postApi } from '@/features/posts/api/postApi';
 import { useAuthStore } from '@/features/auth/stores/authStore';
+import { TeamRegistrationBanner } from '@/components/common/TeamRegistrationBanner';
 import { LandingPage } from './LandingPage';
 import type { PostListItem } from '@/features/posts/types/post';
 
@@ -176,14 +176,6 @@ function PopularPostList({ posts, isLoading }: { posts?: PostListItem[]; isLoadi
   );
 }
 
-function PopularAllTab() {
-  const { data, isLoading } = useQuery({
-    queryKey: ['posts', 'popular', 'all'],
-    queryFn: () => postApi.getPopular(POPULAR_SIZE),
-  });
-  return <PopularPostList posts={data} isLoading={isLoading} />;
-}
-
 function PopularBoardTab({ boardId }: { boardId: number }) {
   const { data, isLoading } = useQuery({
     queryKey: ['posts', 'popular', 'board', boardId],
@@ -194,20 +186,19 @@ function PopularBoardTab({ boardId }: { boardId: number }) {
 
 function PopularPosts() {
   const { data: boards } = useBoards();
-  const [tab, setTab] = useState<string>('all');
+  const [tab, setTab] = useState<string>('');
+
+  useEffect(() => {
+    if (!tab && boards && boards.length > 0) {
+      setTab(String(boards[0].id));
+    }
+  }, [boards, tab]);
 
   return (
     <SectionCard title="인기 게시글" icon={TrendingUp}>
       <Tabs value={tab} onValueChange={setTab}>
         <div className="-mx-1 mb-4 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <TabsList className="inline-flex h-auto w-auto gap-1 bg-transparent p-0">
-            <TabsTrigger
-              value="all"
-              className="h-9 gap-1.5 rounded-full border border-brand-100/70 bg-card px-3 data-[state=active]:border-transparent data-[state=active]:bg-brand-gradient data-[state=active]:text-white data-[state=active]:shadow-glow"
-            >
-              <Sparkles className="h-3.5 w-3.5" />
-              전체
-            </TabsTrigger>
             {boards?.map((board) => (
               <TabsTrigger
                 key={board.id}
@@ -221,9 +212,6 @@ function PopularPosts() {
           </TabsList>
         </div>
 
-        <TabsContent value="all" className="mt-0">
-          <PopularAllTab />
-        </TabsContent>
         {boards?.map((board) => (
           <TabsContent key={board.id} value={String(board.id)} className="mt-0">
             <PopularBoardTab boardId={board.id} />
@@ -251,6 +239,7 @@ function AuthenticatedHome() {
         </p>
       </div>
 
+      <TeamRegistrationBanner />
       <NoticePreview />
       <BoardGrid />
       <PopularPosts />

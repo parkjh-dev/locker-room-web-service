@@ -1,17 +1,36 @@
 import type { SportTeamPair } from '@/types/common';
 
-/** 회원가입 요청 */
+/** 회원가입 요청 (응원팀은 가입 후 온보딩 단계에서 별도 등록) */
 export interface SignupRequest {
   email: string;
   password: string;
+  phone: string;
   nickname: string;
+}
+
+/** 응원팀 등록 요청 (온보딩/마이페이지 공용) */
+export interface AddTeamsRequest {
   teams: SportTeamPair[];
 }
 
-/** SSO 프로필 보완 요청 */
+/** 휴대폰 인증번호 발송 응답 */
+export interface PhoneVerificationSendResponse {
+  expiresInSec: number;
+}
+
+/** 휴대폰 인증번호 검증 응답 */
+export interface PhoneVerificationConfirmResponse {
+  verified: boolean;
+}
+
+/** 이메일 인증 토큰 검증 응답 */
+export interface EmailVerifyResponse {
+  verified: boolean;
+}
+
+/** SSO 프로필 보완 요청 (응원팀은 온보딩 단계에서 별도 등록) */
 export interface ProfileCompleteRequest {
   nickname: string;
-  teams: SportTeamPair[];
 }
 
 /** 종목 (백엔드 SportResponse 매칭) */

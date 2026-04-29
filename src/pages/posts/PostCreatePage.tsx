@@ -2,6 +2,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { PostForm } from '@/features/posts/components/PostForm';
 import { useCreatePost } from '@/features/posts/hooks/useCreatePost';
+import { EmailVerificationRequired } from '@/components/common/EmailVerificationRequired';
+import { useAuthStore } from '@/features/auth/stores/authStore';
 import type { PostFormData } from '@/features/posts/schemas/postSchema';
 
 export default function PostCreatePage() {
@@ -9,12 +11,17 @@ export default function PostCreatePage() {
   const [searchParams] = useSearchParams();
   const defaultBoardId = Number(searchParams.get('boardId')) || 0;
   const { mutateAsync } = useCreatePost();
+  const user = useAuthStore((s) => s.user);
 
   const handleSubmit = async (data: PostFormData, fileIds: number[]) => {
     const result = await mutateAsync({ ...data, fileIds });
     toast.success('게시글이 작성되었습니다.');
     navigate(`/posts/${result.id}`, { replace: true });
   };
+
+  if (user && !user.emailVerified) {
+    return <EmailVerificationRequired action="글쓰기" />;
+  }
 
   return (
     <div className="space-y-4">

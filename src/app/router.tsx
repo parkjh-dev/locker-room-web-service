@@ -6,6 +6,7 @@ import { AdminLayout } from '@/components/layout/AdminLayout';
 import { ProtectedRoute } from '@/guards/ProtectedRoute';
 import { AdminRoute } from '@/guards/AdminRoute';
 import { ProfileGuard } from '@/guards/ProfileGuard';
+import { OnboardingGuard } from '@/guards/OnboardingGuard';
 import { FullScreenLoader } from '@/components/common/FullScreenLoader';
 
 // ─── Lazy Pages ───
@@ -16,6 +17,8 @@ const SignupPage = lazy(() => import('@/pages/auth/SignupPage'));
 const PasswordFindPage = lazy(() => import('@/pages/auth/PasswordFindPage'));
 const OAuthCallbackPage = lazy(() => import('@/pages/auth/OAuthCallbackPage'));
 const ProfileCompletePage = lazy(() => import('@/pages/auth/ProfileCompletePage'));
+const EmailVerifyPage = lazy(() => import('@/pages/auth/EmailVerifyPage'));
+const OnboardingTeamsPage = lazy(() => import('@/pages/onboarding/OnboardingTeamsPage'));
 
 const BoardListPage = lazy(() => import('@/pages/boards/BoardListPage'));
 const BoardPostListPage = lazy(() => import('@/pages/boards/BoardPostListPage'));
@@ -82,6 +85,7 @@ export const router = createBrowserRouter([
       { path: '/auth/signup', element: page(SignupPage) },
       { path: '/auth/password/find', element: page(PasswordFindPage) },
       { path: '/auth/oauth/callback', element: page(OAuthCallbackPage) },
+      { path: '/auth/verify-email', element: page(EmailVerifyPage) },
       { path: '/boards/:boardId', element: page(BoardPostListPage) },
       { path: '/posts/:postId', element: page(PostDetailPage) },
       { path: '/notices', element: page(NoticeListPage) },
@@ -89,12 +93,14 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // Protected Routes (로그인 필수 + 프로필 보완 확인)
+  // Protected Routes (로그인 필수 + 프로필 보완 + 온보딩 확인)
   {
     element: (
       <ProtectedRoute>
         <ProfileGuard>
-          <SidebarLayout />
+          <OnboardingGuard>
+            <SidebarLayout />
+          </OnboardingGuard>
         </ProfileGuard>
       </ProtectedRoute>
     ),
@@ -118,14 +124,18 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // Auth 보완 (프로필 미완성 유저)
+  // Auth 보완 (프로필 미완성 유저) + 온보딩 (응원팀 등록)
+  // OnboardingGuard 미적용 — 본인 페이지에서 무한 루프 방지
   {
     element: (
       <ProtectedRoute>
         <PublicLayout />
       </ProtectedRoute>
     ),
-    children: [{ path: '/auth/profile/complete', element: page(ProfileCompletePage) }],
+    children: [
+      { path: '/auth/profile/complete', element: page(ProfileCompletePage) },
+      { path: '/onboarding/teams', element: page(OnboardingTeamsPage) },
+    ],
   },
 
   // Admin Routes

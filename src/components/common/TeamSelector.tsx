@@ -12,6 +12,11 @@ interface TeamSelectorProps {
   value: SportTeamPair[];
   onChange: (value: SportTeamPair[]) => void;
   error?: string;
+  /**
+   * 종목을 미리 잠그고 country 단계부터 시작.
+   * 마이페이지에서 단일 종목의 응원팀을 추가할 때 사용.
+   */
+  lockedSportId?: number;
 }
 
 interface TeamLabel {
@@ -41,9 +46,9 @@ const COUNTRY_FLAG: Record<string, string> = {
   FR: '🇫🇷',
 };
 
-export function TeamSelector({ value, onChange, error }: TeamSelectorProps) {
-  const [phase, setPhase] = useState<Phase>('sport');
-  const [sportId, setSportId] = useState<number | null>(null);
+export function TeamSelector({ value, onChange, error, lockedSportId }: TeamSelectorProps) {
+  const [phase, setPhase] = useState<Phase>(lockedSportId !== undefined ? 'country' : 'sport');
+  const [sportId, setSportId] = useState<number | null>(lockedSportId ?? null);
   const [countryId, setCountryId] = useState<number | null>(null);
   const [leagueId, setLeagueId] = useState<number | null>(null);
   const [labelCache, setLabelCache] = useState<Record<string, TeamLabel>>({});
@@ -81,8 +86,8 @@ export function TeamSelector({ value, onChange, error }: TeamSelectorProps) {
   const league = leagues?.find((l) => l.id === leagueId);
 
   const resetAll = () => {
-    setPhase('sport');
-    setSportId(null);
+    setPhase(lockedSportId !== undefined ? 'country' : 'sport');
+    setSportId(lockedSportId ?? null);
     setCountryId(null);
     setLeagueId(null);
   };
@@ -139,8 +144,9 @@ export function TeamSelector({ value, onChange, error }: TeamSelectorProps) {
         country={country}
         league={league}
         onJumpTo={(p) => {
-          // breadcrumb 클릭 시 해당 단계로 이동 (하위 단계는 클리어)
+          // breadcrumb 클릭 시 해당 단계로 이동 (하위 단계는 클리어). 종목 락이면 sport 점프 차단
           if (p === 'sport') {
+            if (lockedSportId !== undefined) return;
             setSportId(null);
             setCountryId(null);
             setLeagueId(null);
@@ -476,13 +482,13 @@ function CountryStep({
         onBack={onBack}
       />
       {isLoading ? (
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-2">
           {Array.from({ length: 6 }).map((_, i) => (
             <Skeleton key={i} className="h-14" />
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-2">
           {countries?.map((country) => (
             <button
               key={country.id}
@@ -490,10 +496,10 @@ function CountryStep({
               onClick={() => onPick(country)}
               className="card-interactive group inline-flex items-center gap-3 rounded-xl border border-brand-100/70 bg-card p-3 text-left transition-all hover:border-brand-300"
             >
-              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-brand-50 text-2xl leading-none">
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand-50 text-xl leading-none">
                 {COUNTRY_FLAG[country.code] ?? '🌐'}
               </span>
-              <span className="min-w-0 flex-1 text-sm font-semibold group-hover:text-brand-700">
+              <span className="min-w-0 flex-1 truncate text-sm font-semibold group-hover:text-brand-700">
                 {country.nameKo}
               </span>
               <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-brand-700" />

@@ -3,17 +3,64 @@ import type { ApiResponse } from '@/types/api';
 import type {
   SignupRequest,
   ProfileCompleteRequest,
+  AddTeamsRequest,
+  PhoneVerificationSendResponse,
+  PhoneVerificationConfirmResponse,
+  EmailVerifyResponse,
   Sport,
   Country,
   League,
   Team,
 } from '../types/auth';
+import type { UserProfile } from '@/features/mypage/types/user';
 
 export const authApi = {
   signup: (data: SignupRequest) => api.post<ApiResponse<{ id: number }>>('/auth/signup', data),
 
   profileComplete: (data: ProfileCompleteRequest) =>
     api.post<ApiResponse<{ id: number }>>('/auth/profile/complete', data),
+
+  /** 휴대폰 인증번호 발송 */
+  requestPhoneVerification: (phone: string) =>
+    api
+      .post<ApiResponse<PhoneVerificationSendResponse>>('/auth/phone/verification', { phone })
+      .then((r) => r.data.data),
+
+  /** 휴대폰 인증번호 검증 */
+  confirmPhoneVerification: (phone: string, code: string) =>
+    api
+      .post<
+        ApiResponse<PhoneVerificationConfirmResponse>
+      >('/auth/phone/verification/confirm', { phone, code })
+      .then((r) => r.data.data),
+
+  /**
+   * 이메일 인증 메일 재발송.
+   * - 로그인 사용자: 인자 없이 호출 (백엔드가 토큰에서 식별)
+   * - 가입 직후 미로그인: 가입한 이메일을 인자로 전달
+   */
+  resendVerificationEmail: (email?: string) =>
+    api
+      .post<ApiResponse<null>>('/auth/email/verification/resend', email ? { email } : {})
+      .then((r) => r.data),
+
+  /** 이메일 인증 토큰 검증 */
+  verifyEmail: (token: string) =>
+    api
+      .post<ApiResponse<EmailVerifyResponse>>('/auth/email/verification/confirm', { token })
+      .then((r) => r.data.data),
+
+  /**
+   * 응원팀 등록 (온보딩/마이페이지 공용).
+   * - 등록한 종목의 팀은 이후 변경 불가, 미등록 종목은 추가 가능.
+   * - 호출 성공 시 백엔드가 onboardingCompletedAt을 자동으로 셋한다.
+   */
+  addUserTeams: (data: AddTeamsRequest) =>
+    api.post<ApiResponse<UserProfile>>('/users/me/teams', data).then((r) => r.data.data),
+
+  /** 온보딩 건너뛰기 — onboardingCompletedAt만 셋, 팀은 빈 상태 유지 */
+  skipOnboarding: () =>
+    api.post<ApiResponse<UserProfile>>('/users/me/onboarding/skip').then((r) => r.data.data),
 
   getSports: () => api.get<ApiResponse<Sport[]>>('/sports').then((r) => r.data.data),
 

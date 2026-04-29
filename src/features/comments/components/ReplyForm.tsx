@@ -4,6 +4,8 @@ import { Loader2, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormField, FormItem, FormControl, FormMessage } from '@/components/ui/form';
+import { useAuthStore } from '@/features/auth/stores/authStore';
+import { EmailVerificationInline } from '@/components/common/EmailVerificationInline';
 import { commentSchema, type CommentFormData } from '../schemas/commentSchema';
 
 interface ReplyFormProps {
@@ -13,6 +15,7 @@ interface ReplyFormProps {
 }
 
 export function ReplyForm({ onSubmit, onCancel, replyToNickname }: ReplyFormProps) {
+  const user = useAuthStore((s) => s.user);
   const form = useForm<CommentFormData>({
     resolver: zodResolver(commentSchema),
     defaultValues: { content: replyToNickname ? `@${replyToNickname} ` : '' },
@@ -25,6 +28,19 @@ export function ReplyForm({ onSubmit, onCancel, replyToNickname }: ReplyFormProp
     await onSubmit(data);
     form.reset({ content: replyToNickname ? `@${replyToNickname} ` : '' });
   };
+
+  if (user && !user.emailVerified) {
+    return (
+      <div className="space-y-2">
+        <EmailVerificationInline action="답글" variant="reply" />
+        <div className="flex justify-end">
+          <Button type="button" variant="ghost" size="sm" onClick={onCancel}>
+            취소
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Form {...form}>

@@ -1445,25 +1445,26 @@ export const noticeDetailsById: Record<number, NoticeDetail> = {
 export const userProfile: UserProfile = {
   id: 10,
   email: 'soccer_fan@example.com',
+  emailVerified: false,
   nickname: '축구광팬',
   role: 'USER',
   provider: null,
   profileImageUrl: null,
-  teams: [
-    { teamId: 101, teamName: '전북 현대 모터스', sportId: 1, sportName: '축구' },
-    { teamId: 201, teamName: 'LG 트윈스', sportId: 2, sportName: '야구' },
-  ],
+  teams: [],
+  onboardingCompletedAt: null,
   createdAt: '2026-01-15T08:30:00',
 };
 
 export const adminProfile: UserProfile = {
   id: 1,
   email: 'admin@lockerroom.kr',
+  emailVerified: true,
   nickname: '관리자',
   role: 'ADMIN',
   provider: null,
   profileImageUrl: null,
   teams: [],
+  onboardingCompletedAt: '2026-01-01T00:00:00',
   createdAt: '2026-01-01T00:00:00',
 };
 

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormField, FormItem, FormControl, FormMessage } from '@/components/ui/form';
 import { useAuthStore } from '@/features/auth/stores/authStore';
+import { EmailVerificationInline } from '@/components/common/EmailVerificationInline';
 import { commentSchema, type CommentFormData } from '../schemas/commentSchema';
 
 interface CommentFormProps {
@@ -32,6 +33,10 @@ export function CommentForm({
     await onSubmit(data);
     form.reset();
   };
+
+  if (user && !user.emailVerified) {
+    return <EmailVerificationInline action="댓글" />;
+  }
 
   return (
     <Form {...form}>

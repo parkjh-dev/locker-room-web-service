@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 import { Mail, Calendar, Settings, FileText, MessageSquare, Heart, UserMinus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { MyTeamsSection } from './MyTeamsSection';
 import type { UserProfile } from '../types/user';
 
 interface MyProfileProps {
@@ -64,27 +64,8 @@ export function MyProfile({ profile }: MyProfileProps) {
         </div>
       </section>
 
-      {/* 응원팀 카드 */}
-      <section className="rounded-2xl border border-brand-100/70 bg-card p-5 shadow-soft sm:p-6">
-        <h3 className="text-[11px] font-semibold uppercase tracking-widest text-brand-700">
-          응원팀
-        </h3>
-        {profile.teams.length > 0 ? (
-          <div className="mt-3 flex flex-wrap gap-2">
-            {profile.teams.map((team) => (
-              <Badge
-                key={`${team.sportId}-${team.teamId}`}
-                variant="brand"
-                className="px-3 py-1 text-sm"
-              >
-                {team.sportName} · {team.teamName}
-              </Badge>
-            ))}
-          </div>
-        ) : (
-          <p className="mt-3 text-sm text-muted-foreground">등록된 응원팀이 없습니다.</p>
-        )}
-      </section>
+      {/* 응원팀 섹션 */}
+      <MyTeamsSection teams={profile.teams} />
 
       {/* 바로가기 그리드 */}
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">

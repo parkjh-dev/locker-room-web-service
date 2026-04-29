@@ -99,6 +99,43 @@ export const handlers = [
   http.post(`${BASE}/auth/signup`, () => ok({ id: 100 })),
   http.post(`${BASE}/auth/profile/complete`, () => ok({ id: 100 })),
 
+  // 휴대폰 인증번호 발송 — 항상 성공으로 응답 (mock 발송코드: 123456)
+  http.post(`${BASE}/auth/phone/verification`, () => ok({ expiresInSec: 180 })),
+
+  // 휴대폰 인증번호 검증 — 123456만 통과
+  http.post(`${BASE}/auth/phone/verification/confirm`, async ({ request }) => {
+    const body = (await request.json()) as { phone: string; code: string };
+    if (body.code === '123456') return ok({ verified: true });
+    return HttpResponse.json(
+      {
+        code: 'PHONE_VERIFICATION_INVALID',
+        message: '인증번호가 일치하지 않습니다.',
+        data: null,
+      },
+      { status: 400 },
+    );
+  }),
+
+  // 이메일 인증 메일 재발송 — 항상 성공
+  http.post(`${BASE}/auth/email/verification/resend`, () => ok(null)),
+
+  // 이메일 인증 토큰 검증 — 'invalid' 토큰만 실패, 그 외 모두 성공 + userProfile 인증 처리
+  http.post(`${BASE}/auth/email/verification/confirm`, async ({ request }) => {
+    const body = (await request.json()) as { token: string };
+    if (!body?.token || body.token === 'invalid') {
+      return HttpResponse.json(
+        {
+          code: 'EMAIL_VERIFICATION_INVALID',
+          message: '유효하지 않거나 만료된 토큰입니다.',
+          data: null,
+        },
+        { status: 400 },
+      );
+    }
+    userProfile.emailVerified = true;
+    return ok({ verified: true });
+  }),
+
   // ──────────────────────────────────────────────
   // Sports & Cascading 4-step (Sport → Country → League → Team)
   // ──────────────────────────────────────────────
@@ -249,6 +286,38 @@ export const handlers = [
   }),
   http.put(`${BASE}/users/me`, () => ok({ id: 10, nickname: '축구광팬' })),
   http.delete(`${BASE}/users/me`, () => ok(null)),
+
+  // 응원팀 등록 — 등록한 종목은 변경 불가, 미등록 종목은 추가 가능
+  http.post(`${BASE}/users/me/teams`, async ({ request }) => {
+    const body = (await request.json()) as { teams: { sportId: number; teamId: number }[] };
+    const existingSportIds = new Set(userProfile.teams.map((t) => t.sportId));
+
+    for (const { sportId, teamId } of body.teams ?? []) {
+      if (existingSportIds.has(sportId)) continue;
+
+      const sport = sports.find((s) => s.id === sportId);
+      const teamList = Object.values(teamsByLeague).flat();
+      const team = teamList.find((t) => t.id === teamId);
+      if (!sport || !team) continue;
+
+      userProfile.teams.push({
+        teamId: team.id,
+        teamName: team.name,
+        sportId: sport.id,
+        sportName: sport.name,
+      });
+      existingSportIds.add(sportId);
+    }
+    userProfile.onboardingCompletedAt = new Date().toISOString();
+    return ok(userProfile);
+  }),
+
+  // 온보딩 건너뛰기
+  http.post(`${BASE}/users/me/onboarding/skip`, () => {
+    userProfile.onboardingCompletedAt = new Date().toISOString();
+    return ok(userProfile);
+  }),
+
   http.get(`${BASE}/users/me/posts`, ({ request }) => cursorPage(myPosts, request)),
   http.get(`${BASE}/users/me/comments`, ({ request }) => cursorPage(myComments, request)),
   http.get(`${BASE}/users/me/likes`, ({ request }) => cursorPage(myLikes, request)),
