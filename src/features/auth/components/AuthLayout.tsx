@@ -43,9 +43,7 @@ export function AuthLayout({
 
         <div className="relative flex h-full flex-col justify-between p-12 text-white">
           <Link to="/" className="inline-flex items-center gap-2.5">
-            <span className="grid h-10 w-10 place-items-center rounded-xl bg-card/15 backdrop-blur">
-              <img src="/logo.png" alt="" className="h-7 w-7" />
-            </span>
+            <img src="/locker-room-logo-white.png" alt="" className="h-10 w-10" />
             <span className="text-lg font-bold tracking-tight">Locker Room</span>
           </Link>
 
@@ -85,7 +83,7 @@ export function AuthLayout({
         <div className="w-full max-w-md">
           {/* 모바일 로고 */}
           <Link to="/" className="mb-8 inline-flex items-center gap-2 lg:hidden">
-            <img src="/logo.png" alt="Locker Room" className="h-9 w-9" />
+            <img src="/locker-room-logo-transparent.png" alt="Locker Room" className="h-9 w-9" />
             <span className="text-lg font-bold tracking-tight">Locker Room</span>
           </Link>
 

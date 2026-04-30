@@ -110,9 +110,7 @@ export function Sidebar() {
     <Sheet open={isSidebarOpen} onOpenChange={setSidebarOpen}>
       <SheetContent side="left" className="w-[280px] p-0">
         <SheetTitle className="flex items-center gap-2 border-b border-brand-100/70 px-4 pb-3 pt-5 text-lg font-extrabold tracking-tight">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-brand-gradient">
-            <img src="/logo.png" alt="" className="h-5 w-5" />
-          </span>
+          <img src="/locker-room-logo-transparent.png" alt="" className="h-8 w-8" />
           Locker Room
         </SheetTitle>
         <SheetDescription className="sr-only">게시판과 메뉴를 탐색하는 사이드바</SheetDescription>

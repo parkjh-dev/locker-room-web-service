@@ -68,10 +68,13 @@ export function Header() {
 
         {/* 로고 */}
         <Link to="/" className="group flex items-center gap-2 whitespace-nowrap">
-          <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand-gradient shadow-soft transition-transform group-hover:scale-105">
-            <img src="/logo.png" alt="" className="h-6 w-6" loading="lazy" />
-          </span>
-          <span className="hidden text-base font-extrabold tracking-tight sm:inline">
+          <img
+            src="/locker-room-logo-transparent.png"
+            alt=""
+            className="h-9 w-9 transition-transform group-hover:scale-105"
+            loading="lazy"
+          />
+          <span className="hidden text-xl font-extrabold tracking-tight sm:inline">
             Locker Room
           </span>
         </Link>
