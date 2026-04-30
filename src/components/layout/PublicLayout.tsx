@@ -9,6 +9,7 @@ export function PublicLayout() {
   const isAuthRoute =
     location.pathname.startsWith('/auth/login') ||
     location.pathname.startsWith('/auth/signup') ||
+    location.pathname.startsWith('/auth/find') ||
     location.pathname.startsWith('/auth/password') ||
     location.pathname.startsWith('/auth/profile/complete');
   const isFullBleed = location.pathname === '/' || isAuthRoute;

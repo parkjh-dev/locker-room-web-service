@@ -43,10 +43,10 @@ export default function LoginPage() {
 
         <div className="flex items-center justify-end pt-1">
           <Link
-            to="/auth/password/find"
+            to="/auth/find"
             className="text-xs text-muted-foreground transition-colors hover:text-brand-700"
           >
-            비밀번호를 잊으셨나요?
+            아이디 또는 비밀번호를 잊으셨나요?
           </Link>
         </div>
       </div>

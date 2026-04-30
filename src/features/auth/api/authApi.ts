@@ -7,6 +7,7 @@ import type {
   PhoneVerificationSendResponse,
   PhoneVerificationConfirmResponse,
   EmailVerifyResponse,
+  FindAccountIdResponse,
   Sport,
   Country,
   League,
@@ -48,6 +49,15 @@ export const authApi = {
   verifyEmail: (token: string) =>
     api
       .post<ApiResponse<EmailVerifyResponse>>('/auth/email/verification/confirm', { token })
+      .then((r) => r.data.data),
+
+  /**
+   * 아이디(가입 이메일) 찾기 — 휴대폰 본인확인 후 마스킹 이메일 반환.
+   * 호출 전 휴대폰 인증을 완료해야 한다 (백엔드에서 같은 phone에 대한 verified state 확인).
+   */
+  findAccountIdByPhone: (phone: string) =>
+    api
+      .post<ApiResponse<FindAccountIdResponse>>('/auth/account/find/id', { phone })
       .then((r) => r.data.data),
 
   /**

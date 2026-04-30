@@ -28,6 +28,20 @@ export interface EmailVerifyResponse {
   verified: boolean;
 }
 
+/** 가입 수단 — 이메일 자체가입(EMAIL) 또는 소셜 OAuth(KAKAO/GOOGLE/NAVER). */
+export type AccountProvider = 'EMAIL' | 'KAKAO' | 'GOOGLE' | 'NAVER';
+
+/** 휴대폰 본인확인으로 가입 이메일 조회 (아이디 찾기) */
+export interface FindAccountIdResponse {
+  found: boolean;
+  /** 일부 마스킹된 이메일 (예: lo***@gmail.com). found=false면 null. */
+  maskedEmail: string | null;
+  /** 가입 수단 — 소셜 가입자에게는 비밀번호 재설정 대신 해당 SNS로 로그인하라는 안내. */
+  provider: AccountProvider | null;
+  /** 가입일 — 화면에 가입 시점을 노출해 본인 확인 보강. */
+  createdAt: string | null;
+}
+
 /** SSO 프로필 보완 요청 (응원팀은 온보딩 단계에서 별도 등록) */
 export interface ProfileCompleteRequest {
   nickname: string;

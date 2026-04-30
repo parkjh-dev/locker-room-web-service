@@ -208,6 +208,27 @@ export const handlers = [
     return ok({ verified: true });
   }),
 
+  // 아이디(가입 이메일) 찾기 — 휴대폰 본인확인 결과 기반 마스킹 이메일 반환.
+  // mock 규칙:
+  //   · 끝자리 0  → 가입 이력 없음 (found:false)
+  //   · 끝자리 8  → 카카오 가입 시뮬 (provider: KAKAO)
+  //   · 그 외     → 이메일 자체가입 (provider: EMAIL)
+  http.post(`${BASE}/auth/account/find/id`, async ({ request }) => {
+    const body = (await request.json()) as { phone: string };
+    const phone = body?.phone ?? '';
+    const last = phone.slice(-1);
+    if (last === '0') {
+      return ok({ found: false, maskedEmail: null, provider: null, createdAt: null });
+    }
+    const provider = last === '8' ? 'KAKAO' : 'EMAIL';
+    return ok({
+      found: true,
+      maskedEmail: 's****r_fan@example.com',
+      provider,
+      createdAt: '2026-01-15T08:30:00',
+    });
+  }),
+
   // ──────────────────────────────────────────────
   // Sports & Cascading 4-step (Sport → Country → League → Team)
   // ──────────────────────────────────────────────

@@ -14,7 +14,7 @@ import { FullScreenLoader } from '@/components/common/FullScreenLoader';
 const HomePage = lazy(() => import('@/pages/HomePage'));
 const LoginPage = lazy(() => import('@/pages/auth/LoginPage'));
 const SignupPage = lazy(() => import('@/pages/auth/SignupPage'));
-const PasswordFindPage = lazy(() => import('@/pages/auth/PasswordFindPage'));
+const AccountFindPage = lazy(() => import('@/pages/auth/AccountFindPage'));
 const OAuthCallbackPage = lazy(() => import('@/pages/auth/OAuthCallbackPage'));
 const ProfileCompletePage = lazy(() => import('@/pages/auth/ProfileCompletePage'));
 const EmailVerifyPage = lazy(() => import('@/pages/auth/EmailVerifyPage'));
@@ -83,7 +83,12 @@ export const router = createBrowserRouter([
       { path: '/', element: page(HomePage) },
       { path: '/auth/login', element: page(LoginPage) },
       { path: '/auth/signup', element: page(SignupPage) },
-      { path: '/auth/password/find', element: page(PasswordFindPage) },
+      { path: '/auth/find', element: page(AccountFindPage) },
+      // 기존 북마크/링크 호환 — 비밀번호 탭으로 redirect
+      {
+        path: '/auth/password/find',
+        element: <Navigate to="/auth/find?tab=password" replace />,
+      },
       { path: '/auth/oauth/callback', element: page(OAuthCallbackPage) },
       { path: '/auth/verify-email', element: page(EmailVerifyPage) },
       { path: '/boards/:boardId', element: page(BoardPostListPage) },
