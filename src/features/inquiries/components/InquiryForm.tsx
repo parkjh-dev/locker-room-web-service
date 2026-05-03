@@ -126,7 +126,7 @@ export function InquiryForm() {
 
         <div className="space-y-2">
           <p className="text-sm font-medium">첨부파일</p>
-          <FileUpload value={files} onChange={setFiles} />
+          <FileUpload value={files} onChange={setFiles} targetType="INQUIRY" />
         </div>
 
         <div className="flex gap-2">

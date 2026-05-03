@@ -36,6 +36,7 @@ interface RichEditorProps {
 async function uploadImage(file: File): Promise<string> {
   const formData = new FormData();
   formData.append('file', file);
+  formData.append('targetType', 'POST');
   const res = await api.post<ApiResponse<{ url: string }>>('/files', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });

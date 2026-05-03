@@ -20,9 +20,12 @@ interface UploadedFile {
   mimeType?: string;
 }
 
+type TargetType = 'POST' | 'COMMENT' | 'INQUIRY' | 'NOTICE' | 'PROFILE';
+
 interface FileUploadProps {
   value: UploadedFile[];
   onChange: (files: UploadedFile[]) => void;
+  targetType: TargetType;
   maxCount?: number;
 }
 
@@ -37,7 +40,7 @@ function formatSize(bytes: number) {
   return `${(bytes / (1024 * 1024)).toFixed(1)}MB`;
 }
 
-export function FileUpload({ value, onChange, maxCount = MAX_FILE_COUNT }: FileUploadProps) {
+export function FileUpload({ value, onChange, targetType, maxCount = MAX_FILE_COUNT }: FileUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [dragging, setDragging] = useState(false);
@@ -71,6 +74,7 @@ export function FileUpload({ value, onChange, maxCount = MAX_FILE_COUNT }: FileU
       for (const file of arr) {
         const formData = new FormData();
         formData.append('file', file);
+        formData.append('targetType', targetType);
         const res = await api.post<ApiResponse<UploadedFile>>('/files', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
@@ -95,8 +99,13 @@ export function FileUpload({ value, onChange, maxCount = MAX_FILE_COUNT }: FileU
     if (e.dataTransfer.files) uploadFiles(e.dataTransfer.files);
   };
 
-  const handleRemove = (fileId: number) => {
+  const handleRemove = async (fileId: number) => {
     onChange(value.filter((f) => f.id !== fileId));
+    try {
+      await api.delete(`/files/${fileId}`);
+    } catch {
+      // 삭제 실패해도 UI에서는 제거된 상태 유지 (S3 정리는 백엔드 배치로 보완)
+    }
   };
 
   const remaining = maxCount - value.length;

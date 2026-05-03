@@ -54,12 +54,27 @@ export function RequestManagement() {
     null,
   );
   const [selectedSportId, setSelectedSportId] = useState<string>('');
+  const [selectedCountryId, setSelectedCountryId] = useState<string>('');
+  const [selectedLeagueId, setSelectedLeagueId] = useState<string>('');
   const queryClient = useQueryClient();
 
   const { data: sports } = useQuery({
     queryKey: ['sports'],
     queryFn: () => authApi.getSports(),
     enabled: !!approveTarget,
+  });
+
+  const { data: countries } = useQuery({
+    queryKey: ['sports', selectedSportId, 'countries'],
+    queryFn: () => authApi.getCountriesBySport(Number(selectedSportId)),
+    enabled: !!selectedSportId,
+  });
+
+  const { data: leagues } = useQuery({
+    queryKey: ['sports', selectedSportId, 'countries', selectedCountryId, 'leagues'],
+    queryFn: () =>
+      authApi.getLeaguesByCountry(Number(selectedSportId), Number(selectedCountryId)),
+    enabled: !!selectedSportId && !!selectedCountryId,
   });
 
   const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useAdminRequests({
@@ -78,12 +93,21 @@ export function RequestManagement() {
   };
 
   const { mutate: approve, isPending: isApproving } = useMutation({
-    mutationFn: ({ requestId, sportId }: { requestId: number; sportId?: number }) =>
-      adminApi.processRequest(requestId, { status: 'APPROVED', sportId }),
+    mutationFn: ({
+      requestId,
+      sportId,
+      leagueId,
+    }: {
+      requestId: number;
+      sportId?: number;
+      leagueId?: number;
+    }) => adminApi.processRequest(requestId, { status: 'APPROVED', sportId, leagueId }),
     onSuccess: () => {
       invalidate();
       setApproveTarget(null);
       setSelectedSportId('');
+      setSelectedCountryId('');
+      setSelectedLeagueId('');
       toast.success('요청이 승인되었습니다.');
     },
   });
@@ -92,6 +116,8 @@ export function RequestManagement() {
     if (req.type === 'TEAM') {
       setApproveTarget(req);
       setSelectedSportId('');
+      setSelectedCountryId('');
+      setSelectedLeagueId('');
     } else {
       approve({ requestId: req.id });
     }
@@ -231,7 +257,7 @@ export function RequestManagement() {
         </DialogContent>
       </Dialog>
 
-      {/* TEAM 타입 승인 시 종목 선택 다이얼로그 */}
+      {/* TEAM 타입 승인 시 종목·국가·리그 선택 다이얼로그 */}
       <Dialog
         open={!!approveTarget}
         onOpenChange={(open) => {
@@ -240,32 +266,86 @@ export function RequestManagement() {
       >
         <DialogContent className="sm:max-w-[400px]">
           <DialogHeader>
-            <DialogTitle>구단 추가 - 종목 선택</DialogTitle>
+            <DialogTitle>구단 추가 - 소속 정보 선택</DialogTitle>
           </DialogHeader>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">소속 종목</label>
-            <Select value={selectedSportId} onValueChange={setSelectedSportId}>
-              <SelectTrigger>
-                <SelectValue placeholder="종목을 선택해주세요" />
-              </SelectTrigger>
-              <SelectContent>
-                {sports?.map((sport) => (
-                  <SelectItem key={sport.id} value={String(sport.id)}>
-                    {sport.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="space-y-3">
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium">종목</label>
+              <Select
+                value={selectedSportId}
+                onValueChange={(v) => {
+                  setSelectedSportId(v);
+                  setSelectedCountryId('');
+                  setSelectedLeagueId('');
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="종목을 선택해주세요" />
+                </SelectTrigger>
+                <SelectContent>
+                  {sports?.map((sport) => (
+                    <SelectItem key={sport.id} value={String(sport.id)}>
+                      {sport.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium">국가</label>
+              <Select
+                value={selectedCountryId}
+                disabled={!selectedSportId}
+                onValueChange={(v) => {
+                  setSelectedCountryId(v);
+                  setSelectedLeagueId('');
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="국가를 선택해주세요" />
+                </SelectTrigger>
+                <SelectContent>
+                  {countries?.map((country) => (
+                    <SelectItem key={country.id} value={String(country.id)}>
+                      {country.nameKo}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium">리그</label>
+              <Select
+                value={selectedLeagueId}
+                disabled={!selectedCountryId}
+                onValueChange={setSelectedLeagueId}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="리그를 선택해주세요" />
+                </SelectTrigger>
+                <SelectContent>
+                  {leagues?.map((league) => (
+                    <SelectItem key={league.id} value={String(league.id)}>
+                      {league.nameKo}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setApproveTarget(null)} disabled={isApproving}>
               취소
             </Button>
             <Button
-              disabled={!selectedSportId || isApproving}
+              disabled={!selectedSportId || !selectedLeagueId || isApproving}
               onClick={() => {
-                if (approveTarget && selectedSportId) {
-                  approve({ requestId: approveTarget.id, sportId: Number(selectedSportId) });
+                if (approveTarget && selectedSportId && selectedLeagueId) {
+                  approve({
+                    requestId: approveTarget.id,
+                    sportId: Number(selectedSportId),
+                    leagueId: Number(selectedLeagueId),
+                  });
                 }
               }}
             >

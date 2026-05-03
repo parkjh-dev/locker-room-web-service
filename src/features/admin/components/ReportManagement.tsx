@@ -23,7 +23,7 @@ import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useAdminReports } from '../hooks/useAdminReports';
 import { adminApi } from '../api/adminApi';
-import type { ProcessReportRequest } from '../types/admin';
+import type { ProcessReportRequest, ReportAction } from '../types/admin';
 
 const statusConfig = {
   PENDING: { label: '대기중', variant: 'secondary' as const },
@@ -39,7 +39,7 @@ export function ReportManagement() {
   const [status, setStatus] = useState<string>('');
   const [confirmAction, setConfirmAction] = useState<{
     reportId: number;
-    action: string;
+    action: ReportAction;
   } | null>(null);
   const [suspendTarget, setSuspendTarget] = useState<number | null>(null);
   const [suspensionDays, setSuspensionDays] = useState(7);
@@ -59,7 +59,7 @@ export function ReportManagement() {
     },
   });
 
-  const handleAction = (reportId: number, action: string) => {
+  const handleAction = (reportId: number, action: ReportAction | 'REJECT') => {
     if (action === 'SUSPEND_USER') {
       setSuspendTarget(reportId);
       setSuspensionDays(7);
@@ -72,7 +72,7 @@ export function ReportManagement() {
     }
   };
 
-  const confirmLabels: Record<string, { title: string; description: string }> = {
+  const confirmLabels: Record<ReportAction, { title: string; description: string }> = {
     DELETE_POST: {
       title: '게시글 삭제',
       description: '해당 게시글을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.',

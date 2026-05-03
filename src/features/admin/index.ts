@@ -23,6 +23,7 @@ export type {
   AdminUser,
   SuspendUserRequest,
   AdminReport,
+  ReportAction,
   ProcessReportRequest,
   AdminNoticeRequest,
   AdminNotice,

@@ -5,6 +5,7 @@ export interface UserProfile {
   id: number;
   email: string;
   emailVerified: boolean;
+  phone: string | null;
   nickname: string;
   role: 'USER' | 'ADMIN';
   provider: string | null;

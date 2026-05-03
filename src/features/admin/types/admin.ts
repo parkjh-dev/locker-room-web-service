@@ -34,9 +34,11 @@ export interface AdminReport {
 }
 
 /** 관리자 - 신고 처리 요청 (백엔드 ReportProcessRequest 매칭) */
+export type ReportAction = 'DELETE_POST' | 'SUSPEND_USER';
+
 export interface ProcessReportRequest {
   status: 'APPROVED' | 'REJECTED';
-  action?: string;
+  action?: ReportAction;
   suspensionDays?: number;
 }
 
@@ -90,4 +92,5 @@ export interface ProcessRequestRequest {
   status: 'APPROVED' | 'REJECTED';
   rejectReason?: string;
   sportId?: number;
+  leagueId?: number;
 }
