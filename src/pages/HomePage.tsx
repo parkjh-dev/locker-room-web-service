@@ -117,14 +117,19 @@ function BoardGrid() {
             <Link
               key={board.id}
               to={`/boards/${board.id}`}
-              className="hover-lift group rounded-xl border border-brand-100/70 bg-gradient-to-br from-card to-brand-50/50 p-3.5 transition-colors"
+              className="hover-lift group flex items-center gap-3 rounded-xl border border-brand-100/70 bg-gradient-to-br from-card to-brand-50/50 p-3.5 transition-colors"
             >
-              <p className="truncate text-sm font-semibold group-hover:text-brand-700">
-                {board.name}
-              </p>
-              {board.teamName && (
-                <p className="truncate text-xs text-muted-foreground">{board.teamName}</p>
+              {board.teamLogoUrl && (
+                <img src={board.teamLogoUrl} alt="" className="h-8 w-8 shrink-0 rounded object-contain" loading="lazy" />
               )}
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold group-hover:text-brand-700">
+                  {board.name}
+                </p>
+                {board.teamName && (
+                  <p className="truncate text-xs text-muted-foreground">{board.teamName}</p>
+                )}
+              </div>
             </Link>
           ))}
         </div>
@@ -244,7 +249,6 @@ function AuthenticatedHome() {
       </div>
 
       <TeamRegistrationBanner />
-      <NoticePreview />
       <BoardGrid />
       <div className="grid gap-6 lg:grid-cols-2">
         <TopFollowedTeamsCard />

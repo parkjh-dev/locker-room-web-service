@@ -10,6 +10,8 @@
  */
 
 import type { Sport, Team, Continent, Country, League } from '@/features/auth/types/auth';
+
+const S3 = 'https://locker-room-dev.s3.ap-northeast-2.amazonaws.com';
 import type { Board } from '@/features/boards/types/board';
 import type { PostListItem, PostDetail } from '@/features/posts/types/post';
 import type { Comment } from '@/features/comments/types/comment';
@@ -62,20 +64,20 @@ export const countries: Country[] = [
 
 export const leagues: League[] = [
   // 축구 (sportId=1)
-  { id: 1, nameKo: 'K리그1', sportId: 1, countryId: 1, tier: 1 },
+  { id: 1, nameKo: 'K리그1', sportId: 1, countryId: 1, tier: 1, logoUrl: `${S3}/league-logo/football/KR/K League1.svg` },
   { id: 2, nameKo: 'J1리그', sportId: 1, countryId: 2, tier: 1 },
-  { id: 3, nameKo: '프리미어리그', sportId: 1, countryId: 4, tier: 1 },
-  { id: 4, nameKo: '라리가', sportId: 1, countryId: 5, tier: 1 },
-  { id: 5, nameKo: '분데스리가', sportId: 1, countryId: 6, tier: 1 },
-  { id: 6, nameKo: '세리에 A', sportId: 1, countryId: 7, tier: 1 },
-  { id: 7, nameKo: '리그 1', sportId: 1, countryId: 8, tier: 1 },
-  { id: 8, nameKo: 'MLS', sportId: 1, countryId: 3, tier: 1 },
+  { id: 3, nameKo: '프리미어리그', sportId: 1, countryId: 4, tier: 1, logoUrl: `${S3}/league-logo/football/GB-ENG/English Premier League.svg` },
+  { id: 4, nameKo: '라리가', sportId: 1, countryId: 5, tier: 1, logoUrl: `${S3}/league-logo/football/ES/LaLiga1.svg` },
+  { id: 5, nameKo: '분데스리가', sportId: 1, countryId: 6, tier: 1, logoUrl: `${S3}/league-logo/football/DE/BUNDESLIGA1.svg` },
+  { id: 6, nameKo: '세리에 A', sportId: 1, countryId: 7, tier: 1, logoUrl: `${S3}/league-logo/football/IT/Serie A.svg` },
+  { id: 7, nameKo: '리그 1', sportId: 1, countryId: 8, tier: 1, logoUrl: `${S3}/league-logo/football/FR/Ligue 1.png` },
+  { id: 8, nameKo: 'MLS', sportId: 1, countryId: 3, tier: 1, logoUrl: `${S3}/league-logo/football/US/Major League Soccer.svg` },
   // 야구 (sportId=2)
-  { id: 9, nameKo: 'KBO 리그', sportId: 2, countryId: 1, tier: 1 },
+  { id: 9, nameKo: 'KBO 리그', sportId: 2, countryId: 1, tier: 1, logoUrl: `${S3}/league-logo/baseball/KR/KBO/kbo.svg` },
   { id: 10, nameKo: 'NPB 센트럴', sportId: 2, countryId: 2, tier: 1 },
   { id: 11, nameKo: 'NPB 퍼시픽', sportId: 2, countryId: 2, tier: 1 },
-  { id: 12, nameKo: 'MLB 아메리칸', sportId: 2, countryId: 3, tier: 1 },
-  { id: 13, nameKo: 'MLB 내셔널', sportId: 2, countryId: 3, tier: 1 },
+  { id: 12, nameKo: 'MLB 아메리칸', sportId: 2, countryId: 3, tier: 1, logoUrl: `${S3}/league-logo/baseball/US/mlb.svg` },
+  { id: 13, nameKo: 'MLB 내셔널', sportId: 2, countryId: 3, tier: 1, logoUrl: `${S3}/league-logo/baseball/US/mlb.svg` },
   // 농구 (sportId=3)
   { id: 14, nameKo: 'KBL', sportId: 3, countryId: 1, tier: 1 },
   { id: 15, nameKo: 'NBA', sportId: 3, countryId: 3, tier: 1 },
@@ -90,88 +92,88 @@ export const leagues: League[] = [
 export const teamsByLeague: Record<number, Team[]> = {
   // 1: K리그1 (한국, sport=1)
   1: [
-    { id: 101, name: '전북 현대 모터스', logoUrl: null, isActive: true, leagueId: 1 },
-    { id: 102, name: '울산 HD FC', logoUrl: null, isActive: true, leagueId: 1 },
-    { id: 103, name: 'FC 서울', logoUrl: null, isActive: true, leagueId: 1 },
-    { id: 104, name: '수원 삼성 블루윙즈', logoUrl: null, isActive: true, leagueId: 1 },
-    { id: 105, name: '포항 스틸러스', logoUrl: null, isActive: true, leagueId: 1 },
-    { id: 106, name: '대구 FC', logoUrl: null, isActive: true, leagueId: 1 },
-    { id: 107, name: '강원 FC', logoUrl: null, isActive: true, leagueId: 1 },
-    { id: 108, name: '광주 FC', logoUrl: null, isActive: true, leagueId: 1 },
-    { id: 109, name: '제주 유나이티드', logoUrl: null, isActive: true, leagueId: 1 },
-    { id: 110, name: '인천 유나이티드', logoUrl: null, isActive: true, leagueId: 1 },
-    { id: 111, name: '김천 상무', logoUrl: null, isActive: true, leagueId: 1 },
-    { id: 112, name: '대전 하나 시티즌', logoUrl: null, isActive: true, leagueId: 1 },
+    { id: 101, name: '전북 현대 모터스', logoUrl: `${S3}/team-logo/football/AS/KR/Jeonbuk_Hyundai.jpg`, isActive: true, leagueId: 1 },
+    { id: 102, name: '울산 HD FC', logoUrl: `${S3}/team-logo/football/AS/KR/Ulsan_Hyundai.png`, isActive: true, leagueId: 1 },
+    { id: 103, name: 'FC 서울', logoUrl: `${S3}/team-logo/football/AS/KR/Seoul.png`, isActive: true, leagueId: 1 },
+    { id: 104, name: '수원 삼성 블루윙즈', logoUrl: `${S3}/team-logo/football/AS/KR/Suwon_Samsung_Bluewings.png`, isActive: true, leagueId: 1 },
+    { id: 105, name: '포항 스틸러스', logoUrl: `${S3}/team-logo/football/AS/KR/Pohang_Steelers.png`, isActive: true, leagueId: 1 },
+    { id: 106, name: '대구 FC', logoUrl: `${S3}/team-logo/football/AS/KR/Daegu_FC.png`, isActive: true, leagueId: 1 },
+    { id: 107, name: '강원 FC', logoUrl: `${S3}/team-logo/football/AS/KR/Gangwon.gif`, isActive: true, leagueId: 1 },
+    { id: 108, name: '광주 FC', logoUrl: `${S3}/team-logo/football/AS/KR/Gwangju.PNG`, isActive: true, leagueId: 1 },
+    { id: 109, name: '제주 유나이티드', logoUrl: `${S3}/team-logo/football/AS/KR/Jeju_United.png`, isActive: true, leagueId: 1 },
+    { id: 110, name: '인천 유나이티드', logoUrl: `${S3}/team-logo/football/AS/KR/Incheon_United.png`, isActive: true, leagueId: 1 },
+    { id: 111, name: '김천 상무', logoUrl: `${S3}/team-logo/football/AS/KR/Gimcheon_Sangmu.png`, isActive: true, leagueId: 1 },
+    { id: 112, name: '대전 하나 시티즌', logoUrl: `${S3}/team-logo/football/AS/KR/Daejon_Hana_Citizen.png`, isActive: true, leagueId: 1 },
   ],
   // 2: J1리그 (일본)
   2: [
-    { id: 1001, name: '우라와 레드 다이아몬즈', logoUrl: null, isActive: true, leagueId: 2 },
-    { id: 1002, name: 'FC 도쿄', logoUrl: null, isActive: true, leagueId: 2 },
-    { id: 1003, name: '카시마 앤틀러스', logoUrl: null, isActive: true, leagueId: 2 },
-    { id: 1004, name: '요코하마 F. 마리노스', logoUrl: null, isActive: true, leagueId: 2 },
-    { id: 1005, name: '비셀 고베', logoUrl: null, isActive: true, leagueId: 2 },
-    { id: 1006, name: '카와사키 프론탈레', logoUrl: null, isActive: true, leagueId: 2 },
+    { id: 1001, name: '우라와 레드 다이아몬즈', logoUrl: `${S3}/team-logo/football/AS/JP/Urawa_Red_Diamonds.jpg`, isActive: true, leagueId: 2 },
+    { id: 1002, name: 'FC 도쿄', logoUrl: `${S3}/team-logo/football/AS/JP/FC_Tokyo.png`, isActive: true, leagueId: 2 },
+    { id: 1003, name: '카시마 앤틀러스', logoUrl: `${S3}/team-logo/football/AS/JP/Kashima_Antlers.png`, isActive: true, leagueId: 2 },
+    { id: 1004, name: '요코하마 F. 마리노스', logoUrl: `${S3}/team-logo/football/AS/JP/Yokohama_F_Marinos.png`, isActive: true, leagueId: 2 },
+    { id: 1005, name: '비셀 고베', logoUrl: `${S3}/team-logo/football/AS/JP/Vissel_Kobe.png`, isActive: true, leagueId: 2 },
+    { id: 1006, name: '카와사키 프론탈레', logoUrl: `${S3}/team-logo/football/AS/JP/Kawasaki_Frontale.png`, isActive: true, leagueId: 2 },
   ],
   // 3: 프리미어리그 (잉글랜드)
   3: [
-    { id: 1101, name: '맨체스터 시티', logoUrl: null, isActive: true, leagueId: 3 },
-    { id: 1102, name: '맨체스터 유나이티드', logoUrl: null, isActive: true, leagueId: 3 },
-    { id: 1103, name: '리버풀', logoUrl: null, isActive: true, leagueId: 3 },
-    { id: 1104, name: '첼시', logoUrl: null, isActive: true, leagueId: 3 },
-    { id: 1105, name: '아스널', logoUrl: null, isActive: true, leagueId: 3 },
-    { id: 1106, name: '토트넘 홋스퍼', logoUrl: null, isActive: true, leagueId: 3 },
-    { id: 1107, name: '뉴캐슬 유나이티드', logoUrl: null, isActive: true, leagueId: 3 },
+    { id: 1101, name: '맨체스터 시티', logoUrl: `${S3}/team-logo/football/EU/GB-ENG/Manchester_City.png`, isActive: true, leagueId: 3 },
+    { id: 1102, name: '맨체스터 유나이티드', logoUrl: `${S3}/team-logo/football/EU/GB-ENG/Manchester_United.png`, isActive: true, leagueId: 3 },
+    { id: 1103, name: '리버풀', logoUrl: `${S3}/team-logo/football/EU/GB-ENG/Liverpool.png`, isActive: true, leagueId: 3 },
+    { id: 1104, name: '첼시', logoUrl: `${S3}/team-logo/football/EU/GB-ENG/Chelsea.png`, isActive: true, leagueId: 3 },
+    { id: 1105, name: '아스널', logoUrl: `${S3}/team-logo/football/EU/GB-ENG/Arsenal.png`, isActive: true, leagueId: 3 },
+    { id: 1106, name: '토트넘 홋스퍼', logoUrl: `${S3}/team-logo/football/EU/GB-ENG/Tottenham_Hotspur.png`, isActive: true, leagueId: 3 },
+    { id: 1107, name: '뉴캐슬 유나이티드', logoUrl: `${S3}/team-logo/football/EU/GB-ENG/Newcastle_United.png`, isActive: true, leagueId: 3 },
     { id: 1108, name: '아스턴 빌라', logoUrl: null, isActive: true, leagueId: 3 },
   ],
   // 4: 라리가 (스페인)
   4: [
-    { id: 1201, name: '레알 마드리드', logoUrl: null, isActive: true, leagueId: 4 },
-    { id: 1202, name: 'FC 바르셀로나', logoUrl: null, isActive: true, leagueId: 4 },
-    { id: 1203, name: '아틀레티코 마드리드', logoUrl: null, isActive: true, leagueId: 4 },
-    { id: 1204, name: '세비야', logoUrl: null, isActive: true, leagueId: 4 },
-    { id: 1205, name: '레알 소시에다드', logoUrl: null, isActive: true, leagueId: 4 },
+    { id: 1201, name: '레알 마드리드', logoUrl: `${S3}/team-logo/football/EU/ES/Real_Madrid.png`, isActive: true, leagueId: 4 },
+    { id: 1202, name: 'FC 바르셀로나', logoUrl: `${S3}/team-logo/football/EU/ES/Barcelona.png`, isActive: true, leagueId: 4 },
+    { id: 1203, name: '아틀레티코 마드리드', logoUrl: `${S3}/team-logo/football/EU/ES/Atletico_Madrid.png`, isActive: true, leagueId: 4 },
+    { id: 1204, name: '세비야', logoUrl: `${S3}/team-logo/football/EU/ES/Sevilla.png`, isActive: true, leagueId: 4 },
+    { id: 1205, name: '레알 소시에다드', logoUrl: `${S3}/team-logo/football/EU/ES/Real_Sociedad.png`, isActive: true, leagueId: 4 },
   ],
   // 5: 분데스리가 (독일)
   5: [
-    { id: 1301, name: '바이에른 뮌헨', logoUrl: null, isActive: true, leagueId: 5 },
-    { id: 1302, name: '보루시아 도르트문트', logoUrl: null, isActive: true, leagueId: 5 },
-    { id: 1303, name: 'RB 라이프치히', logoUrl: null, isActive: true, leagueId: 5 },
-    { id: 1304, name: '바이어 04 레버쿠젠', logoUrl: null, isActive: true, leagueId: 5 },
+    { id: 1301, name: '바이에른 뮌헨', logoUrl: `${S3}/team-logo/football/EU/DE/Bayern_de_Munique.png`, isActive: true, leagueId: 5 },
+    { id: 1302, name: '보루시아 도르트문트', logoUrl: `${S3}/team-logo/football/EU/DE/Borussia_Dortmund.png`, isActive: true, leagueId: 5 },
+    { id: 1303, name: 'RB 라이프치히', logoUrl: `${S3}/team-logo/football/EU/DE/RB_Leipzig.png`, isActive: true, leagueId: 5 },
+    { id: 1304, name: '바이어 04 레버쿠젠', logoUrl: `${S3}/team-logo/football/EU/DE/Bayer_Leverkusen.png`, isActive: true, leagueId: 5 },
   ],
   // 6: 세리에 A (이탈리아)
   6: [
-    { id: 1401, name: '인터 밀란', logoUrl: null, isActive: true, leagueId: 6 },
-    { id: 1402, name: '유벤투스', logoUrl: null, isActive: true, leagueId: 6 },
-    { id: 1403, name: 'AC 밀란', logoUrl: null, isActive: true, leagueId: 6 },
-    { id: 1404, name: '나폴리', logoUrl: null, isActive: true, leagueId: 6 },
-    { id: 1405, name: 'AS 로마', logoUrl: null, isActive: true, leagueId: 6 },
+    { id: 1401, name: '인터 밀란', logoUrl: `${S3}/team-logo/football/EU/IT/Internazionale.png`, isActive: true, leagueId: 6 },
+    { id: 1402, name: '유벤투스', logoUrl: `${S3}/team-logo/football/EU/IT/Juventus.png`, isActive: true, leagueId: 6 },
+    { id: 1403, name: 'AC 밀란', logoUrl: `${S3}/team-logo/football/EU/IT/Milan.png`, isActive: true, leagueId: 6 },
+    { id: 1404, name: '나폴리', logoUrl: `${S3}/team-logo/football/EU/IT/Napoli.png`, isActive: true, leagueId: 6 },
+    { id: 1405, name: 'AS 로마', logoUrl: `${S3}/team-logo/football/EU/IT/Roma.png`, isActive: true, leagueId: 6 },
   ],
   // 7: 리그 1 (프랑스)
   7: [
-    { id: 1501, name: '파리 생제르맹', logoUrl: null, isActive: true, leagueId: 7 },
-    { id: 1502, name: '올림피크 리옹', logoUrl: null, isActive: true, leagueId: 7 },
-    { id: 1503, name: '올림피크 마르세유', logoUrl: null, isActive: true, leagueId: 7 },
-    { id: 1504, name: 'AS 모나코', logoUrl: null, isActive: true, leagueId: 7 },
+    { id: 1501, name: '파리 생제르맹', logoUrl: `${S3}/team-logo/football/EU/FR/Paris_Saint_Germain.png`, isActive: true, leagueId: 7 },
+    { id: 1502, name: '올림피크 리옹', logoUrl: `${S3}/team-logo/football/EU/FR/Lyon.png`, isActive: true, leagueId: 7 },
+    { id: 1503, name: '올림피크 마르세유', logoUrl: `${S3}/team-logo/football/EU/FR/Olympique_Marseille.png`, isActive: true, leagueId: 7 },
+    { id: 1504, name: 'AS 모나코', logoUrl: `${S3}/team-logo/football/EU/FR/Monaco.png`, isActive: true, leagueId: 7 },
   ],
   // 8: MLS (미국 — 축구)
   8: [
     { id: 1601, name: '인터 마이애미 CF', logoUrl: null, isActive: true, leagueId: 8 },
-    { id: 1602, name: 'LA 갤럭시', logoUrl: null, isActive: true, leagueId: 8 },
-    { id: 1603, name: 'NYCFC', logoUrl: null, isActive: true, leagueId: 8 },
-    { id: 1604, name: '시애틀 사운더스', logoUrl: null, isActive: true, leagueId: 8 },
+    { id: 1602, name: 'LA 갤럭시', logoUrl: `${S3}/team-logo/football/NA/US/Los_Angeles_Galaxy.png`, isActive: true, leagueId: 8 },
+    { id: 1603, name: 'NYCFC', logoUrl: `${S3}/team-logo/football/NA/US/New_York_City.png`, isActive: true, leagueId: 8 },
+    { id: 1604, name: '시애틀 사운더스', logoUrl: `${S3}/team-logo/football/NA/US/Seattle_Sounders.png`, isActive: true, leagueId: 8 },
   ],
   // 9: KBO 리그 (한국 — 야구)
   9: [
-    { id: 201, name: 'LG 트윈스', logoUrl: null, isActive: true, leagueId: 9 },
-    { id: 202, name: '삼성 라이온즈', logoUrl: null, isActive: true, leagueId: 9 },
-    { id: 203, name: 'KIA 타이거즈', logoUrl: null, isActive: true, leagueId: 9 },
-    { id: 204, name: '두산 베어스', logoUrl: null, isActive: true, leagueId: 9 },
-    { id: 205, name: 'SSG 랜더스', logoUrl: null, isActive: true, leagueId: 9 },
-    { id: 206, name: 'KT 위즈', logoUrl: null, isActive: true, leagueId: 9 },
-    { id: 207, name: 'NC 다이노스', logoUrl: null, isActive: true, leagueId: 9 },
-    { id: 208, name: '롯데 자이언츠', logoUrl: null, isActive: true, leagueId: 9 },
-    { id: 209, name: '한화 이글스', logoUrl: null, isActive: true, leagueId: 9 },
-    { id: 210, name: '키움 히어로즈', logoUrl: null, isActive: true, leagueId: 9 },
+    { id: 201, name: 'LG 트윈스', logoUrl: `${S3}/team-logo/baseball/KR/LG_Twins.svg`, isActive: true, leagueId: 9 },
+    { id: 202, name: '삼성 라이온즈', logoUrl: `${S3}/team-logo/baseball/KR/Samsung_Lions.svg`, isActive: true, leagueId: 9 },
+    { id: 203, name: 'KIA 타이거즈', logoUrl: `${S3}/team-logo/baseball/KR/KIA_Tigers.svg`, isActive: true, leagueId: 9 },
+    { id: 204, name: '두산 베어스', logoUrl: `${S3}/team-logo/baseball/KR/Doosan_Bears.svg`, isActive: true, leagueId: 9 },
+    { id: 205, name: 'SSG 랜더스', logoUrl: `${S3}/team-logo/baseball/KR/SSG_Landers.svg`, isActive: true, leagueId: 9 },
+    { id: 206, name: 'KT 위즈', logoUrl: `${S3}/team-logo/baseball/KR/kt_wiz.svg`, isActive: true, leagueId: 9 },
+    { id: 207, name: 'NC 다이노스', logoUrl: `${S3}/team-logo/baseball/KR/NC_Dinos.svg`, isActive: true, leagueId: 9 },
+    { id: 208, name: '롯데 자이언츠', logoUrl: `${S3}/team-logo/baseball/KR/Lotte_Giants.svg`, isActive: true, leagueId: 9 },
+    { id: 209, name: '한화 이글스', logoUrl: `${S3}/team-logo/baseball/KR/Hanwha_Eagles.svg`, isActive: true, leagueId: 9 },
+    { id: 210, name: '키움 히어로즈', logoUrl: `${S3}/team-logo/baseball/KR/Kiwoom_Heroes.svg`, isActive: true, leagueId: 9 },
   ],
   // 10: NPB 센트럴 (일본)
   10: [
@@ -193,19 +195,19 @@ export const teamsByLeague: Record<number, Team[]> = {
   ],
   // 12: MLB 아메리칸 리그 (미국)
   12: [
-    { id: 1901, name: '뉴욕 양키스', logoUrl: null, isActive: true, leagueId: 12 },
-    { id: 1902, name: '보스턴 레드삭스', logoUrl: null, isActive: true, leagueId: 12 },
-    { id: 1903, name: '휴스턴 애스트로스', logoUrl: null, isActive: true, leagueId: 12 },
-    { id: 1904, name: '시애틀 매리너스', logoUrl: null, isActive: true, leagueId: 12 },
-    { id: 1905, name: '토론토 블루제이스', logoUrl: null, isActive: true, leagueId: 12 },
+    { id: 1901, name: '뉴욕 양키스', logoUrl: `${S3}/team-logo/baseball/US/New_York_Yankees.svg`, isActive: true, leagueId: 12 },
+    { id: 1902, name: '보스턴 레드삭스', logoUrl: `${S3}/team-logo/baseball/US/Boston_Red_Sox.svg`, isActive: true, leagueId: 12 },
+    { id: 1903, name: '휴스턴 애스트로스', logoUrl: `${S3}/team-logo/baseball/US/Houston_Astros.svg`, isActive: true, leagueId: 12 },
+    { id: 1904, name: '시애틀 매리너스', logoUrl: `${S3}/team-logo/baseball/US/Seattle_Mariners.svg`, isActive: true, leagueId: 12 },
+    { id: 1905, name: '토론토 블루제이스', logoUrl: `${S3}/team-logo/baseball/US/Toronto_Blue_Jays.svg`, isActive: true, leagueId: 12 },
   ],
   // 13: MLB 내셔널 리그 (미국)
   13: [
-    { id: 2001, name: 'LA 다저스', logoUrl: null, isActive: true, leagueId: 13 },
-    { id: 2002, name: '샌프란시스코 자이언츠', logoUrl: null, isActive: true, leagueId: 13 },
-    { id: 2003, name: '뉴욕 메츠', logoUrl: null, isActive: true, leagueId: 13 },
-    { id: 2004, name: '샌디에이고 파드리스', logoUrl: null, isActive: true, leagueId: 13 },
-    { id: 2005, name: '애틀랜타 브레이브스', logoUrl: null, isActive: true, leagueId: 13 },
+    { id: 2001, name: 'LA 다저스', logoUrl: `${S3}/team-logo/baseball/US/Los_Angeles_Dodgers.svg`, isActive: true, leagueId: 13 },
+    { id: 2002, name: '샌프란시스코 자이언츠', logoUrl: `${S3}/team-logo/baseball/US/San_Francisco_Giants.svg`, isActive: true, leagueId: 13 },
+    { id: 2003, name: '뉴욕 메츠', logoUrl: `${S3}/team-logo/baseball/US/New_York_Mets.svg`, isActive: true, leagueId: 13 },
+    { id: 2004, name: '샌디에이고 파드리스', logoUrl: `${S3}/team-logo/baseball/US/San_Diego_Padres.svg`, isActive: true, leagueId: 13 },
+    { id: 2005, name: '애틀랜타 브레이브스', logoUrl: `${S3}/team-logo/baseball/US/Atlanta_Braves.svg`, isActive: true, leagueId: 13 },
   ],
   // 14: KBL (한국 — 농구)
   14: [
@@ -288,9 +290,9 @@ export const boards: Board[] = [
   { id: 1, name: '자유게시판', type: 'COMMON', teamId: null, teamName: null },
   { id: 2, name: 'Q&A', type: 'QNA', teamId: null, teamName: null },
   { id: 3, name: '뉴스', type: 'NEWS', teamId: null, teamName: null },
-  { id: 4, name: 'LG 트윈스 게시판', type: 'TEAM', teamId: 201, teamName: 'LG 트윈스' },
-  { id: 5, name: '전북 현대 게시판', type: 'TEAM', teamId: 101, teamName: '전북 현대 모터스' },
-  { id: 6, name: 'KIA 타이거즈 게시판', type: 'TEAM', teamId: 203, teamName: 'KIA 타이거즈' },
+  { id: 4, name: 'LG 트윈스 게시판', type: 'TEAM', teamId: 201, teamName: 'LG 트윈스', teamLogoUrl: `${S3}/team-logo/baseball/KR/LG_Twins.svg` },
+  { id: 5, name: '전북 현대 게시판', type: 'TEAM', teamId: 101, teamName: '전북 현대 모터스', teamLogoUrl: `${S3}/team-logo/football/AS/KR/Jeonbuk_Hyundai.jpg` },
+  { id: 6, name: 'KIA 타이거즈 게시판', type: 'TEAM', teamId: 203, teamName: 'KIA 타이거즈', teamLogoUrl: `${S3}/team-logo/baseball/KR/KIA_Tigers.svg` },
   { id: 7, name: 'SK 나이츠 게시판', type: 'TEAM', teamId: 301, teamName: '서울 SK 나이츠' },
   {
     id: 8,

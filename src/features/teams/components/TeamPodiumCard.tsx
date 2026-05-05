@@ -123,7 +123,7 @@ function PodiumBlock({
   const tone =
     row.rank === 1
       ? {
-          card: 'h-[180px] sm:h-[200px] bg-gradient-to-br from-amber-100 via-amber-50 to-card border-amber-300 ring-2 ring-amber-200',
+          card: 'h-[200px] sm:h-[220px] bg-gradient-to-br from-amber-100 via-amber-50 to-card border-amber-300 ring-2 ring-amber-200',
           medal: 'bg-gradient-to-br from-amber-400 to-amber-500 shadow-glow',
           medalIcon: Crown,
           rankBadge: 'bg-amber-500 text-white',
@@ -131,14 +131,14 @@ function PodiumBlock({
         }
       : row.rank === 2
         ? {
-            card: 'h-[150px] sm:h-[170px] bg-gradient-to-br from-slate-100 via-slate-50 to-card border-slate-300',
+            card: 'h-[170px] sm:h-[190px] bg-gradient-to-br from-slate-100 via-slate-50 to-card border-slate-300',
             medal: 'bg-gradient-to-br from-slate-300 to-slate-400 shadow-soft',
             medalIcon: Medal,
             rankBadge: 'bg-slate-400 text-white',
             valueColor: 'text-slate-700',
           }
         : {
-            card: 'h-[130px] sm:h-[150px] bg-gradient-to-br from-orange-100 via-orange-50 to-card border-orange-300',
+            card: 'h-[150px] sm:h-[170px] bg-gradient-to-br from-orange-100 via-orange-50 to-card border-orange-300',
             medal: 'bg-gradient-to-br from-orange-400 to-orange-500 shadow-soft',
             medalIcon: Award,
             rankBadge: 'bg-orange-500 text-white',
@@ -175,10 +175,14 @@ function PodiumBlock({
         {row.rank}위
       </span>
 
-      {/* 종목 이모지 */}
-      <span className="text-2xl leading-none sm:text-3xl" aria-hidden="true">
-        {emoji}
-      </span>
+      {/* 팀 로고 */}
+      {row.team.logoUrl ? (
+        <img src={row.team.logoUrl} alt={row.team.name} className="h-8 w-8 object-contain sm:h-10 sm:w-10" loading="lazy" />
+      ) : (
+        <span className="text-2xl leading-none sm:text-3xl" aria-hidden="true">
+          {emoji}
+        </span>
+      )}
 
       {/* 팀명 */}
       <p className="mt-1.5 line-clamp-2 text-xs font-bold leading-tight tracking-tight sm:text-sm">
@@ -207,9 +211,9 @@ function PodiumBlock({
 function PodiumSkeleton() {
   return (
     <div className="grid grid-cols-3 items-end gap-2 sm:gap-3">
+      <Skeleton className="h-[170px] rounded-xl sm:h-[190px]" />
+      <Skeleton className="h-[200px] rounded-xl sm:h-[220px]" />
       <Skeleton className="h-[150px] rounded-xl sm:h-[170px]" />
-      <Skeleton className="h-[180px] rounded-xl sm:h-[200px]" />
-      <Skeleton className="h-[130px] rounded-xl sm:h-[150px]" />
     </div>
   );
 }

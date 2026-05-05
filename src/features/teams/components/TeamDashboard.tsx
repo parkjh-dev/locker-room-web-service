@@ -16,18 +16,19 @@ import type { RecentMatch, UpcomingMatch, TeamStanding, TeamProfile } from '../t
 
 interface Props {
   teamId: number;
+  hideHero?: boolean;
 }
 
-export function TeamDashboard({ teamId }: Props) {
+export function TeamDashboard({ teamId, hideHero }: Props) {
   const { data, isLoading } = useTeamDashboard(teamId);
 
   if (isLoading || !data) {
-    return <DashboardSkeleton />;
+    return <DashboardSkeleton hideHero={hideHero} />;
   }
 
   return (
     <section aria-label="팀 정보" className="space-y-3">
-      <HeroCard team={data.team} />
+      {!hideHero && <HeroCard team={data.team} />}
 
       {/* 시즌 데이터 컨텍스트 — 다음 경기/최근 5경기/순위 모두 이 시즌 기준 */}
       <div className="flex items-center justify-end gap-1 pt-1 text-[11px] font-semibold text-muted-foreground">
@@ -59,54 +60,39 @@ function HeroCard({ team }: { team: TeamProfile }) {
         className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-brand-gradient opacity-10 blur-3xl"
       />
 
-      <div className="relative grid gap-5 sm:grid-cols-[auto_1fr] sm:items-start">
-        {/* 좌: 로고 + 이름 + 메타 */}
-        <div className="flex items-start gap-3">
-          <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-brand-gradient text-white shadow-glow sm:h-16 sm:w-16">
-            {team.logoUrl ? (
-              <img src={team.logoUrl} alt={team.name} className="h-10 w-10 object-contain" />
-            ) : (
-              <Trophy className="h-7 w-7" />
-            )}
+      <div className="relative space-y-3">
+        {/* 태그형 메타 정보 */}
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-semibold text-brand-700">
+            <Trophy className="h-3 w-3" />
+            {team.leagueName}
           </span>
-          <div className="min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-brand-700">
-              {team.leagueName}
-            </p>
-            <h2 className="mt-0.5 truncate text-lg font-extrabold tracking-tight sm:text-xl">
-              {team.name}
-            </h2>
-            <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] text-muted-foreground">
-              {team.founded && (
-                <span className="inline-flex items-center gap-1">
-                  <Calendar className="h-3 w-3" />
-                  {team.founded}년 창단
-                </span>
-              )}
-              {team.venue && (
-                <span className="inline-flex items-center gap-1">
-                  <MapPin className="h-3 w-3" />
-                  {team.venue}
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* 우: 팀 소개 */}
-        <div className="min-w-0">
-          <p className="text-sm leading-relaxed text-foreground/80">{shown}</p>
-          {isLong && (
-            <button
-              type="button"
-              onClick={() => setExpanded((v) => !v)}
-              className="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold text-brand-700 transition-colors hover:text-brand-800"
-            >
-              <Sparkles className="h-3 w-3" />
-              {expanded ? '접기' : '더 보기'}
-            </button>
+          {team.founded && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
+              <Calendar className="h-3 w-3" />
+              {team.founded}년 창단
+            </span>
+          )}
+          {team.venue && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
+              <MapPin className="h-3 w-3" />
+              {team.venue}
+            </span>
           )}
         </div>
+
+        {/* 팀 소개 */}
+        <p className="text-sm leading-relaxed text-foreground/80">{shown}</p>
+        {isLong && (
+          <button
+            type="button"
+            onClick={() => setExpanded((v) => !v)}
+            className="inline-flex items-center gap-1 text-[11px] font-semibold text-brand-700 transition-colors hover:text-brand-800"
+          >
+            <Sparkles className="h-3 w-3" />
+            {expanded ? '접기' : '더 보기'}
+          </button>
+        )}
       </div>
     </article>
   );
@@ -352,10 +338,10 @@ function CardHeader({
   );
 }
 
-function DashboardSkeleton() {
+function DashboardSkeleton({ hideHero }: { hideHero?: boolean }) {
   return (
     <section className="space-y-3">
-      <Skeleton className="h-28 rounded-2xl" />
+      {!hideHero && <Skeleton className="h-28 rounded-2xl" />}
       <div className="grid gap-3 lg:grid-cols-3">
         <Skeleton className="h-44 rounded-2xl" />
         <Skeleton className="h-44 rounded-2xl" />

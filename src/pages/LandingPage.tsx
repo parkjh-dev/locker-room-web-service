@@ -43,15 +43,16 @@ const STATS = [
   { value: '24/7', label: '실시간 토론', sub: '경기 후에도 멈추지 않는' },
 ];
 
+const S3 = 'https://locker-room-dev.s3.ap-northeast-2.amazonaws.com';
 const SHOWCASE_TEAMS = [
-  { sport: 'KBO', name: 'LG 트윈스', color: 'from-rose-500 to-rose-600' },
-  { sport: 'KBO', name: 'KIA 타이거즈', color: 'from-red-600 to-red-700' },
-  { sport: 'K리그', name: 'FC 서울', color: 'from-rose-600 to-amber-500' },
-  { sport: 'K리그', name: '울산 HD FC', color: 'from-blue-700 to-blue-900' },
-  { sport: 'KBL', name: '서울 SK 나이츠', color: 'from-red-500 to-orange-500' },
-  { sport: 'KBL', name: '안양 정관장', color: 'from-red-700 to-rose-900' },
-  { sport: 'V리그', name: '대한항공 점보스', color: 'from-sky-500 to-blue-600' },
-  { sport: 'KBO', name: '두산 베어스', color: 'from-blue-800 to-slate-900' },
+  { sport: 'KBO', name: 'LG 트윈스', color: 'from-rose-500 to-rose-600', logoUrl: `${S3}/team-logo/baseball/KR/LG_Twins.svg` },
+  { sport: 'KBO', name: 'KIA 타이거즈', color: 'from-red-600 to-red-700', logoUrl: `${S3}/team-logo/baseball/KR/KIA_Tigers.svg` },
+  { sport: 'K리그', name: 'FC 서울', color: 'from-rose-600 to-amber-500', logoUrl: `${S3}/team-logo/football/AS/KR/Seoul.png` },
+  { sport: 'K리그', name: '울산 HD FC', color: 'from-blue-700 to-blue-900', logoUrl: `${S3}/team-logo/football/AS/KR/Ulsan_Hyundai.png` },
+  { sport: 'KBL', name: '서울 SK 나이츠', color: 'from-red-500 to-orange-500', logoUrl: null },
+  { sport: 'KBL', name: '안양 정관장', color: 'from-red-700 to-rose-900', logoUrl: null },
+  { sport: 'V리그', name: '대한항공 점보스', color: 'from-sky-500 to-blue-600', logoUrl: null },
+  { sport: 'KBO', name: '두산 베어스', color: 'from-blue-800 to-slate-900', logoUrl: `${S3}/team-logo/baseball/KR/Doosan_Bears.svg` },
 ];
 
 export function LandingPage() {
@@ -304,12 +305,16 @@ function TeamsShowcase() {
               key={t.name}
               className="group hover-lift flex items-center gap-3 rounded-xl border border-white/70 bg-card/80 p-3 backdrop-blur"
             >
-              <span
-                aria-hidden="true"
-                className={`grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-gradient-to-br ${t.color} text-sm font-extrabold text-white shadow-soft`}
-              >
-                {t.name.charAt(0)}
-              </span>
+              {t.logoUrl ? (
+                <img src={t.logoUrl} alt="" className="h-10 w-10 shrink-0 rounded-lg object-contain" loading="lazy" />
+              ) : (
+                <span
+                  aria-hidden="true"
+                  className={`grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-gradient-to-br ${t.color} text-sm font-extrabold text-white shadow-soft`}
+                >
+                  {t.name.charAt(0)}
+                </span>
+              )}
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold">{t.name}</p>
                 <p className="text-xs text-muted-foreground">{t.sport}</p>

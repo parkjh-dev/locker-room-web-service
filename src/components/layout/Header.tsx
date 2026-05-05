@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Menu, Search, User, LogOut, FileText, MessageSquare } from 'lucide-react';
+import { Menu, Search, User, LogOut, FileText, MessageSquare, Megaphone } from 'lucide-react';
 import { NotificationDropdown } from '@/features/notifications/components/NotificationDropdown';
 import { ThemeToggle } from '@/components/common/ThemeToggle';
 import { Button } from '@/components/ui/button';
@@ -174,6 +174,12 @@ export function Header() {
                     <Link to="/mypage/comments">
                       <MessageSquare className="mr-2 h-4 w-4" />
                       내가 쓴 댓글
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild className="rounded-lg">
+                    <Link to="/notices">
+                      <Megaphone className="mr-2 h-4 w-4" />
+                      공지사항
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />

@@ -61,12 +61,13 @@ export interface Continent {
   code: string;
 }
 
-/** 국가 (백엔드 Country 매칭) */
+/** 국가 (백엔드 CountryResponse 매칭) */
 export interface Country {
   id: number;
   nameKo: string;
   code: string;
   continentId: number;
+  flagUrl?: string | null;
 }
 
 /** 리그 (Football/Baseball 등 종목별 리그를 추상화) */

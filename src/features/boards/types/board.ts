@@ -8,4 +8,5 @@ export interface Board {
   type: BoardType;
   teamId: number | null;
   teamName: string | null;
+  teamLogoUrl?: string | null;
 }

@@ -1,4 +1,5 @@
 import type { ActiveTeamRanking } from '@/features/teams/types/team';
+import { teamsByLeague } from './data';
 
 /**
  * 백엔드 통계 endpoint(`GET /stats/teams/most-active`) 가 추가되기 전 풍부한 UX를
@@ -126,9 +127,15 @@ function withRank(items: Omit<ActiveTeamRanking, 'rank'>[]): ActiveTeamRanking[]
   return items.map((it, i) => ({ ...it, rank: i + 1 }));
 }
 
+const allTeams = Object.values(teamsByLeague).flat();
+
 function toRanking(items: RawEntry[]): Omit<ActiveTeamRanking, 'rank'>[] {
   return items.map((r) => ({
-    team: { id: r.teamId, name: r.teamName, logoUrl: null },
+    team: {
+      id: r.teamId,
+      name: r.teamName,
+      logoUrl: allTeams.find((t) => t.id === r.teamId)?.logoUrl ?? null,
+    },
     sportName: r.sportName,
     followerCount: r.followerCount,
     avgPostsPerDay: r.avgPostsPerDay,

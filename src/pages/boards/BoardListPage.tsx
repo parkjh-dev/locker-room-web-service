@@ -66,11 +66,15 @@ export default function BoardListPage() {
                     className={`pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-gradient-to-br ${meta.gradient} opacity-15 blur-2xl transition-opacity group-hover:opacity-30`}
                   />
                   <div className="flex items-start justify-between gap-3">
-                    <span
-                      className={`grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br text-white shadow-soft ${meta.gradient}`}
-                    >
-                      <Hash className="h-5 w-5" />
-                    </span>
+                    {board.teamLogoUrl ? (
+                      <img src={board.teamLogoUrl} alt="" className="h-11 w-11 rounded-xl object-contain" loading="lazy" />
+                    ) : (
+                      <span
+                        className={`grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br text-white shadow-soft ${meta.gradient}`}
+                      >
+                        <Hash className="h-5 w-5" />
+                      </span>
+                    )}
                     <span
                       className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${meta.tone}`}
                     >
