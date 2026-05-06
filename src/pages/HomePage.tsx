@@ -65,7 +65,7 @@ function SectionCard({
   );
 }
 
-function NoticePreview() {
+export function NoticePreview() {
   const { data, isLoading } = useQuery({
     queryKey: ['notices', 'home'],
     queryFn: () => noticeApi.getNotices({ size: 5 }),

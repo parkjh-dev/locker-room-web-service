@@ -12,7 +12,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   FILE_TYPE_NOT_ALLOWED: '허용되지 않은 파일 형식입니다.',
 };
 
-const API_ORIGIN = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080';
+const API_ORIGIN = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8082';
 
 const api = axios.create({
   baseURL: `${API_ORIGIN}/api/v1`,
