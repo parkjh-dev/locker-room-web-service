@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# yarn 1.x 사용 — npm/pnpm lock 파일 차단
+package-lock.json
+pnpm-lock.yaml
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
